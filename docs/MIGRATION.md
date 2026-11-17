@@ -766,6 +766,26 @@ Observable behavior (both consoles edit identically, Ctrl+C aborts, arrows
 recall) is what the legacy in-kernel editor already does internally; the
 kernel simply exposes the *characters*, not the *editing*.
 
+**P0.4 (phase 1c prelude) — PS/2 letter case in ConsoleInput.** The legacy
+`Keyboard.MapScancode` (and the legacy `Shell.ReadLine`/password path that
+calls it) returns **UPPERCASE for every letter** regardless of Shift, and has
+**no CapsLock handling at all** (scancode 0x3A is ignored; Shift only affects
+digits/punctuation). So legacy passwords and typed letters are effectively
+always uppercase. The ring-3 `ConsoleInput` now **departs from that**:
+`PushScancode` tracks CapsLock (0x3A toggles, 0xBA ignored) and emits a letter
+**lowercase unless Shift XOR CapsLock**. The legacy `Keyboard` path is left
+**untouched** (the in-kernel shell, if ever revived, keeps its historic
+behavior). Rationale: a ring-3 line editor that cannot type lowercase is not
+usable for paths/commands; the departure is confined to `ConsoleInput` and is
+golden-pinned by 25-getchar (PS/2 `a` now echoes `a`).
+
+**P0.5 (phase 1c prelude) — Flush timing.** `ConsoleInput.Flush()` (called on
+every spawn today) clears the cooked ring and the Ctrl+C marker but **no longer
+resets `_shift`/`_ctrl`**: a spawn must not forget that a physical modifier is
+held. The flush-on-spawn itself is a temporary measure; it **moves to the
+foreground hand-off in slice 6**, where a background spawn must not eat the
+shell's type-ahead (see §5 slice 6).
+
 ### 3.8 Design choice: HALT, POWEROFF, REBOOT privilege
 
 * **Option A — root-gated syscalls; drop HALT from the shell.** `halt`

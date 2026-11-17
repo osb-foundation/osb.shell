@@ -2,7 +2,7 @@ using OsbKT;
 
 namespace Osb.Shell.Userspace
 {
-    // Phase 1b shell: verifies the kernel ABI (>= 2), then runs a minimal
+    // Phase 1b shell: verifies the kernel ABI (>= 3), then runs a minimal
     // zero-allocation line reader on GETCHAR (6Eh). The reader echoes typed
     // characters, handles Backspace and Enter, and aborts the current line on
     // Ctrl+C (GETCHAR returns -2). Only EXIT is a command; anything else is

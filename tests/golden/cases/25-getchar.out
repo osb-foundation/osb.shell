@@ -5,9 +5,9 @@ echo: ABC
 A:\OSB>ABX C
 echo: ABC
 A:\OSB>hello
-A:\OSB>A
-echo: A
-A:\OSB>A
+A:\OSB>a
+echo: a
+A:\OSB>a
 A:\OSB>
 echo: 
 A:\OSB>XY
