@@ -1,0 +1,34 @@
+login: root
+
+root@OSB A:\OSB\ROOT>
+
+root@OSB A:\OSB\ROOT>HISTORY
+    1  HISTORY
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>ECHO alpha
+alpha
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>ECHO beta
+beta
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>HISTORY
+    1  HISTORY
+    2  ECHO alpha
+    3  ECHO beta
+    4  HISTORY
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>(:1)
+HISTORY
+    1  HISTORY
+    2  ECHO alpha
+    3  ECHO beta
+    4  HISTORY
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>(:99)
+No such history entry.
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>HISTORY 2
+    4  HISTORY
+    5  HISTORY 2
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>

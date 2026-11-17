@@ -1,0 +1,22 @@
+login: root
+
+root@OSB A:\OSB\ROOT>
+
+root@OSB A:\OSB\ROOT>TASK
+ PID  NAME        STATE    MEMORY      ROLE
+   1 CONSOLE    run      kernel     fg
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>DEMO
+Started DEMO [2] in the foreground.
+Foreground [2]  (Ctrl+C returns to the shell)
+
+Foreground job aborted (Ctrl+C).
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>KILL 999
+No such process.
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>WAIT 999
+Waiting for pid <N> ...
+No such process (or already gone).
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>

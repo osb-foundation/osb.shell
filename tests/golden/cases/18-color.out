@@ -1,0 +1,21 @@
+login: root
+
+root@OSB A:\OSB\ROOT>
+
+root@OSB A:\OSB\ROOT>COLOR
+Color table: 0=black 1=blue 2=green 3=cyan 4=red 5=magenta 6=brown
+            7=light grey 8=dark grey 9=light blue 10=light green
+            11=light cyan 12=light red 13=light magenta
+            14=yellow 15=white
+Usage: COLOR fg bg
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>COLOR 1
+Usage: COLOR fg bg
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>COLOR 1 1
+Foreground and background cannot be the same.
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>COLOR 99
+Invalid color (0-15).
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>

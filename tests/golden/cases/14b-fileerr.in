@@ -1,0 +1,6 @@
+COPY
+COPY missing.txt out.txt
+REN
+REN missing.txt out.txt
+LN
+LN missing.txt link.txt

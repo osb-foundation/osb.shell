@@ -1,0 +1,35 @@
+# Golden-case manifest (F4a): case name, minimum shell level that must pass
+# it, and kind. Levels are ordered in lib.sh (LEVELS); tests/golden/LEVEL
+# holds the level the shell has reached (each slice updates it).
+#
+# kind: legacy = parity golden captured from the in-kernel shell
+#                (osb.kernel @ 5078f4b); spec = expected output written
+#                from the ABI/spec (behavior that never existed in legacy).
+#
+# case            min-level  kind
+01-ver            9          legacy
+02-echo           9          legacy
+03-set            3          legacy
+04-whoami         1c         legacy
+05-dir            4          legacy
+06-cd             4          legacy
+07-cls            9          legacy
+08-trash          5          legacy
+09-help           9          legacy
+10-history        2          legacy
+11-completion     2          legacy
+12-login          1c         legacy
+13-users          7          legacy
+13b-nonroot       7          legacy
+14-fileops        5          legacy
+14b-fileerr       5          legacy
+15-pipes          8          legacy
+16-jobs           6          legacy
+17-net            10         legacy
+18-color          9          legacy
+19-pci            10         legacy
+20-spawn          1b         spec
+21-exit7          1b         spec
+22-args           1b         spec
+23-print          1b         spec
+24-ptr            1b         spec

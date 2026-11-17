@@ -1,0 +1,5 @@
+USER
+USER /ADD tester pw
+USER
+USER /DEL tester
+USER

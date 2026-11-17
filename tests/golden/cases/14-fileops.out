@@ -1,0 +1,38 @@
+login: root
+
+root@OSB A:\OSB\ROOT>
+
+root@OSB A:\OSB\ROOT>MD SUB
+OK
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>CD SUB
+OK
+root@OSB A:\OSB\ROOT\SUB>
+root@OSB A:\OSB\ROOT\SUB>PWD
+A:\OSB\ROOT\SUB
+root@OSB A:\OSB\ROOT\SUB>
+root@OSB A:\OSB\ROOT\SUB>CD ..
+OK
+root@OSB A:\OSB\ROOT\>
+root@OSB A:\OSB\ROOT\>TYPE SUB\NOPE.TXT
+File not found
+root@OSB A:\OSB\ROOT\>
+root@OSB A:\OSB\ROOT\>COPY NOPE.TXT SUB\COPY.TXT
+Source not found
+root@OSB A:\OSB\ROOT\>
+root@OSB A:\OSB\ROOT\>DIR
+drwxr-xr-x   4root root     4096 <DATE> .
+drwxr-xr-x   9root root     4096 <DATE> ..
+drwxr-xr-x   2root root     4096 <DATE> TRASH
+drwxr-xr-x   2root root     4096 <DATE> SUB
+root@OSB A:\OSB\ROOT\>
+root@OSB A:\OSB\ROOT\>REN SUB\COPY.TXT SUB\REN.TXT
+Not found
+root@OSB A:\OSB\ROOT\>
+root@OSB A:\OSB\ROOT\>DEL SUB\REN.TXT
+File not found
+root@OSB A:\OSB\ROOT\>
+root@OSB A:\OSB\ROOT\>RD SUB
+OK
+root@OSB A:\OSB\ROOT\>
+root@OSB A:\OSB\ROOT\>

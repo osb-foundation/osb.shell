@@ -1,34 +1,50 @@
-# Shared helpers for the golden-transcript harness (A11).
+# Shared helpers for the golden-transcript harness (A11 + F4).
 #
 # Golden transcripts are captured from the legacy in-kernel shell (osb.kernel
 # commit 5078f4b, the last one where Kernel.cs called Shell.Run()) and are the
 # parity fixtures for the userspace shell slices: each slice's acceptance run
-# feeds the same commands to the current ISO and diffs the normalized output.
+# drives the current ISO over serial (drive.py) and diffs the normalized
+# output. tests/golden/LEVEL tracks the level reached; MANIFEST maps each
+# case to the level that must pass it (F4a).
 
-# Boot delay: seconds from QEMU start until the login prompt is expected.
-BOOT_DELAY="${BOOT_DELAY:-12}"
-# Settle time: seconds to keep feeding/guest running after the input is sent.
-SETTLE="${SETTLE:-10}"
+# Ordered implementation levels. A slice updates tests/golden/LEVEL as it
+# lands; cases whose min-level is above LEVEL are skipped.
+LEVELS=(1a 1a.1 1b 1c 2 3 4 5 6 7 8 9 10 11)
 
-# run_case ISO IMG INFILE
-# Boots ISO headless, feeds INFILE over serial (LF -> CRLF on the wire),
-# prints the raw serial transcript to stdout. QEMU is killed by timeout (rc
-# 124 is expected and ignored).
-run_case() {
-    local iso="$1" img="$2" inf="$3"
-    (sleep "$BOOT_DELAY"; sed 's/$/\r/' "$inf"; sleep "$SETTLE") |
-        timeout $((BOOT_DELAY + SETTLE + 15)) qemu-system-x86_64 \
-            -cdrom "$iso" -m "${OSB_MEM:-64M}" \
-            -drive file="$img",if=ide,index=0,format=raw \
-            -vga std -display none -monitor none -no-reboot -serial stdio \
-            2>/dev/null || true
+level_idx() {
+    local i=0 l
+    for l in "${LEVELS[@]}"; do
+        if [[ "$l" == "$1" ]]; then echo "$i"; return; fi
+        i=$((i + 1))
+    done
+    echo -1
 }
 
-# normalize
-# Strips the kernel boot banner (everything before the first login prompt),
-# removes CR, and masks volatile dates (DIR timestamps change per image build).
+# case_level <case-name>: prints "<min-level> <kind>" from MANIFEST.
+case_level() {
+    awk -v c="$1" '$1 == c { print $2, $3 }' "$HERE/MANIFEST"
+}
+
+# normalize: strips the kernel boot banner (everything before the first
+# login prompt or first prompt line), removes CR, masks volatile values
+# (DIR dates, pid numbers) so re-runs compare equal. The tick/DEMO masks are
+# per-case (H3): only cases that run DEMO get them, and the volatile `:Nms`
+# ping-time mask is gone (no case pings).
 normalize() {
+    local case_name="${1:-}"
     sed -n '/login:/,$p' |
         sed -e 's/\r$//' \
-            -e 's#[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9] [0-9][0-9]:[0-9][0-9]#<DATE>#g'
+            -e 's#[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9] [0-9][0-9]:[0-9][0-9]#<DATE>#g' \
+            -e 's/pid [0-9][0-9]*/pid <N>/g' |
+        case "$case_name" in
+            16-jobs)
+                # DEMO's round/tick counters are wall-clock dependent: mask
+                # the tick and drop the round lines entirely.
+                sed -e 's/tick [0-9][0-9]*/tick <T>/g' \
+                    -e '/^DEMO \[[0-9][0-9]*\]: round/d'
+                ;;
+            *)
+                cat
+                ;;
+        esac
 }

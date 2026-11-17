@@ -1,0 +1,31 @@
+login: root
+
+root@OSB A:\OSB\ROOT>
+USER /ADD tester pw
+OK
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>LOGOUT
+login: 
+login: tester
+Password: 
+
+
+tester@OSB A:\OSB\HOME\tester>
+WHOAMI
+tester
+tester@OSB A:\OSB\HOME\tester>
+tester@OSB A:\OSB\HOME\tester>USER
+  NAME          UID   HOME                              FLAGS
+  root              0  A:\OSB\ROOT                       sudo
+  tester            1  A:\OSB\HOME\tester                - *
+tester@OSB A:\OSB\HOME\tester>
+tester@OSB A:\OSB\HOME\tester>USER /ADD intruder
+Permission denied
+tester@OSB A:\OSB\HOME\tester>
+tester@OSB A:\OSB\HOME\tester>CHOWN root A:\OSB\ROOT
+Permission denied
+tester@OSB A:\OSB\HOME\tester>
+tester@OSB A:\OSB\HOME\tester>SUDO VER
+User is not in the sudoers file.
+tester@OSB A:\OSB\HOME\tester>
+tester@OSB A:\OSB\HOME\tester>

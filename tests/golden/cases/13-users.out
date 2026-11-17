@@ -1,0 +1,24 @@
+login: root
+
+root@OSB A:\OSB\ROOT>
+
+root@OSB A:\OSB\ROOT>USER
+  NAME          UID   HOME                              FLAGS
+  root              0  A:\OSB\ROOT                       sudo *
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>USER /ADD tester pw
+OK
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>USER
+  NAME          UID   HOME                              FLAGS
+  root              0  A:\OSB\ROOT                       sudo *
+  tester            1  A:\OSB\HOME\tester                -
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>USER /DEL tester
+OK
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>USER
+  NAME          UID   HOME                              FLAGS
+  root              0  A:\OSB\ROOT                       sudo *
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>

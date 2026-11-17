@@ -1,0 +1,12 @@
+login: root
+
+root@OSB A:\OSB\ROOT>
+
+root@OSB A:\OSB\ROOT>ECHO hello world | GREP hello
+hello world
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>ECHO hello world | GREP xyz
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>TYPE AUTOEXEC.OSB | GREP a
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>

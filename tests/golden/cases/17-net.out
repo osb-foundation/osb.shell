@@ -1,0 +1,11 @@
+login: root
+
+root@OSB A:\OSB\ROOT>
+
+root@OSB A:\OSB\ROOT>NET
+adapter     not started yet (PCI net for hardware detail)
+address     10.0.2.15  netmask 255.255.255.0
+gateway     10.0.2.2  dns 10.0.2.3
+source      static (NET <ip> or NET DHCP to change)
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>

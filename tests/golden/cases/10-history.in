@@ -1,0 +1,7 @@
+HISTORY
+ECHO alpha
+ECHO beta
+HISTORY
+(:1)
+(:99)
+HISTORY 2

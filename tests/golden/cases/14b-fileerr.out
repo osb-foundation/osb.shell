@@ -1,0 +1,23 @@
+login: root
+
+root@OSB A:\OSB\ROOT>
+
+root@OSB A:\OSB\ROOT>COPY
+COPY src dst
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>COPY missing.txt out.txt
+Source not found
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>REN
+REN old new
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>REN missing.txt out.txt
+Not found
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>LN
+LN [/S] source destination
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>LN missing.txt link.txt
+Source not found
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>
