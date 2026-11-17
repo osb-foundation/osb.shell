@@ -9,6 +9,13 @@ namespace Osb.Tests
     {
         private static void Main()
         {
+            // The PrintString guard must tolerate a null/empty string without
+            // faulting (review item 3). If it dereferences null, the kernel
+            // faults here instead of reaching the rest of the proof.
+            Syscall.PrintString(null);
+            Syscall.PrintString("");
+            Syscall.PrintString("null-safe\r\n");
+
             Syscall.PrintString("dollars: PROMPT=$USER@OSB $P$G\r\n");
 
             var big = stackalloc char[300];

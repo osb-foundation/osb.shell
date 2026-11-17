@@ -25,26 +25,39 @@ case_level() {
     awk -v c="$1" '$1 == c { print $2, $3 }' "$HERE/MANIFEST"
 }
 
-# normalize: strips the kernel boot banner (everything before the first
-# login prompt or first prompt line), removes CR, masks volatile values
-# (DIR dates, pid numbers) so re-runs compare equal. The tick/DEMO masks are
-# per-case (H3): only cases that run DEMO get them, and the volatile `:Nms`
-# ping-time mask is gone (no case pings).
+# normalize: strips the kernel boot banner, removes CR, masks volatile values
+# (pid numbers, tick counters) so re-runs compare equal. Legacy/shell cases
+# have a "login:" prompt: keep from the first one (that also drops any shell
+# banner printed between the kernel banner and the prompt). nologin cases (the
+# boot program IS the test, e.g. TWait.EXE) have no login prompt, so strip only
+# the kernel banner block (everything through the first blank line) instead.
+# Volatile masks are per-case (H3): only 16-jobs has pid/tick/round values.
 normalize() {
-    local case_name="${1:-}"
-    sed -n '/login:/,$p' |
-        sed -e 's/\r$//' \
-            -e 's#[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9] [0-9][0-9]:[0-9][0-9]#<DATE>#g' \
-            -e 's/pid [0-9][0-9]*/pid <N>/g' |
+    local case_name="${1:-}" tmp
+    tmp="$(mktemp)"
+    # Strip all CRs: the console emits CRLF and some ring-3 programs emit
+    # "\r\n" on top of the console's own CR, so a line can end in "\r\r\n".
+    sed -e 's/\r//g' > "$tmp"
+    if grep -q 'login:' "$tmp"; then
+        sed -n '/login:/,$p' "$tmp"
+    else
+        sed '1,/^$/d' "$tmp"
+    fi |
         case "$case_name" in
+            05-dir|14-fileops)
+                # DIR timestamps are wall-clock ("MM/DD/YYYY HH:MM") and new
+                # dirs show the epoch ("01/01/1970 00:00").
+                sed -e 's#[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9] [0-9][0-9]:[0-9][0-9]#<DATE>#g'
+                ;;
             16-jobs)
-                # DEMO's round/tick counters are wall-clock dependent: mask
-                # the tick and drop the round lines entirely.
-                sed -e 's/tick [0-9][0-9]*/tick <T>/g' \
+                # DEMO's pid/tick counters and the WAIT pid are volatile.
+                sed -e 's/pid [0-9][0-9]*/pid <N>/g' \
+                    -e 's/tick [0-9][0-9]*/tick <T>/g' \
                     -e '/^DEMO \[[0-9][0-9]*\]: round/d'
                 ;;
             *)
                 cat
                 ;;
         esac
+    rm -f "$tmp"
 }

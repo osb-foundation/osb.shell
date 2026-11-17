@@ -1,0 +1,3 @@
+TEXIT: exiting with code 7
+TWAIT: child exit=7 PASS
+Boot program exited. Halting.

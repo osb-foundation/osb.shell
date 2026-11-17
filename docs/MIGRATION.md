@@ -1,6 +1,6 @@
 # MIGRATION — legacy in-kernel shell → userspace shell
 
-**Status: PHASE 1a.1 COMPLETE (review fixes F1–F4, doc fixes E1–E3, harness fixes H1–H4; branch `phase-1a.1` in each repo). Phase 1a (build/tooling; commits osb.shell 96092f7, osbkt a2248c6, osb.kernel 45ccca5) is done; next is Phase 1b (GETCHAR, SPAWNPATH, pointer hardening). Phase 0 was approved with decisions/amendments (see section 7).**
+**Status: PHASE 1a.1 COMPLETE (review round-2 fixes R1–R10 applied; branch `phase-1a.1` in each repo). Phase 1a (build/tooling; commits osb.shell 96092f7, osbkt a2248c6, osb.kernel 45ccca5) is done; 6Ah SPAWNPATH landed in its minimal 1a.1 form (`RDI=path, RSI=len, RDX=args, RCX=argsLen`); the full handle-based `SpawnReq` form (E1/§3.1a) plus GETCHAR and pointer hardening are phase 1b. Phase 0 was approved with decisions/amendments (see section 7).**
 
 Goal: move the *functionality* of the legacy in-kernel shell
 (`osb.kernel/Shell/**`) into the userspace shell (`osb.shell`), so the kernel no
@@ -211,6 +211,7 @@ Cases live in `osb.shell/tests/golden/cases/`; the level each needs is in
 | WHOAMI | `04-whoami` | identity |
 | HISTORY [n], `(:N)` | `10-history` | list + recall + "No such history entry." |
 | SPAWN [BAD\|SPAWNER] [&] (RING3) | NO GOLDEN YET | foreground/child ordering races; covered by `20-spawn` (1b) |
+| SPAWNPATH (6Ah) + WAIT exit code | `21-exit7` | 1a.1 minimal form: TWait.EXE SPAWNPATHs TExit.EXE, WAIT returns 7 |
 | DEMO [&] / TASK (PS) / KILL <pid> / WAIT <pid> | `16-jobs` | task list, ctrl-c abort, kill/wait errors |
 | TAB <pid> | NO GOLDEN YET | needs a background job to foreground; no deterministic case |
 | OSLANG <script.OSL> [args] / KISS [file] | NO GOLDEN | out of scope (A12); OSLANG stays in kernel |
@@ -417,7 +418,7 @@ kernel ABI is accepted (forward-compatible: newer kernel, older shell).
 | 67h | SUDO | pass ptr/len | 0 / -1 | kernel checks SUDOERS + password; elevates **calling pid only** (A4), restored by 68h |
 | 68h | END_SUDO | — | 0 | restore pre-sudo uid of the calling pid |
 | 69h | WHOAMI | buf, cap | n | session user name (empty when logged out) |
-| 6Ah | SPAWNPATH | RDI = `SpawnReq*` (7 fields, see 3.1a) | pid / neg. err | exec check (any x bit for task uid, root always); handles validated **against the caller** (A5); **D7 deviation: legacy had NO exec check — SPAWNPATH requires an x bit; `build.sh` stages every `.EXE` with mode 0100755 so all shipped programs pass** |
+| 6Ah | SPAWNPATH | **1a.1 minimal form (shipped):** RDI=path, RSI=pathLen, RDX=args, RCX=argsLen. The `SpawnReq*` 7-field form (3.1a) is phase 1b | pid / neg. err | 1a.1: `Scheduler.SpawnFile` + exec check (any x bit for task uid, root always); stdin/stdout = console (no handle redirection yet). **D7 deviation: legacy had NO exec check — SPAWNPATH requires an x bit; `build.sh` stages every `.EXE` with mode 0100755 so all shipped programs pass** |
 | 6Bh | TASKLIST | out buf, cap | n entries | **all tasks visible (decision 4)** |
 | 6Ch | KILL | pid | 0 / err | same uid or root; never the console/session leader |
 | 6Dh | SETFG | pid | 0 / err | same uid or root |
@@ -437,6 +438,10 @@ kernel ABI is accepted (forward-compatible: newer kernel, older shell).
 | 80h/81h | SPAWN/WAIT (exist) | — | — | keep for built-ins; SPAWNPATH supersedes for files |
 
 #### 3.1a `SpawnReq` — the 6Ah argument block (E1)
+
+> **1a.1 note (R8):** the **minimal** 6Ah form (RDI=path, RSI=pathLen, RDX=args,
+> RCX=argsLen) is what actually shipped in 1a.1; this 7-field `SpawnReq` block
+> is the **phase-1b** target, where the handle-based redirection (A5) lands.
 
 6Ah has **seven** inputs but the gate passes only four register args
 (RDI/RSI/RDX/RCX), so they travel as one pointer to a caller-filled block
@@ -943,11 +948,13 @@ shows the userspace banner; smoke tests run unattended.
 
 **Phase 1b — Kernel hardening (X9, X15).**
 GETCHAR (6Eh, 3.7-A, A7 return space) + serial input into ring 3 (X15);
-SPAWNPATH (6Ah, A5 handle-based, 128-byte args); **full pointer validation
-(ptr+len ≤ UserLimit) on every syscall** (X9, kills the ring-3 → ring-0
-panic vector).
+SPAWNPATH (6Ah) **upgraded from the 1a.1 minimal form (RDI=path, RSI=len, RDX=args,
+RCX=argsLen) to the A5 handle-based `SpawnReq` form** (3.1a), 128-byte args;
+**full pointer validation (ptr+len ≤ UserLimit) on every syscall** (X9, kills the
+ring-3 → ring-0 panic vector).
 *Acceptance:* typing works over serial; bad pointers return -1 instead of
-panicking; test program started by path with args.
+panicking; test program started by path with args. (The 1a.1 minimal SPAWNPATH
+already passes `21-exit7`: TWait.EXE SPAWNPATHs TExit.EXE and WAIT returns 7.)
 
 **Phase 1c — Identity foundation (do before any non-root slice).**
 Kernel-owned Users table (PASSWD/SUDOERS parsed at boot, `Users.Init()` at
@@ -1051,6 +1058,49 @@ FSTAT→STAT metadata-only) is listed in the slice summary.
 | Vga-capture pipe hack | **Replaced** (3.3) — deleted with the legacy shell. |
 | `Environment`/`Cwd` in-kernel singletons | **Stay kernel-side** (session state), exposed via 63h/64h/22h/24h. |
 | osb.xwin's private copies (xwin.S, user.ld, mkosbx.py, Sys.cs, MiniCoreLib) | Later cleanup: reuse osbkt's crt0/stub/ld/packaging; XWIN is out of this migration's scope. |
+
+### 6.1 XWIN staging in `osb.kernel/build.sh` (review item 8)
+
+`build.sh` **does** stage `XWIN.EXE`: after building `osb.img` it runs
+`../osb.xwin/build.sh` with `STAGE_BIN` pointed at a temp dir and, if that
+produces `XWIN.EXE`, `debugfs write`s it to `/OSB/BIN/XWIN.EXE` with mode
+0100755 (then `e2fsck`). This is **best-effort**: a missing sibling or a
+failing XWIN build prints `WARN: XWIN build failed ... continuing` and does
+not abort the kernel build. So the default image ships `XWIN.EXE` only when
+the `osb.xwin` sibling is present and builds cleanly; otherwise the image
+still builds without it (known gap: the desktop is absent from the image, and
+`Shell/Desktop*.cs` was never migrated — §6). XWIN itself is out of this
+migration's scope.
+
+### 6.2 Legacy TAB-completion bug — issue draft (review item 9)
+
+The note is in §1.4. Draft issue text to file against the legacy tree
+(do **not** fix it in the kernel; the new shell implements completion
+correctly):
+
+```
+Title: Legacy TAB completion triples-faults on any non-empty token
+Labels: bug, legacy-shell, crash
+
+Completion.CmdCount (Completion.cs:28) is 56, but InitCommands
+(Completion.cs:336-355) registers 63 names into the fixed CmdTable
+(Completion.cs:30-35). The 7-entry overflow corrupts lens[]
+(Completion.cs:113-120); NameMatches then reads out of bounds and the box
+triple faults on ANY non-empty token (empty-line Tab is safe because
+CompleteCommand returns early at `if (tl == 0) return;`).
+
+Repro: boot the legacy image, type `AB` then Tab (serial 0x09 or PS/2
+0x0F -> Shell.cs:287-290 -> Completion.Complete). Result: triple fault.
+Expected: `AB<TAB>` completes to `ABOUT`.
+
+Fix (for the record, not applied here): set CmdCount to 64 (or derive it
+from the InitCommands table size). Verified: bumping CmdCount to 64 makes
+`AB<TAB>` complete to `ABOUT`.
+
+Impact on migration: completion cannot be golden-captured from the legacy
+build (case 11-completion = NO GOLDEN YET); the userspace shell implements
+completion per §1.4 / Slice 2.
+```
 
 ---
 

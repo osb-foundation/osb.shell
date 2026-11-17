@@ -29,7 +29,7 @@
 18-color          9          legacy
 19-pci            10         legacy
 20-spawn          1b         spec
-21-exit7          1b         spec
+21-exit7          1a.1       spec
 22-args           1b         spec
 23-print          1b         spec
 24-ptr            1b         spec
