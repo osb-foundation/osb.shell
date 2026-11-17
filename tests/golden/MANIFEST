@@ -33,3 +33,5 @@
 22-args           1b         spec
 23-print          1b         spec
 24-ptr            1b         spec
+25-getchar        1b         spec
+26-spawnerr       1b         spec

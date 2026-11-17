@@ -88,7 +88,12 @@ class Driver:
              "-netdev", "user,id=net0", "-device", "e1000,netdev=net0",
              "-vga", "std", "-display", "none",
              "-monitor", "unix:%s,server,nowait" % self.mon_path,
-             "-no-reboot", "-serial", "stdio"],
+             "-no-reboot",
+             # signal=off: pass a raw serial 0x03 (Ctrl+C) through to COM1
+             # instead of QEMU turning it into SIGINT for itself. The driver
+             # writes/reads the process stdin/stdout, so stdio is the chardev.
+             "-chardev", "stdio,id=ser0,signal=off",
+             "-serial", "chardev:ser0"],
             stdin=subprocess.PIPE, stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL, bufsize=0)
         self.fd = self.qemu.stdout.fileno()

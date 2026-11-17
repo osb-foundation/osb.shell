@@ -18,6 +18,11 @@ namespace Osb.Shell.Userspace
         // Line capacity (chars, excluding NUL). Kept small and fixed.
         private const int LineCap = 128;
 
+        // Set when the previous line ended on a CR, so an LF that immediately
+        // follows a CR (CRLF) is swallowed instead of being read as a second
+        // Enter (no extra empty line).
+        private static bool _skipLf;
+
         private static void Main()
         {
             ushort abi = Syscall.GetABI();
@@ -62,16 +67,28 @@ namespace Osb.Shell.Userspace
             for (;;)
             {
                 int ch = Syscall.GetChar();
+                if (ch == -1) { Syscall.Sleep(1); continue; }   // empty: idle (S3), not spin
                 if (ch == -2) { Syscall.PutChar('\r'); Syscall.PutChar('\n'); return -1; }
-                if (ch < 0) continue;   // empty: spin (non-blocking)
 
-                if (ch == '\r' || ch == '\n')
+                if (ch == '\r')
                 {
+                    Syscall.PutChar('\r');
+                    Syscall.PutChar('\n');
+                    buf[len] = '\0';
+                    _skipLf = true;      // swallow an LF that immediately follows
+                    return len;
+                }
+
+                if (ch == '\n')
+                {
+                    if (_skipLf) { _skipLf = false; continue; }   // CRLF: LF is not a 2nd Enter
                     Syscall.PutChar('\r');
                     Syscall.PutChar('\n');
                     buf[len] = '\0';
                     return len;
                 }
+
+                _skipLf = false;   // any other char ends the "CR then LF" window
 
                 if (ch == '\b' || ch == 0x7F)
                 {

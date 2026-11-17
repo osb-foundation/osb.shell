@@ -1,6 +1,6 @@
 # MIGRATION — legacy in-kernel shell → userspace shell
 
-**Status: PHASE 1b IN PROGRESS (branch `phase-1b` in each repo, from phase-1a.1). Phase 1a.1 complete (review round-2 fixes R1–R10; commits osb.shell 7c29ceb, osb.kernel 8a6871e, osbkt 606059b). Phase 1b adds: GETCHAR 6Eh (cooked serial+PS/2 input), final SpawnReq 6Ah form, pointer hardening (S3), shell line reader (S4), and spec cases 20/22/23/24. Housekeeping: H-A (6Ah provisional→final), H-B (CONF/BOOT gated on WITH_TESTS), H-C (13b flake fix in drive.py).**
+**Status: PHASE 1b.1 IN PROGRESS (branch `phase-1b.1` in each repo, from phase-1b). Phase 1b complete (commits osb.shell d03ce0d, osb.kernel ac53e53, osbkt aa8769f). Phase 1b.1 is the review round on phase 1b: B1 (all ring-3 strings are byte strings — 6Ah/20h, kernel converts to char*), B2 (20h rejects len>260, no clamp), B3 (6Ah resolves/type/exec-checks before task creation; CurrentUid() helper; owner/group/other x bit), B4 (6Ah error codes: -1 EFAULT bad pointer, -5 EINVAL bad content), B5 (new cases 25-getchar over serial+PS/2, 26-spawnerr, TPtr n=<count> incl. 42h/48h/50h/56h), B6 (legacy parity 3× + golden 1b 3× all green). Should-fix: S1 (PS/2 extended keys → ANSI sequences), S2 (flush cooked input on spawn), S3 (shell idle Sleep(1) on GETCHAR -1), S4 (ABI.md docs). `AbiVersion` stays 2 (6Ah/20h wire format unchanged; callers pass bytes).**
 
 > **1b housekeeping H-B (CONF/BOOT):** `A:\OSB\CONF\BOOT` (owner root, mode 0644)
 > names the boot program; the kernel honors it **only** when built with
