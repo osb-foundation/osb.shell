@@ -2,31 +2,24 @@ using OsbKT;
 
 namespace Osb.Shell.Userspace
 {
-    // Phase 1b shell: verifies the kernel ABI (>= 3), then runs a minimal
-    // zero-allocation line reader on GETCHAR (6Eh). The reader echoes typed
-    // characters, handles Backspace and Enter, and aborts the current line on
-    // Ctrl+C (GETCHAR returns -2). Only EXIT is a command; anything else is
-    // echoed back. Zero GC allocations by design (stack buffers only).
+    // Phase 1c shell: kernel-owned session identity. Verifies the kernel ABI
+    // (>= 4), then runs the legacy login flow (login: / Password:) and a command
+    // loop with the `user@OSB cwd>` prompt. Commands: WHOAMI, LOGIN, LOGOUT,
+    // SUDO <cmd>, EXIT. No other commands yet. Zero GC allocations (stack
+    // buffers only; osbkt is called through its byte*/SpawnReq overloads).
     internal static unsafe class Program
     {
-        private const string Banner =
-            "OSB Userspace Shell v0.72 (phase 1b)\r\n" +
-            "Type EXIT to quit. Ctrl+C aborts a line.\r\n";
-
-        private const string Prompt = "A:\\OSB>";
-
-        // Line capacity (chars, excluding NUL). Kept small and fixed.
         private const int LineCap = 128;
+        private const int NameCap = 32;
+        private const int CwdCap = 256;
 
         // Set when the previous line ended on a CR, so an LF that immediately
-        // follows a CR (CRLF) is swallowed instead of being read as a second
-        // Enter (no extra empty line).
+        // follows a CR (CRLF) is swallowed instead of read as a second Enter.
         private static bool _skipLf;
 
         private static void Main()
         {
-            ushort abi = Syscall.GetABI();
-            if (abi < Syscall.AbiVersion)
+            if (Syscall.GetABI() < Syscall.AbiVersion)
             {
                 Syscall.PrintString("SHELL: kernel ABI too old (need >= ");
                 PrintUShort(Syscall.AbiVersion);
@@ -34,94 +27,200 @@ namespace Osb.Shell.Userspace
                 return;
             }
 
-            Syscall.PrintString(Banner);
+            Login();
+            Session();   // returns only on EXIT (which exits the process)
+        }
 
-            var line = stackalloc char[LineCap];
-
+        // Interactive login: "login:" and, for password-protected accounts,
+        // "Password:" (no echo). The kernel decides whether a password is
+        // needed: we try an empty password first; a -3 means either an unknown
+        // user or a user that has a password, so we prompt and retry (the two
+        // cases stay indistinguishable to the caller — no user enumeration).
+        private static void Login()
+        {
+            var name = stackalloc char[NameCap];
+            var pass = stackalloc char[NameCap];
+            var nbuf = stackalloc byte[NameCap];
+            var pbuf = stackalloc byte[NameCap];
             for (;;)
             {
-                Syscall.PrintString(Prompt);
-                int len = ReadLine(line, LineCap);
-                if (len < 0) continue;   // aborted (Ctrl+C): re-prompt
+                Syscall.PrintString("login: ");
+                int nlen = ReadLine(name, NameCap, true);
+                if (nlen <= 0) continue;   // aborted or empty: re-prompt
+                Narrow(name, nbuf, nlen);  // char (UTF-16) -> byte string
 
-                if (IsExit(line, len))
+                if (Syscall.Login(nbuf, nlen, null, 0) == 0) { Syscall.PutChar('\n'); return; }
+
+                Syscall.PrintString("Password: ");
+                int plen = ReadLine(pass, NameCap, false);
+                Syscall.PutChar('\n');   // the extra newline the legacy flow prints
+                if (plen < 0) continue;
+                Narrow(pass, pbuf, plen);
+
+                if (Syscall.Login(nbuf, nlen, pbuf, plen) == 0) { Syscall.PutChar('\n'); return; }
+                Syscall.PrintString("Login incorrect\r\n");
+            }
+        }
+
+        // Command loop. EXIT exits the process; LOGIN/LOGOUT re-enter Login()
+        // in place.
+        private static void Session()
+        {
+            var line = stackalloc char[LineCap];
+            for (;;)
+            {
+                PrintPrompt();
+                int len = ReadLine(line, LineCap, true);
+                if (len < 0) continue;   // Ctrl+C: re-prompt
+
+                if (IsEq(line, len, "EXIT"))
                 {
                     Syscall.PrintString("bye\r\n");
                     Syscall.Exit(0);
                     return;
                 }
-
-                // No other commands yet: echo what was typed, then re-prompt.
-                Syscall.PrintString("echo: ");
-                Syscall.Print(line, len);
-                Syscall.PutChar('\r');
-                Syscall.PutChar('\n');
+                if (IsEq(line, len, "WHOAMI")) { DoWhoAmI(); continue; }
+                if (IsEq(line, len, "LOGIN")) { Login(); continue; }
+                if (IsEq(line, len, "LOGOUT")) { Syscall.Logout(); Login(); continue; }
+                if (StartsWith(line, len, "SUDO ")) { DoSudo(line, len); continue; }
+                // No other commands yet: silently re-prompt.
             }
         }
 
-        // Read one line from GETCHAR. Returns the length (0..LineCap-1), or -1
-        // if Ctrl+C aborted the line. Echoes printable chars; Backspace erases.
-        private static int ReadLine(char* buf, int cap)
+        private static void DoWhoAmI()
+        {
+            var buf = stackalloc byte[NameCap];
+            int n = Syscall.WhoAmI(buf, NameCap);
+            if (n < 0) n = 0;
+            Syscall.Write(buf, n);
+            Syscall.PutChar('\r'); Syscall.PutChar('\n');
+        }
+
+        // SUDO <cmd>: elevate, run the external program, de-elevates. A
+        // non-sudoer gets the legacy message and nothing runs.
+        private static void DoSudo(char* line, int len)
+        {
+            int i = 5;   // skip "SUDO "
+            while (i < len && line[i] == ' ') i++;
+            if (i >= len) { Syscall.PrintString("Usage: SUDO <command>\r\n"); return; }
+
+            if (Syscall.Sudo() != 0) { Syscall.PrintString("User is not in the sudoers file.\r\n"); return; }
+
+            int pid = SpawnCmd(line + i, len - i);
+            if (pid < 0) Syscall.PrintString("SUDO: cannot run command\r\n");
+            else Syscall.Wait(pid);
+            Syscall.EndSudo();
+        }
+
+        // Spawn an external program given the raw command bytes (a DOS path).
+        // Builds a SpawnReq on the stack (zero GC allocations).
+        private static int SpawnCmd(char* cmd, int clen)
+        {
+            var path = stackalloc byte[260];
+            int n = clen < 260 ? clen : 260;
+            for (int k = 0; k < n; k++) path[k] = (byte)cmd[k];
+            var req = new Syscall.SpawnReq
+            {
+                PathPtr = (ulong)path,
+                PathLen = (uint)n,
+                ArgsPtr = 0,
+                ArgsLen = 0,
+                StdinHandle = -1,
+                StdoutHandle = -1
+            };
+            return Syscall.SpawnPath(&req);
+        }
+
+        private static void PrintPrompt()
+        {
+            var ubuf = stackalloc byte[NameCap];
+            int ulen = Syscall.WhoAmI(ubuf, NameCap);
+            if (ulen < 0) ulen = 0;
+            Syscall.Write(ubuf, ulen);
+            Syscall.PrintString("@OSB ");
+
+            var cbuf = stackalloc byte[CwdCap];
+            int clen = Syscall.GetCwd(cbuf, CwdCap);
+            if (clen < 0) clen = 0;
+            Syscall.Write(cbuf, clen);
+            Syscall.PrintString(">");
+        }
+
+        // Read one line from GETCHAR. Returns the length (0..cap-1), or -1 if
+        // Ctrl+C aborted. Echoes printable chars unless `echo` is false;
+        // Backspace erases. On Enter prints CRLF (normalized to LF).
+        private static int ReadLine(char* buf, int cap, bool echo)
         {
             int len = 0;
             for (;;)
             {
                 int ch = Syscall.GetChar();
-                if (ch == -1) { Syscall.Sleep(1); continue; }   // empty: idle (S3), not spin
+                if (ch == -1) { Syscall.Sleep(1); continue; }
                 if (ch == -2) { Syscall.PutChar('\r'); Syscall.PutChar('\n'); return -1; }
 
                 if (ch == '\r')
                 {
-                    Syscall.PutChar('\r');
-                    Syscall.PutChar('\n');
+                    Syscall.PutChar('\r'); Syscall.PutChar('\n');
                     buf[len] = '\0';
-                    _skipLf = true;      // swallow an LF that immediately follows
+                    _skipLf = true;
                     return len;
                 }
-
                 if (ch == '\n')
                 {
-                    if (_skipLf) { _skipLf = false; continue; }   // CRLF: LF is not a 2nd Enter
-                    Syscall.PutChar('\r');
-                    Syscall.PutChar('\n');
+                    if (_skipLf) { _skipLf = false; continue; }
+                    Syscall.PutChar('\r'); Syscall.PutChar('\n');
                     buf[len] = '\0';
                     return len;
                 }
-
-                _skipLf = false;   // any other char ends the "CR then LF" window
+                _skipLf = false;
 
                 if (ch == '\b' || ch == 0x7F)
                 {
                     if (len > 0)
                     {
                         len--;
-                        Syscall.PutChar('\b');
-                        Syscall.PutChar(' ');
-                        Syscall.PutChar('\b');
+                        if (echo) { Syscall.PutChar('\b'); Syscall.PutChar(' '); Syscall.PutChar('\b'); }
                     }
                     continue;
                 }
-
                 if (ch >= ' ' && ch < 127 && len < cap - 1)
                 {
                     buf[len++] = (char)ch;
-                    Syscall.PutChar((char)ch);
+                    if (echo) Syscall.PutChar((char)ch);
                 }
             }
         }
 
-        private static bool IsExit(char* buf, int len)
+        private static bool IsEq(char* buf, int len, string lit)
         {
-            // Case-insensitive compare against "EXIT" (4 chars).
-            if (len != 4) return false;
-            char e0 = 'E', x0 = 'X', i0 = 'I', t0 = 'T';
-            char a = Upper(buf[0]), b = Upper(buf[1]), c = Upper(buf[2]), d = Upper(buf[3]);
-            return a == e0 && b == x0 && c == i0 && d == t0;
+            if (len != lit.Length) return false;
+            fixed (char* p = lit)
+            {
+                for (int k = 0; k < len; k++)
+                    if (Upper(buf[k]) != Upper(p[k])) return false;
+            }
+            return true;
         }
 
-        private static char Upper(char c)
+        private static bool StartsWith(char* buf, int len, string lit)
         {
-            return (c >= 'a' && c <= 'z') ? (char)(c - 32) : c;
+            if (len < lit.Length) return false;
+            fixed (char* p = lit)
+            {
+                for (int k = 0; k < lit.Length; k++)
+                    if (Upper(buf[k]) != Upper(p[k])) return false;
+            }
+            return true;
+        }
+
+        private static char Upper(char c) => (c >= 'a' && c <= 'z') ? (char)(c - 32) : c;
+
+        // char (UTF-16) -> byte string: the byte-string syscalls (LOGIN/WHOAMI/
+        // GETCWD) carry ASCII bytes, not UTF-16 chars, so a char* buffer cannot
+        // be passed to them directly.
+        private static void Narrow(char* src, byte* dst, int n)
+        {
+            for (int k = 0; k < n; k++) dst[k] = (byte)src[k];
         }
 
         private static void PrintUShort(ushort v)

@@ -990,6 +990,22 @@ Kernel-owned Users table (PASSWD/SUDOERS parsed at boot, `Users.Init()` at
 *Acceptance:* boot → `login:`; root passwordless login; wrong password
 denied; logged-out session cannot do privileged ops.
 
+> **1c golden re-capture (04-whoami, 12-login, 25-getchar, 27-ctrlc-order).**
+> These goldens were captured from the legacy in-kernel shell (5078f4b), but
+> two pre-1c changes moved the line reader away from byte-exact legacy parity:
+> (a) **1b.1 P0.5-adjacent CRLF swallow** — the ring-3 reader now swallows the
+> LF that follows a CR (a serial CRLF is one Enter), so the legacy's "leftover
+> `\n` read as an empty command → extra prompt" no longer happens; (b) **1c
+> login** — the shell now boots to `login:` and uses a `user@OSB cwd>` prompt
+> instead of the fixed `A:\OSB>` + `ECHO` of 1b. The four cases were
+> re-captured from the 1c shell: 04-whoami/12-login keep their legacy
+> *semantics* (passwordless root login, WHOAMI=root, LOGOUT→login) but their
+> transcripts reflect the fixed reader + login prompt; 25-getchar/27-ctrlc-order
+> gained an LF-only login prelude (`sendlf root`) so they still exercise the
+> GETCHAR line editor (echo, backspace, in-band Ctrl+C, CRLF) via the 1c shell.
+> The dedicated 1c security goldens (28-identity, 29-logout-kills, 30-sudo-scope)
+> are new `spec` cases booting TId/TLogout/TSudo.EXE.
+
 Then, one slice at a time:
 
 **Slice 2 — line editor / history / completion.**
@@ -1013,6 +1029,23 @@ decision 9); 24h CHDIR; 60h STAT (metadata-only, A2); 62h READLINK.
 *Acceptance:* `DIR`, `DIR /W`, `CD A:\OSB`, `TYPE A:\OSB\README.TXT`; as
 non-root with `CHMOD 600` file: `Permission denied` (kernel-enforced); DIR
 still lists the unreadable file (A2).
+
+> **I6 — HARD GATE before slice 4 ships.** Slice 4 adds the first read
+> commands (TYPE/SIZE/GREP), so the permission story must be closed *first*:
+> 1. **READ/OPEN must enforce the file read permission.** The read path
+>    (2Ah–2Eh OPEN/READ, 2Bh GREP input) must call the `Users.CanRead(owner,
+>    mode)` check and return `-3` (EACCES) for a non-readable file — a read
+>    syscall that ignores mode bits is the hole slice 4 would otherwise open.
+> 2. **PASSWD/SUDOERS must be root:root, mode 0600, before any read command
+>    exists.** `build.sh` already seeds `sif … mode 0100600` (uid 0), but the
+>    gate makes it a release blocker: if the read syscalls ship before the
+>    credential files are locked down, a non-root `TYPE A:\OSB\CONF\PASSWD`
+>    would dump every password (1c stores them plaintext — see §3.5 debt).
+> 3. **20h RESOLVE has no permission check (X7).** RESOLVE only resolves a
+>    path to an inode and is intentionally open (DIR needs it to list
+>    unreadable files, A2); the read *data* syscalls (READ/OPEN) are where
+>    enforcement lives. Do not "fix" X7 by gating RESOLVE — that would break
+>    DIR of unreadable files and the `ls`-style listing A2 requires.
 
 **Slice 5 — filesystem write commands.**
 MD/RD, DEL→trash + TRASH (list//F//U) as shell logic over 25h/26h/27h/28h/

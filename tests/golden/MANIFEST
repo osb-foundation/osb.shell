@@ -36,3 +36,6 @@
 25-getchar        1b         spec
 26-spawnerr       1b         spec
 27-ctrlc-order    1c         spec
+28-identity       1c         spec
+29-logout-kills   1c         spec
+30-sudo-scope     1c         spec

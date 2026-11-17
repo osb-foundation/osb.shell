@@ -9,7 +9,13 @@
 #     right after a CR is swallowed), then CR-only LAST.
 # Order matters: a CR sets the "swallow next LF" flag, so LF-only/CRLF run
 # while it is clear and the lone CR is the final input.
+# 1c: the shell now requires login, so the script logs in as root first (LF
+# only, so no stray CR is left for the line reader) before the line-editor
+# checks. The login itself exercises the same GETCHAR path.
 nologin
+expect login:
+sendlf root
+prompt
 send ABC
 prompt
 sendraw 41425808430d
