@@ -1,6 +1,13 @@
 # MIGRATION — legacy in-kernel shell → userspace shell
 
-**Status: PHASE 1a.1 COMPLETE (review round-2 fixes R1–R10 applied; branch `phase-1a.1` in each repo). Phase 1a (build/tooling; commits osb.shell 96092f7, osbkt a2248c6, osb.kernel 45ccca5) is done; 6Ah SPAWNPATH landed in its minimal 1a.1 form (`RDI=path, RSI=len, RDX=args, RCX=argsLen`); the full handle-based `SpawnReq` form (E1/§3.1a) plus GETCHAR and pointer hardening are phase 1b. Phase 0 was approved with decisions/amendments (see section 7).**
+**Status: PHASE 1b IN PROGRESS (branch `phase-1b` in each repo, from phase-1a.1). Phase 1a.1 complete (review round-2 fixes R1–R10; commits osb.shell 7c29ceb, osb.kernel 8a6871e, osbkt 606059b). Phase 1b adds: GETCHAR 6Eh (cooked serial+PS/2 input), final SpawnReq 6Ah form, pointer hardening (S3), shell line reader (S4), and spec cases 20/22/23/24. Housekeeping: H-A (6Ah provisional→final), H-B (CONF/BOOT gated on WITH_TESTS), H-C (13b flake fix in drive.py).**
+
+> **1b housekeeping H-B (CONF/BOOT):** `A:\OSB\CONF\BOOT` (owner root, mode 0644)
+> names the boot program; the kernel honors it **only** when built with
+> `BOOT_FROM_CONF` (`build.sh` with `WITH_TESTS=1`). The default image always
+> boots `A:\OSB\BIN\SHELL.EXE` regardless of `CONF/BOOT`. Verified by
+> `tests/smoke.sh` (default image with a non-shell `CONF/BOOT` still boots
+> SHELL.EXE). Documented in `osbkt/docs/ABI.md`.
 
 Goal: move the *functionality* of the legacy in-kernel shell
 (`osb.kernel/Shell/**`) into the userspace shell (`osb.shell`), so the kernel no

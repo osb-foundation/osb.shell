@@ -2,18 +2,29 @@ using OsbKT;
 
 namespace Osb.Tests
 {
-    // 6Ah proof: SPAWNPATH a file on disk (not a built-in), WAIT for it, and
-    // print the exit code it reported. TEXIT.EXE exits with 7, so we PASS only
-    // when the kernel hands back exactly 7. The path length is derived from the
-    // literal (review item 4), never hardcoded.
+    // SPAWNPATH a program by path (6Ah, final SpawnReq form), WAIT for it,
+    // and print "TWAIT: child exit=N PASS" only when the code is exactly 7.
+    // The path length is derived from the string; the SpawnReq block is filled
+    // on the stack (zero GC allocations). stdin/stdout inherit the console.
     internal static unsafe class Program
     {
         private static void Main()
         {
+            // "A:\OSB\BIN\TExit.EXE" (the staged name is TExit.EXE).
             string path = "A:\\OSB\\BIN\\TExit.EXE";
+            int pathLen = path.Length;
+
+            Syscall.SpawnReq req = default;
             fixed (char* p = path)
             {
-                int child = Syscall.SpawnPath(p, path.Length, null, 0);
+                req.PathPtr = (ulong)p;
+                req.PathLen = (uint)pathLen;
+                req.ArgsPtr = 0;
+                req.ArgsLen = 0;
+                req.StdinHandle = -1;   // inherit console
+                req.StdoutHandle = -1;  // inherit console
+
+                int child = Syscall.SpawnPath(&req);
                 if (child < 0)
                 {
                     Syscall.PrintString("TWAIT: spawn failed\r\n");

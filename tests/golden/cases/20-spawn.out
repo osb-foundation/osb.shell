@@ -1,0 +1,4 @@
+HELLO from ring 3;
+memory is private (OK)
+TSPAWN: child exit=0 PASS
+Boot program exited. Halting.

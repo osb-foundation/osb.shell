@@ -39,9 +39,48 @@ fi
 
 if grep -q "OSB Userspace Shell v0.72" "$LOG"; then
     echo "PASS: userspace shell banner found on serial."
-    exit 0
+else
+    echo "FAIL: banner not found. Last serial lines:" >&2
+    tail -20 "$LOG" >&2 || true
+    exit 1
 fi
 
-echo "FAIL: banner not found. Last serial lines:" >&2
-tail -20 "$LOG" >&2 || true
-exit 1
+# H-B: the default image must always boot SHELL.EXE regardless of CONF/BOOT.
+# Patch CONF/BOOT on a throwaway copy to point at a non-shell program and
+# verify the default kernel still boots the shell (CONF/BOOT is honored only
+# in WITH_TESTS=1 builds).
+if [[ -f "$IMG" ]] && command -v debugfs >/dev/null 2>&1; then
+    TMPIMG="$(mktemp /tmp/osb-smoke-XXXXXX.img)"
+    cp "$IMG" "$TMPIMG"
+    BF="$(mktemp)"
+    printf 'A:\\OSB\\BIN\\TExit.EXE\n' > "$BF"
+    debugfs -w -R "rm /OSB/CONF/BOOT" "$TMPIMG" 2>/dev/null || true
+    debugfs -w -R "write $BF /OSB/CONF/BOOT" "$TMPIMG" 2>/dev/null || true
+    e2fsck -fy "$TMPIMG" >/dev/null 2>&1 || true
+    rm -f "$BF"
+    HBL="$(mktemp /tmp/osb-smoke-hb-XXXXXX.log)"
+    trap 'rm -f "$LOG" "$HBL" "$TMPIMG"' EXIT
+    hrc=0
+    timeout "$TMO" qemu-system-x86_64 \
+        -cdrom "$ISO" -m "$MEM" \
+        -drive file="$TMPIMG",if=ide,index=0,format=raw \
+        -netdev user,id=net0 -device e1000,netdev=net0 \
+        -vga std -display none -monitor none -no-reboot \
+        -serial "file:$HBL" || hrc=$?
+    if [[ $hrc -ne 0 && $hrc -ne 124 ]]; then
+        echo "ERROR: H-B QEMU exited with $hrc" >&2
+        rm -f "$HBL" "$TMPIMG"
+        exit 1
+    fi
+    if grep -q "OSB Userspace Shell v0.72" "$HBL"; then
+        echo "PASS (H-B): default image boots SHELL.EXE despite CONF/BOOT."
+    else
+        echo "FAIL (H-B): default image honored CONF/BOOT (should boot SHELL.EXE)." >&2
+        tail -20 "$HBL" >&2 || true
+        rm -f "$HBL" "$TMPIMG"
+        exit 1
+    fi
+    rm -f "$HBL" "$TMPIMG"
+fi
+
+exit 0

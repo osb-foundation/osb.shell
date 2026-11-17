@@ -2,30 +2,116 @@ using OsbKT;
 
 namespace Osb.Shell.Userspace
 {
-    // Phase 1a milestone shell: verifies the kernel ABI, prints a banner, and
-    // idles. Interactive input (GETCHAR) lands in phase 1b and commands follow
-    // slice by slice - see docs/MIGRATION.md. Zero GC allocations by design.
+    // Phase 1b shell: verifies the kernel ABI (>= 2), then runs a minimal
+    // zero-allocation line reader on GETCHAR (6Eh). The reader echoes typed
+    // characters, handles Backspace and Enter, and aborts the current line on
+    // Ctrl+C (GETCHAR returns -2). Only EXIT is a command; anything else is
+    // echoed back. Zero GC allocations by design (stack buffers only).
     internal static unsafe class Program
     {
         private const string Banner =
-            "OSB Userspace Shell v0.72 (phase 1a)\r\n" +
-            "Input support arrives in phase 1b; see docs/MIGRATION.md.\r\n";
+            "OSB Userspace Shell v0.72 (phase 1b)\r\n" +
+            "Type EXIT to quit. Ctrl+C aborts a line.\r\n";
+
+        private const string Prompt = "A:\\OSB>";
+
+        // Line capacity (chars, excluding NUL). Kept small and fixed.
+        private const int LineCap = 128;
 
         private static void Main()
         {
             ushort abi = Syscall.GetABI();
-            if (abi != Syscall.AbiVersion)
+            if (abi < Syscall.AbiVersion)
             {
-                Syscall.PrintString("SHELL: kernel ABI mismatch, halting.\r\n");
+                Syscall.PrintString("SHELL: kernel ABI too old (need >= ");
+                PrintUShort(Syscall.AbiVersion);
+                Syscall.PrintString("), halting.\r\n");
                 return;
             }
 
             Syscall.PrintString(Banner);
 
-            while (true)
+            var line = stackalloc char[LineCap];
+
+            for (;;)
             {
-                Syscall.Sleep(100); // idle in ~100-tick slices; IRQ-driven
+                Syscall.PrintString(Prompt);
+                int len = ReadLine(line, LineCap);
+                if (len < 0) continue;   // aborted (Ctrl+C): re-prompt
+
+                if (IsExit(line, len))
+                {
+                    Syscall.PrintString("bye\r\n");
+                    Syscall.Exit(0);
+                    return;
+                }
+
+                // No other commands yet: echo what was typed, then re-prompt.
+                Syscall.PrintString("echo: ");
+                Syscall.Print(line, len);
+                Syscall.PutChar('\r');
+                Syscall.PutChar('\n');
             }
+        }
+
+        // Read one line from GETCHAR. Returns the length (0..LineCap-1), or -1
+        // if Ctrl+C aborted the line. Echoes printable chars; Backspace erases.
+        private static int ReadLine(char* buf, int cap)
+        {
+            int len = 0;
+            for (;;)
+            {
+                int ch = Syscall.GetChar();
+                if (ch == -2) { Syscall.PutChar('\r'); Syscall.PutChar('\n'); return -1; }
+                if (ch < 0) continue;   // empty: spin (non-blocking)
+
+                if (ch == '\r' || ch == '\n')
+                {
+                    Syscall.PutChar('\r');
+                    Syscall.PutChar('\n');
+                    buf[len] = '\0';
+                    return len;
+                }
+
+                if (ch == '\b' || ch == 0x7F)
+                {
+                    if (len > 0)
+                    {
+                        len--;
+                        Syscall.PutChar('\b');
+                        Syscall.PutChar(' ');
+                        Syscall.PutChar('\b');
+                    }
+                    continue;
+                }
+
+                if (ch >= ' ' && ch < 127 && len < cap - 1)
+                {
+                    buf[len++] = (char)ch;
+                    Syscall.PutChar((char)ch);
+                }
+            }
+        }
+
+        private static bool IsExit(char* buf, int len)
+        {
+            // Case-insensitive compare against "EXIT" (4 chars).
+            if (len != 4) return false;
+            char e0 = 'E', x0 = 'X', i0 = 'I', t0 = 'T';
+            char a = Upper(buf[0]), b = Upper(buf[1]), c = Upper(buf[2]), d = Upper(buf[3]);
+            return a == e0 && b == x0 && c == i0 && d == t0;
+        }
+
+        private static char Upper(char c)
+        {
+            return (c >= 'a' && c <= 'z') ? (char)(c - 32) : c;
+        }
+
+        private static void PrintUShort(ushort v)
+        {
+            var buf = stackalloc char[8];
+            int n = Fmt.U32(buf, v);
+            Syscall.Print(buf, n);
         }
     }
 }

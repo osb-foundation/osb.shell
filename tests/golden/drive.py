@@ -51,7 +51,14 @@ LOGIN_RE = re.compile(r"login: ?$")
 
 
 def last_line(buf: bytes) -> str:
-    line = buf[buf.rfind(b"\n") + 1:]
+    # The last non-empty line. The legacy shell prints the prompt with no
+    # trailing newline, but the post-login prompt is followed by "\r\n"
+    # (Shell.cs LoginSequence -> Vga.PutChar('\n')), so a naive "text after
+    # the last \n" is empty exactly when the driver happens to read that
+    # chunk. Strip trailing CR/LF first so a prompt followed by a newline
+    # still matches (fixes the 13b-nonroot batch flake).
+    stripped = buf.rstrip(b"\r\n")
+    line = stripped[stripped.rfind(b"\n") + 1:]
     return line.decode("latin-1").rstrip("\r")
 
 

@@ -41,6 +41,9 @@ coverage.opencover.xml
 coverage.json
 coverage.cobertura.xml
 
+# Python cache (golden harness)
+__pycache__/
+
 # NuGet
 packages/
 *.nupkg
