@@ -1,0 +1,13 @@
+--- a/Cpu/SyscallGfx.cs
++++ b/Cpu/SyscallGfx.cs
+@@ -156,9 +156,7 @@
+                 frame[14] = Keyboard.IsCtrlPressed ? 1UL : 0UL;
+                 return true;
+ 
+-            case 0x58: // POWEROFF -> ACPI S5 (QEMU exits); never returns. root only (I3).
+-                if (Scheduler.CurrentUid() != 0) { frame[14] = unchecked((ulong)-3); return true; } // EACCES
+-                NativeMethods.osb_poweroff();
++            case 0x58: // MUTATION: no root check
+                 frame[14] = 0;
+                 return true;
+ 

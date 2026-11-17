@@ -1,0 +1,11 @@
+--- a/Processes/Session.cs
++++ b/Processes/Session.cs
+@@ -93,7 +93,7 @@
+     // fresh "login:".
+     public static int Logout()
+     {
+-        if (!IsLeader(_current)) return -3;
++        if (false) return -3;
+         TeardownSession();
+         return 0;
+     }

@@ -1,0 +1,17 @@
+OSB Userspace Shell v0.72 (phase 1b)
+Type EXIT to quit. Ctrl+C aborts a line.
+A:\OSB>ABC
+echo: ABC
+A:\OSB>ABX C
+echo: ABC
+A:\OSB>hello
+A:\OSB>a
+echo: a
+A:\OSB>a
+A:\OSB>
+echo: 
+A:\OSB>XY
+echo: XY
+A:\OSB>
+echo: 
+A:\OSB>

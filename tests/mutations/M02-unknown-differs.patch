@@ -1,0 +1,11 @@
+--- a/Processes/Session.cs
++++ b/Processes/Session.cs
+@@ -69,7 +69,7 @@
+         char* nbuf = stackalloc char[Users.NameCap];
+         for (int k = 0; k < nameLen; k++) nbuf[k] = (char)name[k];
+         int idx = Users.Find(nbuf, nameLen);
+-        if (idx < 0) return -3;                       // unknown user
++        if (idx < 0) return -2;                       // unknown user
+ 
+         char* pbuf = stackalloc char[Users.PassCap];
+         int pn = passLen < Users.PassCap ? passLen : Users.PassCap;

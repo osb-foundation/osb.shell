@@ -1,0 +1,10 @@
+--- a/Processes/Session.cs
++++ b/Processes/Session.cs
+@@ -131,7 +131,6 @@
+     // session user's real uid.
+     public static int EndSudo()
+     {
+-        _tasks.uid[_current] = _tasks.realUid[_current];
+         return 0;
+     }
+ 

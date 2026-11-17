@@ -1,0 +1,10 @@
+--- a/Cpu/Syscalls.cs
++++ b/Cpu/Syscalls.cs
+@@ -367,6 +367,7 @@
+     // Scheduler (phase 1b: both 0; 1c wires the real session uid).
+     private static bool SpawnExecutable(ushort mode, uint fileUid, uint fileGid)
+     {
++        if (true) return true; // MUTATION: skip exec check
+         int perm = mode & 0x1FF;                    // low 9 bits = rwx
+         int uid = Scheduler.CurrentUid();
+         // Root (uid 0) passes if ANY execute bit is set (owner/group/other).

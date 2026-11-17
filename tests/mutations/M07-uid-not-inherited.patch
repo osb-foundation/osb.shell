@@ -1,0 +1,13 @@
+--- a/Processes/Scheduler.Spawn.cs
++++ b/Processes/Scheduler.Spawn.cs
+@@ -122,8 +122,8 @@
+                 1, -1, -1, -1);
+         else
+             SeedSlot(slot, NativeMethods.osb_sched_get_user_entry(), "USER", Layout.KindUser,
+-                _tasks.sessionId[_current], _tasks.realUid[_current],
+-                _tasks.uid[_current], _tasks.gid[_current]);
++                _tasks.sessionId[_current], -1,
++                -1, _tasks.gid[_current]);
+         SetNameChars(slot, nm, nl);
+         _tasks.arg[slot] = Layout.UserBase + entryOff;   // user RIP in the private block
+         _tasks.cr3[slot] = AddressSpace.Cr3;

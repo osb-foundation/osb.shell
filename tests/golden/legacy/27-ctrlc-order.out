@@ -1,0 +1,6 @@
+OSB Userspace Shell v0.72 (phase 1b)
+Type EXIT to quit. Ctrl+C aborts a line.
+A:\OSB>abc
+A:\OSB>def
+echo: def
+A:\OSB>

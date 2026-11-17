@@ -1,0 +1,11 @@
+--- a/Processes/Session.cs
++++ b/Processes/Session.cs
+@@ -108,7 +108,7 @@
+         {
+             if (i == _leaderSlot) continue;                       // leader survives
+             if (_tasks.state[i] == Layout.TaskFree) continue;
+-            if (sid != 0 && _tasks.sessionId[i] == sid) Release(i); // session tasks only
++            if (false && sid != 0 && _tasks.sessionId[i] == sid) Release(i); // MUTATION: no kill
+         }
+         _tasks.uid[_leaderSlot] = -1;
+         _tasks.realUid[_leaderSlot] = -1;

@@ -1006,6 +1006,60 @@ denied; logged-out session cannot do privileged ops.
 > The dedicated 1c security goldens (28-identity, 29-logout-kills, 30-sudo-scope)
 > are new `spec` cases booting TId/TLogout/TSudo.EXE.
 
+> **1c.1 prelude (Q1–Q8) — tighten the 1c security before Slice 2.**
+> Landed on `phase-2` as its own commit (osb.kernel + osb.shell; the ABI stays
+> v4, so osbkt is unchanged). Summary of the eight items:
+> - **Q1** `TId`'s child now asserts a non-leader child's LOGIN(root)/LOGOUT are
+>   `-3` and WHOAMI stays `tester` (folded into the existing childuid check).
+> - **Q2** `TLogout` asserts that after LOGOUT every privileged call is refused
+>   (WHOAMI/SUDO/POWEROFF/REBOOT/spawn ROOTONLY == `-3`) and a fresh LOGIN works.
+> - **Q3** `LOGIN` rejects an empty or over-long name (`nameLen <= 0` or
+>   `>= Users.NameCap`) outright — it never truncates. A 15-char user
+>   (`abcdefghijklmno`) is seeded in WITH_TESTS; `<name>QQ` (17 chars) is
+>   rejected. `TId` is now n=10.
+> - **Q4** the boot program is created with session 1 / uid -1 **before** it
+>   becomes READY (`SpawnFileInode(boot:true)`), so it can never run a tick with
+>   the Console's uid 0. `SeedSlot` now takes explicit
+>   `(sessionId, realUid, uid, gid)` instead of inheriting `_current`.
+> - **Q5** a LOGIN while a user is logged in first performs the LOGOUT teardown
+>   (kill session tasks except leader+kernel), THEN authenticates. This deviates
+>   from legacy `UserCommands.Login` (which just re-ran SessionSetup and left the
+>   old session's tasks alive) — recorded here and in
+>   `tests/golden/DEVIATIONS.md`. `TeardownSession` is shared by LOGOUT and
+>   re-LOGIN so the two paths cannot drift.
+> - **Q6** legacy transcripts for 04/12/25/27 are preserved in
+>   `tests/golden/legacy/` with per-case deltas in
+>   `tests/golden/DEVIATIONS.md` (banner removal, login-first, the `echo:` debug
+>   line removed from the line reader, and the PS/2 lowercase departure).
+> - **Q7** mutation suite `tests/mutations/` + `tests/mutations.sh`: 11 patches,
+>   each breaks exactly one check and is caught (11/11; see `docs/MUTATIONS.md`).
+> - **Q8** this note plus the validation below.
+>
+> **PASSWD/SUDOERS (path, format, legacy storage).** Kernel-owned at
+> `A:\OSB\CONF\PASSWD` (`name:password:uid:home`, plaintext, `PassCap` 32) and
+> `A:\OSB\CONF\SUDOERS` (one user per line); both are mode 0600 root:root (seeded
+> by `build.sh`). Legacy stored the same plaintext table in-kernel (`Users.cs`,
+> recorded debt in §3.5). No syscall ever returns password material — WHOAMI
+> returns the user **name** only. **Accepted risk (legacy-compatible):** root is
+> passwordless and SUDO does not prompt for a password; both match the legacy
+> shell and are left as-is for this prelude (hashing + a SUDO password are future
+> slices).
+>
+> **P0.1 grep (20h/21h/6Ah).** `0x20` RESOLVE (`Cpu/Syscalls.cs:193`) and `0x21`
+> DIRNEXT (`:228`) are intentionally open — DIR must list unreadable files (A2),
+> and the I6 gate says *not* to add a check to RESOLVE. `0x6A` SPAWNPATH (`:73`)
+> resolves, type-checks, then calls `SpawnExecutable(mode,uid,gid)` and refuses
+> with `-3` EACCES **before any task is created** (B3); 1c wires the caller's real
+> uid into that check. No 6Ah caller bypasses the exec check.
+>
+> **Validation.** Golden at the current level (1c): **13 pass / 0 fail / 18 skip**,
+> three runs (156 s each). Mutations: **11/11 caught**. Legacy parity: the 20
+> `kind=legacy` cases were captured from the in-kernel shell @ 5078f4b; a fresh
+> 20/20 legacy re-run needs that kernel rebuilt with its old sibling layout and
+> shims (see `capture.sh`), which is out of scope for this prelude — the four
+> recaptured cases' legacy transcripts are preserved in `legacy/` and their deltas
+> are in `DEVIATIONS.md`.
+
 Then, one slice at a time:
 
 **Slice 2 — line editor / history / completion.**

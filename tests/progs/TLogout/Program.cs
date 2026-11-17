@@ -2,10 +2,16 @@ using OsbKT;
 
 namespace Osb.Tests
 {
-    // 29-logout-kills (1c, I5): boot program (session leader). Log in as the
-    // non-root "tester", spawn a background child (TSpin, loops forever), then
-    // LOGOUT. The child must be killed (WAIT returns -1); the leader survives to
-    // print the result. Kernel tasks (session 0) are never touched.
+    // 29-logout-kills (1c, I5): boot program (session leader). Logs in as the
+    // non-root "tester", spawns a background child (TSpin, loops forever), then
+    // LOGOUT. Checks:
+    //   Q2: the child is killed (WAIT -> -1); after LOGOUT every privileged call
+    //       is refused (WHOAMI/SUDO/POWEROFF/REBOOT/spawn ROOTONLY == -3); a
+    //       fresh LOGIN still works.
+    //   Q5: a re-LOGIN as another user ("sudoer") tears down this session's
+    //       tasks before authenticating (the freshly spawned child is gone).
+    // The leader survives to print the result; kernel tasks (session 0) are
+    // never touched. Prints "LOGOUT: PASS".
     internal static unsafe class Program
     {
         private static int Fill(byte* dst, string s, int cap)
@@ -39,8 +45,34 @@ namespace Osb.Tests
             int r = Syscall.Logout();
             // The background child must be gone (WAIT -> -1); we are still here.
             bool killed = Syscall.Wait(tpid) == -1;
-            if (r == 0 && killed) { Syscall.PrintString("LOGOUT: PASS\r\n"); Syscall.Exit(0); }
-            else Fail(r == 0 ? "notkilled" : "logout");
+
+            // Q2: after LOGOUT nothing privileged is allowed.
+            var buf = stackalloc byte[16];
+            bool after = Syscall.WhoAmI(buf, 16) == -3
+                      && Syscall.Sudo() == -3
+                      && Syscall.Raw(0x58, 0, 0, 0, 0, 0) == -3
+                      && Syscall.Raw(0x59, 0, 0, 0, 0, 0) == -3
+                      && Spawn("A:\\OSB\\BIN\\ROOTONLY.EXE") == -3;
+
+            // Q2: a fresh LOGIN works.
+            bool relogin = Syscall.Login(name, nl, pass, pl) == 0;
+
+            // Q5: a re-LOGIN as another user kills this session's tasks.
+            int t2 = Spawn("A:\\OSB\\BIN\\TSpin.EXE");
+            if (t2 < 0) { Fail("spawn2"); }
+            var sname = stackalloc byte[16]; int sn = Fill(sname, "sudoer", 16);
+            bool reloginKill = Syscall.Login(sname, sn, pass, pl) == 0
+                            && Syscall.Wait(t2) == -1;
+            bool whoSudo = Syscall.WhoAmI(buf, 16) == 6 &&
+                           buf[0] == 's' && buf[1] == 'u' && buf[2] == 'd' &&
+                           buf[3] == 'o' && buf[4] == 'e' && buf[5] == 'r';
+
+            if (r == 0 && killed && after && relogin && reloginKill && whoSudo)
+            {
+                Syscall.PrintString("LOGOUT: PASS\r\n");
+                Syscall.Exit(0);
+            }
+            Fail(!after ? "notdenied" : !relogin ? "relogin" : !reloginKill ? "rekill" : "logout");
         }
 
         private static void Fail(string name)

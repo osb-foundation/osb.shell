@@ -1,0 +1,17 @@
+--- a/Processes/Session.cs
++++ b/Processes/Session.cs
+@@ -64,11 +64,10 @@
+ 
+         // Q3: reject an empty or over-long name outright; never truncate. A
+         // name that does not fit Users.NameCap is not a valid account name.
+-        if (nameLen <= 0 || nameLen >= Users.NameCap) return -3;
+-
+         char* nbuf = stackalloc char[Users.NameCap];
+-        for (int k = 0; k < nameLen; k++) nbuf[k] = (char)name[k];
+-        int idx = Users.Find(nbuf, nameLen);
++        int nlen = nameLen < Users.NameCap ? nameLen : Users.NameCap - 1;
++        for (int k = 0; k < nlen; k++) nbuf[k] = (char)name[k];
++        int idx = Users.Find(nbuf, nlen);
+         if (idx < 0) return -3;                       // unknown user
+ 
+         char* pbuf = stackalloc char[Users.PassCap];
