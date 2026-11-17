@@ -49,7 +49,7 @@ Validation expectations:
 After `../osb.kernel/build.sh`:
 
 ```bash
-tests/smoke.sh                # QEMU serial smoke test (banner, headless)
+tests/smoke.sh                # QEMU serial smoke test (login prompt, headless)
 tests/golden/golden.sh        # golden transcripts vs the legacy shell (A11)
 ```
 

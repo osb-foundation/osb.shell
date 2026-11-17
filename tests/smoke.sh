@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Smoke test (A11 harness): boot the kernel ISO headless, capture the serial
-# console, and require the userspace shell banner. Exit 0 on success.
+# console, and require the userspace shell login prompt. Exit 0 on success.
 #
 # Usage: tests/smoke.sh [path-to-osb.iso]     (default: ../osb.kernel/osb.iso)
 # Env:   OSB_MEM (guest RAM, default 64M), OSB_TIMEOUT (seconds, default 45).
@@ -37,10 +37,10 @@ if [[ $rc -ne 0 && $rc -ne 124 ]]; then
     exit 1
 fi
 
-if grep -q "OSB Userspace Shell v0.72" "$LOG"; then
-    echo "PASS: userspace shell banner found on serial."
+if grep -q "login:" "$LOG"; then
+    echo "PASS: userspace shell login prompt found on serial."
 else
-    echo "FAIL: banner not found. Last serial lines:" >&2
+    echo "FAIL: login prompt not found. Last serial lines:" >&2
     tail -20 "$LOG" >&2 || true
     exit 1
 fi
@@ -72,7 +72,7 @@ if [[ -f "$IMG" ]] && command -v debugfs >/dev/null 2>&1; then
         rm -f "$HBL" "$TMPIMG"
         exit 1
     fi
-    if grep -q "OSB Userspace Shell v0.72" "$HBL"; then
+    if grep -q "login:" "$HBL"; then
         echo "PASS (H-B): default image boots SHELL.EXE despite CONF/BOOT."
     else
         echo "FAIL (H-B): default image honored CONF/BOOT (should boot SHELL.EXE)." >&2
