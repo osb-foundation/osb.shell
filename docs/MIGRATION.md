@@ -1,6 +1,6 @@
 # MIGRATION — legacy in-kernel shell → userspace shell
 
-**Status: PHASE 0 — ANALYSIS ONLY. No code changed. Awaiting approval.**
+**Status: PHASE 1a.1 COMPLETE (review fixes F1–F4, doc fixes E1–E3, harness fixes H1–H4; branch `phase-1a.1` in each repo). Phase 1a (build/tooling; commits osb.shell 96092f7, osbkt a2248c6, osb.kernel 45ccca5) is done; next is Phase 1b (GETCHAR, SPAWNPATH, pointer hardening). Phase 0 was approved with decisions/amendments (see section 7).**
 
 Goal: move the *functionality* of the legacy in-kernel shell
 (`osb.kernel/Shell/**`) into the userspace shell (`osb.shell`), so the kernel no
@@ -20,7 +20,9 @@ osb.shell  ->  osbkt  ->  INT 21h  ->  osb.kernel
 * The shell owns presentation and interaction (editing, history, completion,
   prompt, parsing, expansion, dispatch, help).
 * Every new syscall is documented in `osbkt/docs/ABI.md` **before**
-  implementation (file does not exist yet — created in Phase 1).
+  implementation. ABI.md v0 (every existing syscall, exactly as implemented)
+  exists since Phase 1a; each slice adds its entries first and bumps the
+  GETABI version when the table changes.
 * OSB stays DOS-like: drive letters, `\`, DOS command names/aliases/flags/messages.
 
 ---
@@ -87,7 +89,7 @@ the exact console output (`\n` line endings on VGA; serial mirrors with CRLF).
 ### 1.4 TAB completion
 
 * First token of the line → command names (case-insensitive; fixed table of
-  56 names mirroring the dispatch, `Completion.cs:336`).
+  command names mirroring the dispatch, `Completion.cs:336`).
 * Token starting with `/` → flags of that command. Today only `LN`/`LNK /S`.
 * Otherwise → file/directory name completion against ext4 (drive A:):
   relative to the current directory, `dir\name`, `\name`, `A:\dir\name`;
@@ -96,6 +98,26 @@ the exact console output (`\n` line endings on VGA; serial mirrors with CRLF).
   `\`. Several matches: they are listed (two spaces apart), the token is
   extended to the longest common prefix, prompt and line are redrawn.
   No match: nothing happens (no beep, no message).
+
+**Input-path finding (H2): Tab is device-independent in the legacy code, but
+completion is broken in the legacy build.** Serial 0x09 and PS/2 Tab reach the
+same handler: serial `Shell.cs:184` `Serial.Pop()` → `Shell.cs:207`
+`FeedChar((char)ch, …)` → `Shell.cs:287-290` `if (c == '\t')
+Completion.Complete(...)`; PS/2 scancode 0x0F → `Shell.cs:232`
+`FeedChar('\t', …)`. There is **no serial-specific gate** — serial Tab is not
+missing; it is the same path as the keyboard. However the legacy table is
+oversubscribed: `Completion.cs:28` declares `CmdCount = 56` while
+`InitCommands` (`Completion.cs:336-355`) registers **63** names, a 7-entry
+overflow of the fixed `CmdTable` (`Completion.cs:30-35`) that corrupts the
+`lens[]` array and makes `NameMatches` (`Completion.cs:113-120`) read out of
+bounds → triple fault on **any non-empty token** (empty-line Tab is safe
+because `CompleteCommand` returns early at `if (tl == 0) return;`). Verified:
+bumping `CmdCount` to 64 makes "AB"+Tab complete to `ABOUT`. Consequence for
+the migration: completion **cannot be golden-captured from the legacy build**
+(case 11-completion is therefore `NO GOLDEN YET`), and the new shell must
+implement completion correctly. The driver's PS/2 path (QEMU monitor
+`sendkey`, H2) exercises Tab/arrows/Ctrl+C on the virtual keyboard, so the new
+implementation can be tested on both devices.
 
 ### 1.5 Prompt rendering ($PROMPT)
 
@@ -153,6 +175,49 @@ names are printed literally as `$NAME`). Default when unset: `$P$G`.
 | OSLANG <script.OSL> [args] | — | embedded interpreter |
 | KISS [file] | — | runs `OSLANG A:\OSB\BIN\KISS.OSL [file]` |
 | NET [ip\|DHCP\|AUTO] / PING <ip> [n] / PCI [net\|scan\|B:D.F] | NET: IFCONFIG | network |
+
+#### 1.7a Coverage table (H4): every 1.7 command → golden case
+
+Cases live in `osb.shell/tests/golden/cases/`; the level each needs is in
+`tests/golden/MANIFEST`. "NO GOLDEN YET" = deterministic but not yet captured
+(reason given), or not capturable from the legacy build.
+
+| Command / syntax (aliases) | Golden case | Notes |
+|---|---|---|
+| VER / ABOUT | `01-ver` | static text |
+| HELP [cmd], `/?` | `09-help` | overview + per-command page |
+| CLS (CLEAR) | `07-cls` | VGA + serial clear |
+| MEM | NO GOLDEN YET | deterministic (memory counters); not in the H4 list |
+| HALT / POWEROFF (SHUTDOWN, QUIT) / REBOOT | NO GOLDEN | machine control halts/reboots QEMU; HALT dropped (decision 6) |
+| EXIT / LOGOUT | `12-login` | LOGOUT → `login:` |
+| ECHO <text> | `02-echo` | `$` and long-line handling in `23-print` (1b) |
+| TIME / DATE / TICKS / SLEEP <s> | NO GOLDEN YET | clock output is wall-clock volatile |
+| SET [NAME[=value]] | `03-set` | env get/set/list |
+| DIR [path] [/W] | `05-dir` | listing + date mask |
+| CD [path] / PWD | `06-cd` | navigation |
+| TYPE <file> / SIZE <file> | NO GOLDEN YET | TYPE error in `14-fileops`; success path not captured |
+| MD / RD (MKDIR, RMDIR, RDDR) | `14-fileops` | create/remove |
+| DEL (ERASE, DELETE) | `14-fileops` | to trash |
+| REN / MOVE (RENAME) | `14-fileops`, `14b-fileerr` | success + errors |
+| COPY (CP) | `14-fileops`, `14b-fileerr` | success + errors |
+| LN [/S] (LNK) | `14b-fileerr` | errors; success path NO GOLDEN YET |
+| COLOR [fg [bg]] | `18-color` | table + usage + invalid + same fg/bg |
+| TRASH [/F pat \| /U name \| pat] | `08-trash` | list/search/undelete |
+| GREP [/I] pat [file] | `15-pipes` | via pipes |
+| USER [/ADD/CHANGE/DEL/SUDO/UNSUDO] | `13-users`, `13b-nonroot` | add/del/list; non-root denials |
+| LOGIN [name [pass]] | `12-login`, `13b-nonroot` | login: flow + password |
+| CHOWN <user> <path> / CHMOD <octal> <path> | `13b-nonroot` | non-root denials; success NO GOLDEN YET |
+| SUDO <cmd> | `13b-nonroot` | non-sudoer refusal; success NO GOLDEN YET |
+| WHOAMI | `04-whoami` | identity |
+| HISTORY [n], `(:N)` | `10-history` | list + recall + "No such history entry." |
+| SPAWN [BAD\|SPAWNER] [&] (RING3) | NO GOLDEN YET | foreground/child ordering races; covered by `20-spawn` (1b) |
+| DEMO [&] / TASK (PS) / KILL <pid> / WAIT <pid> | `16-jobs` | task list, ctrl-c abort, kill/wait errors |
+| TAB <pid> | NO GOLDEN YET | needs a background job to foreground; no deterministic case |
+| OSLANG <script.OSL> [args] / KISS [file] | NO GOLDEN | out of scope (A12); OSLANG stays in kernel |
+| NET [ip\|DHCP\|AUTO] (IFCONFIG) | `17-net` | interface info |
+| PING <ip> [n] | NO GOLDEN YET | round-trip timing is non-deterministic |
+| PCI [net\|scan\|B:D.F] | `19-pci` | bus list + device detail |
+| TAB completion (key) | NO GOLDEN YET | legacy completion crashes (1.4 overflow); driver has PS/2 `key` path |
 
 ### 1.8 External programs
 
@@ -301,15 +366,32 @@ the 40h–59h range).
 ### 3.1 Proposed syscall map (additions)
 
 Error returns (A7): `-1` (EFAULT) and `-2` (ENOSYS) keep their **existing**
-meaning and are never redefined. New error codes are defined once in
+meaning and are never redefined. **`-2` is deliberately overloaded**: it means
+ENOSYS as a syscall error *and* Ctrl+C as GETCHAR's return value (GETCHAR has
+no "error" space of its own — `-1` = empty, `-2` = Ctrl+C, D2). Callers must
+not treat a GETCHAR `-2` as "syscall missing"; the distinction is per-syscall
+and documented in each ABI.md entry. New error codes are defined once in
 `osbkt/docs/ABI.md` (v0 records the existing behavior; later slices extend the
 table): `-3` EACCES (permission denied), `-4` ENOENT (not found), `-5` EINVAL
 (not empty / not a directory / bad type / bad mode), `-6` ENOMEM (out of
-memory / no task slot / no handle). Per-syscall exceptions are listed in each
-ABI.md entry (e.g. GETCHAR: `-1` = empty, `-2` = Ctrl+C — its own return
-space, not an error). All pointer arguments must be validated **including
-range end** (`ptr ≥ UserBase && ptr+len ≤ UserLimit`) — today's gate only
-checks the start, which lets ring 3 panic the kernel (blocker X9).
+memory / no task slot / no handle), `-7` EINTR (interrupted by Ctrl+C — WAIT,
+D6), `-8` EBADF (handle not open for this operation — **including READ on a
+console handle, D9**: console READ returns -8, never -1 which is EFAULT).
+Per-syscall exceptions are listed in each ABI.md entry (e.g. GETCHAR: `-1` =
+empty, `-2` = Ctrl+C — its own return space, not an error). All pointer
+arguments must be validated **including range end** (`ptr ≥ UserBase && ptr+len
+≤ UserLimit`) — today's gate only checks the start, which lets ring 3 panic the
+kernel (blocker X9).
+
+**ABI/version lockstep (E3).** `osbkt/docs/ABI.md` and `Syscall.AbiVersion`
+are one contract: every slice that adds, removes, or changes a syscall-table
+entry bumps **both** in the same commit (ABI.md gets the new entry and the new
+version number; `Syscall.AbiVersion` is set to that number). The shell refuses
+to run when the kernel's GETABI (82h) is **lower** than the version it was
+built against: at startup it calls GETABI and, if `kernelAbi <
+Syscall.AbiVersion`, prints a clear "shell needs ABI vN, kernel is vM" message
+and exits instead of calling syscalls the kernel does not implement. A *higher*
+kernel ABI is accepted (forward-compatible: newer kernel, older shell).
 
 | AH | Name | Args | Returns | Enforcement |
 |---|---|---|---|---|
@@ -320,7 +402,7 @@ checks the start, which lets ring 3 panic the kernel (blocker X9).
 | 28h | RENAME | old ptr/len, new ptr/len | 0 / err | write on both parents; files across dirs |
 | 29h | LINK | src path, dst path | 0 / err | parent write; optional /S via flags in RDX → symlink target = src string |
 | 2Ah | OPEN | path ptr, RSI=len, RDX=flags (bit0 create+trunc, bit1 append) | handle 3–7 / neg. err | read → CanRead; write/create → parent write; O_CREAT owner=task uid, mode 0644 |
-| 2Bh | READ | RDI=handle, RSI=buf, RDX=len | n / neg. err | handle table; buffer fully range-checked; handle 0 = stdin (pipes) |
+| 2Bh | READ | RDI=handle, RSI=buf, RDX=len | n / neg. err | handle table; buffer fully range-checked; handle 0 = stdin (pipes); **READ on a console handle returns -8 (EBADF, D9) — never -1 (EFAULT)** |
 | 2Ch | WRITE | handle, buf, len | n / neg. err | handle opened for write; handle 1 = stdout (console or file) |
 | 2Dh | CLOSE | handle | 0 / err | — |
 | 2Eh | LSEEK | handle, off (RDX), whence (RCX: 0 set/1 cur/2 end) | new off / neg. err | — |
@@ -335,11 +417,11 @@ checks the start, which lets ring 3 panic the kernel (blocker X9).
 | 67h | SUDO | pass ptr/len | 0 / -1 | kernel checks SUDOERS + password; elevates **calling pid only** (A4), restored by 68h |
 | 68h | END_SUDO | — | 0 | restore pre-sudo uid of the calling pid |
 | 69h | WHOAMI | buf, cap | n | session user name (empty when logged out) |
-| 6Ah | SPAWNPATH | path ptr/len, args ptr/len (128 B), RDX = stdout write handle or -1 (console), RCX = stdin read handle or -1 | pid / neg. err | exec check (any x bit for task uid, root always); handles validated **against the caller** (A5) |
+| 6Ah | SPAWNPATH | RDI = `SpawnReq*` (7 fields, see 3.1a) | pid / neg. err | exec check (any x bit for task uid, root always); handles validated **against the caller** (A5); **D7 deviation: legacy had NO exec check — SPAWNPATH requires an x bit; `build.sh` stages every `.EXE` with mode 0100755 so all shipped programs pass** |
 | 6Bh | TASKLIST | out buf, cap | n entries | **all tasks visible (decision 4)** |
 | 6Ch | KILL | pid | 0 / err | same uid or root; never the console/session leader |
 | 6Dh | SETFG | pid | 0 / err | same uid or root |
-| 6Eh | GETCHAR | — | char / -1 empty / -2 Ctrl+C | merges serial+PS/2, arrows as `ESC[A/B`, see 3.7; **-1/-2 are GETCHAR's return space (A7)** |
+| 6Eh | GETCHAR | — | char 0–255 / -1 empty / -2 Ctrl+C | merges serial+PS/2, arrows as `ESC[A/B`, see 3.7; **-1/-2 are GETCHAR's return space (A7); Ctrl+C is consumed kernel-side — byte 0x03 is never delivered (D2)** |
 | 6Fh | CLEAR | — | 0 | console clear + serial `ESC[2J H` |
 | 70h | SETCOLOR | fg (AL), bg (AH) | 0 / err | console attribute |
 | 71h | GETCOLOR | out: fg, bg | 0 | — |
@@ -354,13 +436,47 @@ checks the start, which lets ring 3 panic the kernel (blocker X9).
 | 58h/59h | POWEROFF/REBOOT (exist) | — | — | **add: root only (decision 5)** |
 | 80h/81h | SPAWN/WAIT (exist) | — | — | keep for built-ins; SPAWNPATH supersedes for files |
 
+#### 3.1a `SpawnReq` — the 6Ah argument block (E1)
+
+6Ah has **seven** inputs but the gate passes only four register args
+(RDI/RSI/RDX/RCX), so they travel as one pointer to a caller-filled block
+(RDI = `SpawnReq*`). The kernel copies and range-checks the block before use;
+ring 3 must not keep writing it after the call.
+
+```c
+// All pointers are user-window addresses (UserBase..UserLimit). All lengths
+// are bytes and must satisfy ptr >= UserBase && ptr + len <= UserLimit.
+typedef struct SpawnReq {
+    uint32_t pathLen;      // +0   length of the path string (<= 260)
+    uint32_t argsLen;      // +4   length of the raw argument string (<= 128, decision 7)
+    uint32_t reserved;     // +8   must be 0 (future flags; kernel rejects != 0)
+    uint32_t stdoutH;      // +12  caller's write handle to dup into child fd 1, or 0xFFFFFFFF
+    uint32_t stdinH;       // +16  caller's read handle to dup into child fd 0, or 0xFFFFFFFF
+    uint32_t elevate;      // +20  nonzero = spawn with uid 0 (D4; caller must be elevated/root)
+    uint32_t pathPtr;      // +24  low 32 bits of the path pointer
+    uint32_t pathPtrHi;    // +28  high 32 bits (so the block is 64-bit-clean)
+    uint32_t argsPtr;      // +32  low 32 bits of the args pointer
+    uint32_t argsPtrHi;    // +36  high 32 bits
+} SpawnReq;                // +40  (padded to 40 bytes)
+```
+
+Validation (kernel, before any load): `reserved == 0`; `pathLen` in 1..260
+and `argsLen` in 0..128; `pathPtr`/`argsPtr` in the user window with their
+lengths; `stdoutH`/`stdinH` either 0xFFFFFFFF or an open handle **in the
+caller's table** in the right direction (A5); `elevate` requires the caller
+to be elevated or root (A4/D4). Any failure returns the matching negative
+code (`-1` EFAULT for a bad pointer/length, `-5` EINVAL for a bad flag/handle,
+`-3` EACCES for a non-elevated `elevate`). The child gets a **copy** of the
+path/args (they live in the child's inherited env/arg block, decision 3), so
+the caller may reuse its buffers as soon as 6Ah returns.
+
 Handles (A5): every task owns a per-task table of 8 entries. Slots 0/1/2 are
 stdin/stdout/stderr, defaulting to the console; OPEN returns 3–7. SPAWNPATH
 redirects the child's 0/1 by passing the caller's already-open handles
-(kernel validates: the handle exists in the caller's table and is open in the
-right direction) — never raw inodes. GREP reads piped stdin via READ(0).
-Console handles: WRITE works (console output), READ on a console handle
-returns -1 (interactive input is GETCHAR, not READ).
+(`SpawnReq.stdoutH`/`stdinH`) — the kernel validates the handle exists in the
+caller's table and is open in the right direction, never raw inodes. GREP
+reads piped stdin via READ(0). Console handles: WRITE works (console output),
+READ on a console handle returns -8 (EBADF, D9), not -1.
 
 **A2 redesign note:** `STAT` (60h) is metadata-only and deliberately does
 **not** require read permission: directory listing (`DIR`, completion) must
@@ -417,7 +533,8 @@ public static unsafe class Syscall {          // today: internal
     public static bool Resolve(char* path, int len, out uint ino, out ushort mode, out ushort uid, out ulong size); // 20h (extended stat)
     public static bool DirNext(uint ino, int index, byte* outBuf, int cap); // 21h (now permission-checked)
     // processes (B items)
-    public static int  SpawnPath(char* path, int pL, char* args, int aL, int stdoutH, int stdinH); // 6Ah (handles, -1 = console, A5)
+    public static int  SpawnPath(char* path, int pL, char* args, int aL, int stdoutH, int stdinH); // 6Ah (builds a SpawnReq*, A5)
+    public static int  SpawnPathEx(SpawnReq* req);      // 6Ah (pointer form, E1; req fields per 3.1a)
     public static int  SpawnBuiltin(int id);                          // 80h (HELLO/BAD/SPAWNER/DEMO?)
     public static int  Wait(int pid);                                 // 81h
     public static int  GetPid();                                      // 30h
@@ -449,19 +566,28 @@ and the OSBX packaging tool (`mkosbx.py`) — per architecture rule 4.
   rules, 4 KiB-class buffer forces blocking writes (needs a "would block"
   protocol or big buffers), deadlock-prone under the 8-slot table; most code.
 * **Option B — temp-file redirection (DOS-authentic).** Shell creates
-  `%TEMP%\PIPE<n>.TMP`, spawns stage A with stdout→that file (6Ah flag),
-  waits, then runs stage B with the temp file as an OPEN handle / or B reads
-  it as an argument file. Pros: tiny kernel surface (just "stdout = this
-  ino"), no new objects, bounded by disk not RAM, matches how DOS-era shells
-  did pipes. Cons: disk churn; temp cleanup; visible `.TMP` files.
+  `%TEMP%\PIPE<n>.TMP` via OPEN (write), spawns stage A with that **open
+  write handle** as stdout (SPAWNPATH RDX), waits, LSEEKs the handle back to
+  0, then spawns stage B with the same file as an OPEN read handle passed as
+  stdin (SPAWNPATH RCX). Pros: tiny kernel surface (handles only — no new
+  objects, no inode passing, no flags), bounded by disk not RAM, matches how
+  DOS-era shells did pipes. Cons: disk churn; temp cleanup; visible `.TMP`
+  files.
 * **Option C — capture in the shell.** Impossible from ring 3 (VGA memory is
   U/S=0 and there is no other-process output bus). Refuted; listed to close
   the legacy mechanism out.
 
 **Recommendation: B — APPROVED (decision 1)**, with amendments:
-* **A6 — pipe temp files:** mode `0600`, unique names (`PIPE0001.TMP`…),
-  owner-only, cleaned up on normal pipeline end **and** on Ctrl+C abort
-  (shell owns cleanup; kernel never leaks them).
+* **A6 — pipe temp files:** created inside a **per-user 0700 temp directory
+  `$HOME\TEMP`** (created at login like `$HOME\TRASH`; NOT the world-writable
+  0777 `A:\OSB\TEMP`), mode `0600`, unique names (`PIPE0001.TMP`…),
+  cleaned up on normal pipeline end **and** on Ctrl+C abort (shell owns
+  cleanup; kernel never leaks them). **D8 rationale:** `%TEMP%` is 0777 with
+  no sticky semantics — another user could unlink or replace a 0600 pipe
+  file between stages (TOCTOU). A 0700 per-user dir closes this without
+  kernel changes; sticky-bit UNLINK/RENAME semantics were considered and
+  rejected (more kernel surface, DOS-inauthentic). Cross-user pipelines are
+  not supported (single-user box, DOS-like).
 * **A5 — redirection is handle-based:** SPAWNPATH (6Ah) takes already-open
   write handles (`RDX` = stdout handle or -1 = console, `RCX` = stdin handle
   or -1), validated kernel-side against the **caller's** handle table; raw
@@ -470,6 +596,21 @@ The observable behavior (`A | B` feeds A's output as B's stdin, `GREP` last)
 is preserved; `%TEMP%` already exists and is world-writable (0777). The
 4096-byte legacy cap becomes a documented limitation of the temp file size
 instead of a silent truncation.
+
+**D5 — architecture rule: single output sink.** Built-ins run inside the
+shell process, so SPAWNPATH redirection (which only affects a *child*
+process) cannot capture their output — `DIR | GREP` and `TYPE f | GREP`
+would capture nothing. Rule: **from the first shell slice onward, ALL shell
+output goes through one output-sink abstraction** — either the console
+(default) or an open handle (temp file for a pipe stage, redirected file).
+Built-ins never call `PrintString`/`PutChar` directly; they write to the
+current sink (a tiny `Out` module: `Out.Print/Out.PutChar/Out.Newline`,
+swappable per command). Consequences: (1) pipes work for built-ins AND
+externals uniformly; (2) `>` style redirection later is the same mechanism;
+(3) the shell's own prompts/errors always go to the console sink, never to
+a redirected one (so a piped command's prompt does not pollute the pipe).
+This rule binds slice 1 (line editor) onward — retrofitting it later would
+touch every command module.
 
 ### 3.4 Design choice: session identity and login
 
@@ -502,6 +643,42 @@ instead of a silent truncation.
   elevation reverts automatically when the command ends (background/`&` tasks
   never inherit elevation; SETFG/SPAWN never propagate it). END_SUDO stays
   as the explicit restore for built-ins.
+* **D3 — LOGIN/LOGOUT are session-leader-only:** both syscalls are accepted
+  **only from the session-leader task** (the task that owns the console
+  session — in practice the shell's main task; the kernel tracks its pid).
+  Any other task calling LOGIN/LOGOUT gets -3 (EACCES). Rationale: without
+  this, a background task that outlives LOGOUT could call `LOGIN("root","")`
+  while the console session has no uid — passwordless root login would be
+  reachable from a non-console context (the hole this closes).
+  **LOGOUT also terminates the departing user's other tasks, keyed by login
+(session) id, not by effective uid (E2).** Every task carries a `sessionId`
+inherited from its parent at spawn: the session leader's id at boot, copied
+unchanged into every SPAWNPATH child (including `SUDO prog.exe` children that
+run as uid 0 — they keep the leader's `sessionId` even though their effective
+uid is 0). LOGOUT kills **every task whose `sessionId` equals the departing
+session's id**, except (a) kernel tasks (`sessionId == 0`, i.e. the console
+and kernel-internal tasks) and (b) the session leader itself, which survives
+to print the next `login:`. Keying on uid instead would be wrong: a
+`SUDO prog.exe` child runs as uid 0, so a uid-based sweep would leave it
+alive as an orphan root task after a non-root user logs out. Keying on
+`sessionId` catches it (it inherited the departing user's session) while
+never touching kernel tasks (session 0) or the leader. Trade-off: this
+matches DOS single-session semantics (a user's background work does not
+survive logout); the alternative — letting tasks survive and blocking LOGIN
+without a console uid — was rejected because orphaned ring-3 tasks with a
+stale uid are a privilege-ambiguity source (whose credentials do they run
+under after logout?).
+* **D4 — SUDO for external programs (elevated spawn):** `SUDO <external>`
+  spawns the child **with uid 0 for its lifetime**; the kernel validates the
+  SUDO password/sudoers once (as for built-ins), then SPAWNPATHs with an
+  elevated-uid flag checked against the caller's **active** elevation
+  (caller must currently be elevated or root — an unelevated task cannot
+  request an elevated spawn even with a valid password it captured). The
+  caller's own elevation **reverts immediately after the spawn** returns
+  (SUDO does not stay elevated while the child runs; only the child is
+  uid 0). For built-ins, elevation lasts for the builtin's execution (A4).
+  This keeps A4's "never propagates to background tasks" while making
+  `SUDO some-tool.exe` actually work.
 
 ### 3.5 Design choice: where PASSWD/SUDOERS live
 
@@ -542,20 +719,23 @@ entry. `USER /CHANGE` (own password) is allowed for any logged-in user;
 
 **Recommendation: A — APPROVED (decisions 7, 8), 128-byte cap**, raw-string
 semantics identical to `SetArgs` today (trailing spaces trimmed). Redirection
-is handle-based (RDX/RCX carry caller-validated open handles, A5), not
-path+flag. TASK/PS shows **all tasks** (decision 4). Args live per task;
-SPAWN copies the parent's env and args (decision 3).
+is handle-based: the seven inputs travel in a `SpawnReq` block passed by
+pointer (3.1a, E1) whose `stdoutH`/`stdinH` are caller-validated open handles
+(A5), not path+flag. TASK/PS shows **all tasks** (decision 4). Args live per
+task; SPAWN copies the parent's env and args (decision 3).
 
 ### 3.7 Design choice: console input delivery
 
 * **Option A — cooked GETCHAR (kernel line discipline-lite).** Kernel merges
   the two IRQ rings, translates scancodes (the `MapScancode` table is
-  hardware knowledge → kernel), folds Ctrl+C (serial 0x03 / PS/2 Ctrl+C)
-  into the stream as 0x03, delivers arrows as `ESC [ A/B` for both devices,
-  `-1` when empty. Shell does all editing. Pros: presentation stays in the
-  shell (rule 3); one input path for keyboard and serial; XWIN's 52h raw
-  scancode call stays untouched for the desktop. Cons: the kernel gains a
-  small translation table (hardware concern — correct home).
+  hardware knowledge → kernel), **consumes Ctrl+C** (serial 0x03 / PS/2
+  Ctrl+C) exactly like the legacy `ConsoleControl` and returns it to ring 3
+  only as `-2` — the byte `0x03` is never delivered as data (D2), delivers
+  arrows as `ESC [ A/B` for both devices, `-1` when empty. Shell does all
+  editing. Pros: presentation stays in the shell (rule 3); one input path
+  for keyboard and serial; XWIN's 52h raw scancode call stays untouched for
+  the desktop. Cons: the kernel gains a small translation table (hardware
+  concern — correct home).
 * **Option B — raw scancodes + serial merged, shell translates.** Cons:
   duplicates the scancode map in ring 3 (hardware table in presentation
   code) and forces the shell to distinguish devices.
@@ -566,8 +746,10 @@ SPAWN copies the parent's env and args (decision 3).
 
 **Recommendation: A — APPROVED (1b).** GETCHAR returns: char value 0–255,
 `-1` = empty, `-2` = Ctrl+C (A7: GETCHAR-specific return space, not an
-error — Ctrl+C is data to the line editor, and the kernel forwards 0x03 so
-the shell can fold it into the edit buffer per its own rules).
+error). **Resolved (D2, supersedes earlier drafts): the kernel consumes the
+Ctrl+C event — serial 0x03 and PS/2 Ctrl+C never reach ring 3 as the byte
+0x03; `-2` is the only representation. The shell reacts to -2 by discarding
+the current line and printing a fresh prompt (legacy parity).**
 Observable behavior (both consoles edit identically, Ctrl+C aborts, arrows
 recall) is what the legacy in-kernel editor already does internally; the
 kernel simply exposes the *characters*, not the *editing*.
@@ -615,6 +797,14 @@ advertises (`OpenFile`, `ReadFile`, `WriteFile`).
 ---
 
 ## 4. (d) Verification of suspected blockers (evidence)
+
+> **Snapshot status (D1):** this section records the state **before Phase 1a**
+> (analysis time). X1/X3/X4/X5/X6/X14 and parts of X15 are **resolved** by
+> the Phase 1a commits (osb.shell 96092f7, osbkt a2248c6, osb.kernel
+> 45ccca5): all three repos build, `./build.sh` produces the ISO, osbkt is
+> public with `docs/ABI.md`, sources are single-copy linked, and the shell
+> prints its banner on serial. The remaining blockers (X7–X13, X15 input,
+> X16 args cap) are addressed by the slices below.
 
 Verdicts from reading the code and building in this environment
 (`dotnet 10.0.400`; `dotnet build` run in each repo).
@@ -724,9 +914,10 @@ ISO build block (lines 648–664 appear twice).
   0x400000; actual `. = 0x2000000` matching `Layout.UserBase`). The file
   moves to osbkt in Phase 1; fix the comment then.
 
-Build status in this environment: `osb.kernel` → **0 errors** (35 warnings);
-`osbkt` → **0 errors**; `osb.shell` → **79 errors** (X4); full ISO build
-(`./build.sh`) → **fails at line 455** (X6). QEMU is present
+Build status **at snapshot time (pre-1a, D1)**: `osb.kernel` → **0 errors**
+(35 warnings); `osbkt` → **0 errors**; `osb.shell` → **79 errors** (X4); full
+ISO build (`./build.sh`) → **fails at line 455** (X6). (Current status: all
+green after Phase 1a — see the header.) QEMU is present
 (`qemu-system-x86_64`), so slice validation can run here.
 
 ---
@@ -799,7 +990,10 @@ compare; non-root cannot write into root-owned dir (kernel EACCES).
 **Slice 6 — processes / jobs.**
 SPAWN/RING3 built-ins (80h), DEMO, TASK/PS (all tasks — decision 4), KILL,
 WAIT, TAB(pid), `&`, foreground messages, Ctrl+C abort — over 6Bh/6Ch/6Dh/
-80h/81h with same-uid/root rules.
+80h/81h with same-uid/root rules. **D6: 81h becomes interruptible here —
+Ctrl+C during WAIT returns -7 (EINTR) to the shell, the child keeps running;
+the shell prints `Foreground job aborted (Ctrl+C).`** (ABI.md entry for the
+81h change is written with this slice.)
 *Acceptance:* `SPAWN &`, `TASK` shows it, `TAB <pid>`, Ctrl+C abort message,
 `KILL`, `WAIT` exit code; non-root cannot kill root's task.
 
@@ -898,8 +1092,10 @@ Amendments applied to this document:
 * **A6** — pipe temp files: mode 0600, unique names, owner-only, cleaned up
   on normal end and Ctrl+C.
 * **A7** — keep -1 EFAULT / -2 ENOSYS as-is; full table in ABI.md v0;
-  GETCHAR's -1/-2 are its own return space.
-* **A8** — GETABI syscall 82h; osbkt checks the version at startup.
+  GETCHAR's -1/-2 are its own return space (so -2 = Ctrl+C there, not ENOSYS).
+* **A8** — GETABI syscall 82h; osbkt checks the version at startup and the
+  shell **refuses to run** when the kernel's GETABI is lower than the version
+  it needs (E3). ABI.md and `Syscall.AbiVersion` bump together per slice.
 * **A9** — drop the duplicate MEMINFO 73h row; MEMINFO is 10h only.
 * **A10** — sibling-checkout convention documented in each repo's README;
   build.sh fails with a clear message when a sibling repo is missing.
