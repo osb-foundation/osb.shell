@@ -17,9 +17,12 @@ This file guides coding agents working in the `osb.shell` repository.
    - Deterministic, bounded behavior over convenience frameworks.
 
 3. **Dependencies**
-   - Depends on `osbkt` for INT 21h syscall wrappers.
-   - Depends on `osb.core` for shared runtime library (MiniCoreLib).
-   - Communicates with OSB kernel via syscalls.
+   - Depends on `osbkt` for INT 21h syscall wrappers (linked sources:
+     `../osbkt/Syscall.cs` — sibling checkout required, see README.md).
+   - Depends on `osb.core` for the canonical MiniCoreLib (linked from
+     `../osb.core/src/MiniCoreLib.cs` — never keep a local copy).
+   - Communicates with OSB kernel via syscalls (`osbkt/docs/ABI.md` is the
+     contract).
 
 ## Architecture
 
@@ -42,6 +45,13 @@ Validation expectations:
 - Build succeeds.
 - Binary is produced (OsbShell.exe / SHELL.EXE).
 - Can be loaded by the OSB kernel.
+
+After `../osb.kernel/build.sh`:
+
+```bash
+tests/smoke.sh                # QEMU serial smoke test (banner, headless)
+tests/golden/golden.sh        # golden transcripts vs the legacy shell (A11)
+```
 
 ## Change Workflow for Agents
 

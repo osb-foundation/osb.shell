@@ -1,0 +1,42 @@
+login: root
+
+root@OSB A:\OSB\ROOT>
+
+root@OSB A:\OSB\ROOT>HELP
+Commands: VER  ABOUT  HELP  CLS  ECHO <text>  SET  TICKS
+          SET [NAME=value]  env ($VAR, case-insensitive names)
+Detail:   COMMAND /?        shows the help page of one command
+Files:    DIR [path] [/W]  CD [path]  PWD  TYPE <file>  (ext4/A:)
+          MD  RD  DEL (to trash)  REN/MOVE  COPY  SIZE  LN [/S]  COLOR  CLEAR/CLS
+          TRASH [/F <pattern>]  list/search the per-user trash ($HOME\TRASH)
+          TRASH /U <name>       undelete back to the original folder
+          GREP [/I] <pattern> [file]   filter lines (/I = caseless)
+Pipes:    A | B        A's console output becomes B's input
+Network:  PING <ip> [count]   ICMP echo with round-trip times
+          NET [ip | DHCP | AUTO]   show or set the interface address
+          PCI [net | B:D.F]   PCI bus, network adapter, device detail
+          OSLANG <script.OSL> [args]  run an OSLANG script (A:)
+          SLEEP   TIME  DATE  MEM  HALT  POWEROFF  REBOOT
+History:  HISTORY [n]     numbered list (100 latest by default)
+          (:N)            re-run entry N of the history
+          Up/Down         walk the history while editing
+Editing:  TAB completes commands, /flags and filenames
+Users:    USER            list accounts (uid 0 = root)
+          USER /ADD <name> [password]   /CHANGE  /DEL <name> [/HOME]
+          USER /SUDO <name> | /UNSUDO <name>  edit the sudoers
+          LOGIN [name]    switch user (passwordless for root)
+          EXIT | LOGOUT   end the session, back to 'login:'
+Perms:    CHOWN <user> <path>   CHMOD <octal> <path>  (root/owner)
+          A:\OSB is root-owned; HOME folders are the user's;
+          A:\OSB\CONF holds PASSWD and SUDOERS; SUDO runs as root
+Processes:SPAWN [BAD|SPAWNER] [&]  start a ring-3 process
+          RING3 [BAD] [&]  synonym for SPAWN
+          TASK / PS        list processes (a simple ps)
+          KILL <pid>       terminate a process
+          WAIT <pid>       wait for a child and collect its code
+          TAB <pid>        bring a process to the foreground
+          DEMO [&]         start a demo (kernel) task
+          Add '&' to run in the background; Ctrl+C aborts a
+          foreground job and returns to the shell.
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>

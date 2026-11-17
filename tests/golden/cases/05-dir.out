@@ -1,0 +1,13 @@
+login: root
+
+root@OSB A:\OSB\ROOT>
+
+root@OSB A:\OSB\ROOT>DIR
+drwxr-xr-x   3root root     4096 <DATE> .
+drwxr-xr-x   9root root     4096 <DATE> ..
+drwxr-xr-x   2root root     4096 <DATE> TRASH
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>DIR /W
+.	..	TRASH	
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>

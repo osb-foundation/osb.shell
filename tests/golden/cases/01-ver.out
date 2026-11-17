@@ -1,0 +1,11 @@
+login: root
+
+root@OSB A:\OSB\ROOT>
+
+root@OSB A:\OSB\ROOT>VER
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>VER /V
+Bad command or file name.
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>

@@ -4,30 +4,55 @@ A freestanding userspace shell for OSB (Operating System Basic).
 
 ## Overview
 
-`osb.shell` is the userspace shell for OSB. It is a simple REPL (Read-Eval-Print Loop) that runs on top of the OSB kernel, using the `osbkt` library for console I/O and file operations. It is compiled as a freestanding NativeAOT executable (`SHELL.EXE`) and placed on the ext4 image at `/OSB/BIN/SHELL.EXE`.
+`osb.shell` is the userspace shell for OSB. It is compiled as a freestanding NativeAOT executable (`SHELL.EXE`) and placed on the ext4 image at `/OSB/BIN/SHELL.EXE`, where the kernel spawns it at boot.
+
+Current status (**phase 1a**): the shell verifies the kernel ABI (`GETABI`),
+prints a banner, and idles. Interactive input, the line editor, and commands
+arrive slice by slice — the authoritative plan and per-slice acceptance tests
+are in [`docs/MIGRATION.md`](docs/MIGRATION.md).
 
 ## Features
 
-- **Interactive REPL** - Command-line interface with prompt
-- **File Operations** - Create, read, write, delete files
-- **Directory Navigation** - Change directories, list contents
-- **Program Execution** - Spawn and wait for external programs
-- **Environment Variables** - Get and set environment variables
+- **ABI-checked startup** - refuses to run against an incompatible kernel
+- **Zero-allocation core** - no GC, no BCL, fixed buffers only
+- *(planned)* REPL with line editor, history and completion
+- *(planned)* file operations, directory navigation, program execution
+- *(planned)* environment variables, users/login, pipes/GREP, network tools
 
 ## Architecture
 
 The shell is built on top of:
-- **osbkt** - INT 21h syscall wrappers for I/O and file operations
-- **osb.core** - Shared runtime library (MiniCoreLib)
-- **OSB Kernel** - Provides the underlying OS services
+- **osbkt** - INT 21h syscall wrappers, crt0 startup, user.ld, mkosbx.py
+  (consumed by **linked sources** — no DLLs at runtime)
+- **osb.core** - canonical MiniCoreLib (linked from `src/MiniCoreLib.cs`)
+- **OSB Kernel** - provides the underlying OS services
 
 ## Building
 
-```bash
-dotnet build
+The OSB repos are expected **side by side** (sibling checkouts):
+
+```
+osb/ ├─ osb.kernel/  (build.sh produces osb.iso, stages SHELL.EXE)
+     ├─ osb.shell/    (this repo)
+     ├─ osbkt/
+     └─ osb.core/
 ```
 
-This produces `OsbShell.exe` (SHELL.EXE) that can be loaded by the OSB kernel.
+```bash
+dotnet build              # this repo alone (needs the siblings above)
+../osb.kernel/build.sh    # full ISO, includes SHELL.EXE
+```
+
+The build fails with a clear message if a sibling repo is missing.
+
+## Testing
+
+```bash
+tests/smoke.sh      # boot the ISO headless; PASS = userspace banner on serial
+tests/golden/golden.sh   # diff serial transcripts vs the legacy shell (A11);
+                         # phase 1a skips (no input yet), gates from phase 1b
+tests/golden/capture.sh <legacy-iso>   # regenerate goldens from a legacy build
+```
 
 ## Part of OSB
 

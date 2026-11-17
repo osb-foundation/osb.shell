@@ -1,0 +1,11 @@
+login: root
+
+root@OSB A:\OSB\ROOT>
+
+root@OSB A:\OSB\ROOT>ECHO hello world
+hello world
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>ECHO
+
+root@OSB A:\OSB\ROOT>
+root@OSB A:\OSB\ROOT>
