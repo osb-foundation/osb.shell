@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Compile Include="../../../../osbkt/Syscall.cs" Link="osbkt/Syscall.cs" />
+    <Compile Include="../../../../osbkt/Syscall.Raw.cs" Link="osbkt/Syscall.Raw.cs" />
     <Compile Include="../../../../osbkt/Fmt.cs" Link="osbkt/Fmt.cs" />
     <Compile Include="../../../../osb.core/src/MiniCoreLib.cs" Link="MiniCoreLib.cs" />
     <Compile Include="Program.cs" />

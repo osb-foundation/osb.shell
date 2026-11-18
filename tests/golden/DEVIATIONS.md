@@ -73,3 +73,65 @@ the old Keyboard case mapping is expected to differ in letter case.
   renders identically.
 - Case 26-spawnerr is unchanged; the flagged "duplicated args" was a misreading
   of the transcript, not a defect, and was left alone.
+## Phase 3 (2.1 prelude): line-editor redraw and completion
+
+### 11-completion (recaptured; spec, never legacy)
+
+§1.4 records that the legacy in-kernel TAB completion triple-faults on any
+non-empty token (`CmdCount` 56 vs 63 registered names), so completion could
+never be captured from the legacy build; 11-completion is a `spec` case (see
+MANIFEST), not a legacy parity fixture. Slice 2 captured it with the first
+(`\r`-based) redraw. The phase-3 redraw is `\b`-based (wrap-aware), and a
+single match whose typed prefix is already canonical only ECHOES the new
+characters (§1.4 "extended in place") instead of redrawing. The case was
+recaptured with `recapture.sh`; the completion results (HISTORY, `TRASH\`, the
+`HELP  HALT  HISTORY` listing, the absolute/root/subdir paths, and the
+no-match / over-long-token no-ops) are unchanged.
+
+### Single-match case canonicalization (new behavior, no legacy equivalent)
+
+The buffer always receives the real (canonical-case) name, so a
+case-insensitive prefix (`tr` -> `TRASH`) executes correctly on the
+case-sensitive ext4 tree. When the typed prefix is already canonical the screen
+shows only the echoed suffix (`HI<TAB>` -> `HISTORY`), the legacy/§1.4 display
+behavior. When the case differs the line is redrawn with the canonical spelling
+(the legacy shell left the typed case on screen and in the buffer, so
+`CD tRASH` then failed); this is the only user-visible difference.
+
+### 31/32/33/34 (new spec cases, VGA goldens)
+
+`31-edit-wrap`, `32-edit-history`, `33-complete-wrap`, `34-escape` are new spec
+cases for the A1/A2/A4/A7 prelude work. They drive the shell over serial and
+capture the 80x25 VGA text buffer plus the CRTC cursor (`vga` directive,
+`cases/<name>.vga`) because cursor placement across the 80-column wrap is not
+visible in the serial byte stream. Each of 31/32/33/35 was verified to FAIL
+against the old `\r`-based redraw (both the serial and the VGA goldens differ),
+which is the point of the capture.
+
+### A1 serial-terminal limitation (`\b` wrap)
+
+The wrap-aware redraw moves the cursor with `\b` (0x08), which the kernel VGA
+console implements as a true cursor-left (column 0 steps to the previous row's
+last column). On a real serial terminal the meaning of `\b` at column 0 is
+terminal dependent (many wrap to the next line or ignore it), so the redraw is
+only guaranteed on the kernel console and on the QEMU serial capture used by
+the goldens. The serial byte stream is still the correct *character* sequence;
+the limitation is cursor placement on third-party terminals.
+
+### A5 legacy ambiguous-Tab listing (confirmed)
+
+The legacy completion DOES list candidates on an ambiguous Tab:
+`Completion.CompleteCommand` / `CompleteFile` (osb.kernel @ 5078f4b) print a
+newline, then the matching names, then a newline, and redraw prompt + line;
+they then extend the token to the longest common prefix. MIGRATION §1.4
+already specifies exactly that ("Several matches: they are listed (two spaces
+apart), the token is extended to the longest common prefix, prompt and line are
+redrawn"). The userspace shell implements it; `11-completion` covers the
+`H` -> `HELP  HALT  HISTORY` listing and `33-complete-wrap` covers the
+`A:\OSB\` directory listing on a wrapped line.
+
+### 35-edit-scroll (A1 scroll proof)
+
+A new spec case: the prompt is at the bottom of a full screen, a 127-char line
+wraps and scrolls once, then Home must land on the line start. Captured with a
+VGA golden; it fails on the old `\r` redraw.

@@ -1,0 +1,27 @@
+=== VGA left2 ===
+OSB - Operating System Basic
+Bootable kernel prototype (C# / NativeAOT, bare metal)
+Keyboard: PS/2 IRQ1 + serial console IRQ4 (COM1).
+Timer: PIT channel 0 @ 100 Hz (IRQ0 ticks).
+Clock: RTC via IRQ8 (update-ended).
+Scheduler: preemptive round-robin over a task table.
+Processes: private address space per process (CR3).
+Ring 3: user segments + TSS; syscalls via INT 21h (DOS-style).
+Files: ATA PIO + ext4 on A:.
+Shell: boot program (default A:\OSB\BIN\SHELL.EXE; CONF/BOOT only in WITH_TESTS
+builds)
+Mouse: PS/2 IRQ12 (stream mode).
+
+login: root
+
+root@OSB A:\OSB\ROOT>x
+root@OSB A:\OSB\ROOT>AB
+
+
+
+
+
+
+
+
+=== CRTC row=16 col=21 ===

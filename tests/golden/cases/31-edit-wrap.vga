@@ -1,0 +1,189 @@
+=== VGA typed ===
+OSB - Operating System Basic
+Bootable kernel prototype (C# / NativeAOT, bare metal)
+Keyboard: PS/2 IRQ1 + serial console IRQ4 (COM1).
+Timer: PIT channel 0 @ 100 Hz (IRQ0 ticks).
+Clock: RTC via IRQ8 (update-ended).
+Scheduler: preemptive round-robin over a task table.
+Processes: private address space per process (CR3).
+Ring 3: user segments + TSS; syscalls via INT 21h (DOS-style).
+Files: ATA PIO + ext4 on A:.
+Shell: boot program (default A:\OSB\BIN\SHELL.EXE; CONF/BOOT only in WITH_TESTS
+builds)
+Mouse: PS/2 IRQ12 (stream mode).
+
+login: root
+
+root@OSB A:\OSB\ROOT>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+
+
+
+
+
+
+
+=== CRTC row=16 col=41 ===
+=== VGA left30 ===
+OSB - Operating System Basic
+Bootable kernel prototype (C# / NativeAOT, bare metal)
+Keyboard: PS/2 IRQ1 + serial console IRQ4 (COM1).
+Timer: PIT channel 0 @ 100 Hz (IRQ0 ticks).
+Clock: RTC via IRQ8 (update-ended).
+Scheduler: preemptive round-robin over a task table.
+Processes: private address space per process (CR3).
+Ring 3: user segments + TSS; syscalls via INT 21h (DOS-style).
+Files: ATA PIO + ext4 on A:.
+Shell: boot program (default A:\OSB\BIN\SHELL.EXE; CONF/BOOT only in WITH_TESTS
+builds)
+Mouse: PS/2 IRQ12 (stream mode).
+
+login: root
+
+root@OSB A:\OSB\ROOT>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+
+
+
+
+
+
+
+=== CRTC row=16 col=11 ===
+=== VGA insert ===
+OSB - Operating System Basic
+Bootable kernel prototype (C# / NativeAOT, bare metal)
+Keyboard: PS/2 IRQ1 + serial console IRQ4 (COM1).
+Timer: PIT channel 0 @ 100 Hz (IRQ0 ticks).
+Clock: RTC via IRQ8 (update-ended).
+Scheduler: preemptive round-robin over a task table.
+Processes: private address space per process (CR3).
+Ring 3: user segments + TSS; syscalls via INT 21h (DOS-style).
+Files: ATA PIO + ext4 on A:.
+Shell: boot program (default A:\OSB\BIN\SHELL.EXE; CONF/BOOT only in WITH_TESTS
+builds)
+Mouse: PS/2 IRQ12 (stream mode).
+
+login: root
+
+root@OSB A:\OSB\ROOT>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaZZaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+
+
+
+
+
+
+
+=== CRTC row=16 col=13 ===
+=== VGA home ===
+OSB - Operating System Basic
+Bootable kernel prototype (C# / NativeAOT, bare metal)
+Keyboard: PS/2 IRQ1 + serial console IRQ4 (COM1).
+Timer: PIT channel 0 @ 100 Hz (IRQ0 ticks).
+Clock: RTC via IRQ8 (update-ended).
+Scheduler: preemptive round-robin over a task table.
+Processes: private address space per process (CR3).
+Ring 3: user segments + TSS; syscalls via INT 21h (DOS-style).
+Files: ATA PIO + ext4 on A:.
+Shell: boot program (default A:\OSB\BIN\SHELL.EXE; CONF/BOOT only in WITH_TESTS
+builds)
+Mouse: PS/2 IRQ12 (stream mode).
+
+login: root
+
+root@OSB A:\OSB\ROOT>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaZZaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+
+
+
+
+
+
+
+=== CRTC row=15 col=21 ===
+=== VGA right5 ===
+OSB - Operating System Basic
+Bootable kernel prototype (C# / NativeAOT, bare metal)
+Keyboard: PS/2 IRQ1 + serial console IRQ4 (COM1).
+Timer: PIT channel 0 @ 100 Hz (IRQ0 ticks).
+Clock: RTC via IRQ8 (update-ended).
+Scheduler: preemptive round-robin over a task table.
+Processes: private address space per process (CR3).
+Ring 3: user segments + TSS; syscalls via INT 21h (DOS-style).
+Files: ATA PIO + ext4 on A:.
+Shell: boot program (default A:\OSB\BIN\SHELL.EXE; CONF/BOOT only in WITH_TESTS
+builds)
+Mouse: PS/2 IRQ12 (stream mode).
+
+login: root
+
+root@OSB A:\OSB\ROOT>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaZZaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+
+
+
+
+
+
+
+=== CRTC row=15 col=26 ===
+=== VGA delete ===
+OSB - Operating System Basic
+Bootable kernel prototype (C# / NativeAOT, bare metal)
+Keyboard: PS/2 IRQ1 + serial console IRQ4 (COM1).
+Timer: PIT channel 0 @ 100 Hz (IRQ0 ticks).
+Clock: RTC via IRQ8 (update-ended).
+Scheduler: preemptive round-robin over a task table.
+Processes: private address space per process (CR3).
+Ring 3: user segments + TSS; syscalls via INT 21h (DOS-style).
+Files: ATA PIO + ext4 on A:.
+Shell: boot program (default A:\OSB\BIN\SHELL.EXE; CONF/BOOT only in WITH_TESTS
+builds)
+Mouse: PS/2 IRQ12 (stream mode).
+
+login: root
+
+root@OSB A:\OSB\ROOT>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaZZaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+
+
+
+
+
+
+
+=== CRTC row=15 col=26 ===
+=== VGA backspace ===
+OSB - Operating System Basic
+Bootable kernel prototype (C# / NativeAOT, bare metal)
+Keyboard: PS/2 IRQ1 + serial console IRQ4 (COM1).
+Timer: PIT channel 0 @ 100 Hz (IRQ0 ticks).
+Clock: RTC via IRQ8 (update-ended).
+Scheduler: preemptive round-robin over a task table.
+Processes: private address space per process (CR3).
+Ring 3: user segments + TSS; syscalls via INT 21h (DOS-style).
+Files: ATA PIO + ext4 on A:.
+Shell: boot program (default A:\OSB\BIN\SHELL.EXE; CONF/BOOT only in WITH_TESTS
+builds)
+Mouse: PS/2 IRQ12 (stream mode).
+
+login: root
+
+root@OSB A:\OSB\ROOT>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaZZaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+
+
+
+
+
+
+
+=== CRTC row=15 col=25 ===

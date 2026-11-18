@@ -121,7 +121,8 @@ bounds → triple fault on **any non-empty token** (empty-line Tab is safe
 because `CompleteCommand` returns early at `if (tl == 0) return;`). Verified:
 bumping `CmdCount` to 64 makes "AB"+Tab complete to `ABOUT`. Consequence for
 the migration: completion **cannot be golden-captured from the legacy build**
-(case 11-completion is therefore `NO GOLDEN YET`), and the new shell must
+(case 11-completion is a `spec` golden captured from the new shell instead —
+see the 2.1 prelude note in §5), and the new shell must
 implement completion correctly. The driver's PS/2 path (QEMU monitor
 `sendkey`, H2) exercises Tab/arrows/Ctrl+C on the virtual keyboard, so the new
 implementation can be tested on both devices.
@@ -1068,6 +1069,32 @@ Shell-side editor over GETCHAR: 128-char line, Backspace, Up/Down + draft,
 permission-checked 21h + 60h).
 *Acceptance:* recall `(:1)`; `HISTORY` numbers; Up/Down across serial arrow
 sequences; `<TAB>` completes `DI`→`DIR`, `TY`→`TYPE`, `A:\OS<TAB>`.
+
+> **2.1 prelude (A1–A8) — line-editor redraw / completion before Slice 3.**
+> Landed on `phase-3` as its own commit (osb.kernel + osb.shell + osbkt). Items:
+> - **A1/A2** `Vga.PutChar` mirrors the logical cursor into the CRTC, and the
+>   line editor's Redraw returns to the line start with wrap-aware `\b` x
+>   `screenCur` (the old `\r` redraw only worked on one row). New `vga`
+>   directive in `drive.py` captures the 80x25 text buffer + the CRTC cursor
+>   (`vga.py`), with goldens 31-edit-wrap / 32-edit-history / 33-complete-wrap /
+>   35-edit-scroll; each was verified to fail against the old redraw.
+> - **A3/A4/A5** completion replaces the token with the canonical-case name
+>   (so `t<TAB>` -> `TRASH`, not `tRASH`), echoes only the new chars when the
+>   typed prefix is already canonical (§1.4 "extended in place"), lists
+>   ambiguous matches two spaces apart and extends to the LCP; root-anchored
+>   (`\OSB\...`) and absolute (`A:\...`) tokens keep their directory prefix.
+>   11-completion was extended (empty token, `H` listing, absolute/root/subdir
+>   paths, no-match, over-long token, lowercase/mixed `ver`/`vEr` and a
+>   line-cap token) and recaptured as a spec case; 33 adds a mixed-case path.
+> - **A6** osbkt gains `Syscall.ResolvePath(char*, …)`; the register-level
+>   `Raw()` moved to `Syscall.Raw.cs` (test programs only), so the shell no
+>   longer calls `Raw`.
+> - **A7** a lone ESC is discarded after a 5-tick wait; new 34-escape.
+> - **A8** default (non-WITH_TESTS) smoke passes H-B; KVM keystroke→echo
+>   latency: median 1.2 ms, p95 9.3 ms, max 10.4 ms (one 100 Hz tick).
+>
+> **Validation.** Golden at level 2: **19 pass / 0 fail / 17 skip** (three runs,
+> ~195 s each; 31/32/33 carry VGA goldens). Mutations: **11/11 caught**.
 
 **Slice 3 — prompt / environment / expansion.**
 `$PROMPT` tokens, `$VAR` expansion in the line, `SET` over 63h/64h

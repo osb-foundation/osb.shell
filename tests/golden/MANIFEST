@@ -39,3 +39,8 @@
 28-identity       1c         spec
 29-logout-kills   1c         spec
 30-sudo-scope     1c         spec
+31-edit-wrap      2          spec
+32-edit-history   2          spec
+33-complete-wrap  2          spec
+34-escape         2          spec
+35-edit-scroll    2          spec

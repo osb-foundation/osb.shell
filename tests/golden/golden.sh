@@ -92,18 +92,19 @@ for case in "$HERE"/cases/*.in "$HERE"/cases/*.scm; do
     # Throwaway image copy per case (mutating cases must not leak).
     tmp="$(mktemp /tmp/osb-case-XXXXXX.raw)"
     tmpimg="$(mktemp /tmp/osb-img-XXXXXX.img)"
+    tmpvga="$(mktemp /tmp/osb-vga-XXXXXX.txt)"
     cp "$IMG" "$tmpimg"
     if [[ -n "$bootprog" ]] && ! patch_boot "$tmpimg" "$bootprog"; then
         echo "FAIL: $name (BOOT patch)"
         fail=$((fail + 1))
-        rm -f "$tmp" "$tmpimg"
+        rm -f "$tmp" "$tmpimg" "$tmpvga"
         [[ "$scrip" != "$case" ]] && rm -f "$scrip"
         continue
     fi
-    if ! python3 "$HERE/drive.py" "$ISO" "$tmpimg" "$scrip" --out "$tmp"; then
+    if ! python3 "$HERE/drive.py" "$ISO" "$tmpimg" "$scrip" --out "$tmp" --vga-out "$tmpvga"; then
         echo "FAIL: $name (driver error)"
         fail=$((fail + 1))
-        rm -f "$tmp" "$tmpimg"
+        rm -f "$tmp" "$tmpimg" "$tmpvga"
         [[ "$scrip" != "$case" ]] && rm -f "$scrip"
         continue
     fi
@@ -116,12 +117,35 @@ for case in "$HERE"/cases/*.in "$HERE"/cases/*.scm; do
     exp="$(cat "$expected")"
     act="$(cat "$tmp.n")"
     rm -f "$tmp.n"
+    ok=1
     if diff -u <(printf '%s\n' "$exp") <(printf '%s\n' "$act") > "$HERE/cases/$name.diff"; then
         rm -f "$HERE/cases/$name.diff"
+    else
+        echo "FAIL: $name (diff in cases/$name.diff)"
+        ok=0
+    fi
+    # VGA captures are optional: a case only compares them when it has a
+    # cases/<name>.vga golden. An unexpected dump is an error (recapture.sh).
+    vgaexp="$HERE/cases/$name.vga"
+    if [[ -s "$tmpvga" ]]; then
+        if [[ ! -f "$vgaexp" ]]; then
+            echo "FAIL: $name (unexpected VGA dump; run recapture.sh)"
+            ok=0
+        elif diff -u "$vgaexp" "$tmpvga" > "$HERE/cases/$name.vga.diff"; then
+            rm -f "$HERE/cases/$name.vga.diff"
+        else
+            echo "FAIL: $name (vga diff in cases/$name.vga.diff)"
+            ok=0
+        fi
+    elif [[ -f "$vgaexp" ]]; then
+        echo "FAIL: $name (missing VGA dump)"
+        ok=0
+    fi
+    rm -f "$tmpvga"
+    if [[ "$ok" == "1" ]]; then
         echo "PASS: $name"
         pass=$((pass + 1))
     else
-        echo "FAIL: $name (diff in cases/$name.diff)"
         fail=$((fail + 1))
     fi
 done

@@ -2,37 +2,56 @@ using OsbKT;
 
 namespace Osb.Shell.Userspace
 {
-    // Slice 2 TAB completion (S2.3). Completes the token at the caret:
+    // Slice 2 TAB completion (S2.3 / 2.1 prelude). Completes the token at the
+    // caret:
     //   * first token          -> a command name (Commands table)
     //   * token with '/' lead  -> flags (not yet: no flags in this shell)
     //   * otherwise            -> a file/directory name, resolved via 20h
     //                             RESOLVE + 21h DIRNEXT against A:
-    // A single match appends the missing chars (plus '\' for a directory);
-    // several matches extend the token to their longest common prefix; no
-    // match does nothing. Zero GC allocations (stack buffers only).
+    // A single match replaces the typed token with the real (canonical-case)
+    // name (the FS is case-sensitive, so "t<TAB>" against TRASH must end up as
+    // "TRASH" in the buffer, never "tRASH"), plus a '\' for a directory. When
+    // the typed prefix is already canonical the completion only ECHOES the new
+    // characters ("HI<TAB>" prints "STORY", §1.4 "extended in place"); when
+    // the case differs the caller redraws the line with the canonical name.
+    // Command names are likewise canonical. Several matches are LISTED (two
+    // spaces apart) and the token is extended to their longest common prefix.
+    // No match does nothing. Zero GC allocations (stack buffers only).
     internal static unsafe class Completion
     {
         private const int MaxMatches = 64;
         private const int NameCap = 32;
         private const int PathCap = 200;
 
-        public static void Complete(char* line, ref int len, ref int cur, int cap)
+        // Returns true when matches were LISTED (the caller must Reprint the
+        // prompt + line from column 0); false for a silent completion. `appended`
+        // is true for a silent single match that only EXTENDED the line at the
+        // caret with the canonical spelling (caret at the end, typed prefix
+        // already canonical): the caller can echo just the new characters, which
+        // is the "extended in place" behavior of §1.4 (no redraw). `changed` is
+        // true when a silent completion modified the line in any other way (a
+        // canonical-case fix, an extension mid-line, a directory separator) and
+        // the caller must redraw.
+        public static bool Complete(char* line, ref int len, ref int cur, int cap, out bool appended, out bool changed)
         {
+            appended = false;
+            changed = false;
             int ts = 0;   // token start = just after the last space before the caret
             for (int k = 0; k < cur; k++) if (line[k] == ' ') ts = k + 1;
             int tl = cur - ts;
 
-            if (ts == 0) { CompleteCommand(line, ref len, ref cur, ts, tl, cap); return; }
-            if (tl > 0 && line[ts] == '/') return;   // flags: none yet
-            CompleteFile(line, ref len, ref cur, ts, tl, cap);
+            if (ts == 0) return CompleteCommand(line, ref len, ref cur, ts, tl, cap, ref appended, ref changed);
+            if (tl > 0 && line[ts] == '/') return false;   // flags: none yet
+            return CompleteFile(line, ref len, ref cur, ts, tl, cap, ref appended, ref changed);
         }
 
         // ---- command names ----
 
-        private static void CompleteCommand(char* line, ref int len, ref int cur, int ts, int tl, int cap)
+        private static bool CompleteCommand(char* line, ref int len, ref int cur, int ts, int tl, int cap, ref bool appended, ref bool changed)
         {
-            if (tl <= 0) return;
+            if (tl <= 0) return false;
             char* first = stackalloc char[NameCap];
+            char* nm = stackalloc char[NameCap];
             int firstLen = 0;
             int count = 0;
             for (int i = 0; i < Commands.Count; i++)
@@ -41,37 +60,45 @@ namespace Osb.Shell.Userspace
                 if (count == 0) { firstLen = Commands.NameLen(i); Commands.NameAt(i, first); }
                 count++;
             }
-            if (count == 0) return;
+            if (count == 0) return false;
             if (count == 1)
             {
-                AppendSuffix(line, ref len, ref cur, ts, tl, first, tl, firstLen - tl, cap);
-                return;
+                appended = Appended(line, ts, tl, cur, len, first, firstLen);
+                changed = ReplaceToken(line, ref len, ref cur, ts, tl, first, firstLen, cap);
+                return false;
             }
-            // several: extend to the longest common prefix
+            // several: list them (canonical names, two spaces apart) then
+            // extend the token to the longest common prefix (canonical case).
             int lcpLen = firstLen;
-            char* nm = stackalloc char[NameCap];
+            Syscall.PutChar('\n');
+            bool firstOut = true;
             for (int i = 0; i < Commands.Count; i++)
             {
                 if (!Commands.NameMatches(i, line + ts, tl)) continue;
                 Commands.NameAt(i, nm);
                 int nl = Commands.NameLen(i);
+                if (!firstOut) Syscall.PrintString("  ");
+                firstOut = false;
+                Syscall.Print(nm, nl);
                 int c = 0;
                 while (c < lcpLen && c < nl && Commands.Upper(first[c]) == Commands.Upper(nm[c])) c++;
-                lcpLen = c;
+                if (c < lcpLen) lcpLen = c;
             }
-            if (lcpLen > tl) AppendSuffix(line, ref len, ref cur, ts, tl, first, tl, lcpLen - tl, cap);
+            Syscall.PutChar('\n');
+            if (lcpLen > 0) changed = ReplaceToken(line, ref len, ref cur, ts, tl, first, lcpLen, cap);
+            return true;
         }
 
         // ---- file and directory names ----
 
-        private static void CompleteFile(char* line, ref int len, ref int cur, int ts, int tl, int cap)
+        private static bool CompleteFile(char* line, ref int len, ref int cur, int ts, int tl, int cap, ref bool appended, ref bool changed)
         {
             int split = -1;   // last separator in the token
             for (int k = 0; k < tl; k++)
                 if (line[ts + k] == '\\' || line[ts + k] == '/') split = k;
             char* namePrefix = line + ts + split + 1;
             int npLen = tl - split - 1;
-            if (npLen > NameCap - 1) return;
+            if (npLen > NameCap - 1) return false;
 
             // directory to list: the prefix, or the current directory
             char* dirPath = stackalloc char[PathCap];
@@ -80,9 +107,14 @@ namespace Osb.Shell.Userspace
             {
                 byte* cwd = stackalloc byte[PathCap];
                 int cl = Syscall.GetCwd(cwd, PathCap);
-                if (cl < 0) return;
+                if (cl < 0) return false;
                 for (int k = 0; k < cl; k++) dirPath[k] = (char)cwd[k];
                 dlen = cl;
+            }
+            else if (split == 0)
+            {
+                dirPath[0] = '\\';   // root-anchored token: "\name"
+                dlen = 1;
             }
             else
             {
@@ -91,12 +123,13 @@ namespace Osb.Shell.Userspace
             }
 
             uint dirIno;
-            if (!ResolveDir(dirPath, dlen, out dirIno)) return;
+            if (!ResolveDir(dirPath, dlen, out dirIno)) return false;
 
             char* names = stackalloc char[MaxMatches * NameCap];
             int* nlens = stackalloc int[MaxMatches];
             byte* types = stackalloc byte[MaxMatches];
             char* first = stackalloc char[NameCap];
+            char* nm = stackalloc char[NameCap];
             int firstLen = 0;
             int count = 0;
             byte* ent = stackalloc byte[240];
@@ -121,61 +154,95 @@ namespace Osb.Shell.Userspace
                 if (count == 0) { firstLen = nlen; for (int k = 0; k < nlen; k++) first[k] = (char)ent[6 + k]; }
                 count++;
             }
-            if (count == 0) return;
+            if (count == 0) return false;
 
             if (count == 1)
             {
-                AppendSuffix(line, ref len, ref cur, ts, tl, first, npLen, firstLen - npLen, cap);
+                int ts2 = ts + split + 1;   // the name inside the token (dir kept)
+                appended = Appended(line, ts2, npLen, cur, len, first, firstLen);
+                changed = ReplaceToken(line, ref len, ref cur, ts2, npLen, first, firstLen, cap);
                 if (types[0] == 2 && cur < cap - 1)   // directory: add a separator
                 {
                     for (int k = len; k > cur; k--) line[k] = line[k - 1];
                     line[cur] = '\\';
-                    len++; cur++;
+                    len++; cur++; changed = true;
                 }
-                return;
+                return false;
             }
 
-            // several: longest common prefix of the matched names
+            // several: list them, then extend to the longest common prefix.
             int lcpLen = firstLen;
+            Syscall.PutChar('\n');
+            bool firstOut = true;
             for (int c = 0; c < count; c++)
             {
-                char* nm = names + c * NameCap;
+                for (int k = 0; k < nlens[c]; k++) nm[k] = names[c * NameCap + k];
                 int nl = nlens[c];
-                int k = 0;
-                while (k < lcpLen && k < nl && Upper(first[k]) == Upper(nm[k])) k++;
-                if (k < lcpLen) lcpLen = k;
+                if (!firstOut) Syscall.PrintString("  ");
+                firstOut = false;
+                Syscall.Print(nm, nl);
+                int m = 0;
+                while (m < lcpLen && m < nl && Upper(first[m]) == Upper(nm[m])) m++;
+                if (m < lcpLen) lcpLen = m;
             }
-            if (lcpLen > npLen) AppendSuffix(line, ref len, ref cur, ts, tl, first, npLen, lcpLen - npLen, cap);
+            Syscall.PutChar('\n');
+            if (lcpLen > 0)
+            {
+                int ts2 = ts + split + 1;   // the name inside the token (dir kept)
+                changed = ReplaceToken(line, ref len, ref cur, ts2, npLen, first, lcpLen, cap);
+            }
+            return true;
         }
 
-        // Resolve a directory path (char*) to its inode via the raw 20h RESOLVE.
+        // Resolve a directory path (char*) to its inode via the osbkt RESOLVE
+        // wrapper (A6: the shell never calls Syscall.Raw).
         private static bool ResolveDir(char* path, int plen, out uint ino)
         {
             ino = 0;
-            var pbuf = stackalloc byte[PathCap];
-            int n = plen < PathCap ? plen : PathCap;
-            for (int k = 0; k < n; k++) pbuf[k] = (byte)path[k];
-            byte* outb = stackalloc byte[16];
-            if (Syscall.Raw(0x20, 0, (ulong)pbuf, (ulong)n, (ulong)outb, 0) != 1) return false;
-            ino = (uint)(outb[0] | (outb[1] << 8) | (outb[2] << 16) | (outb[3] << 24));
-            ushort mode = (ushort)(outb[4] | (outb[5] << 8));
-            return (mode & 0xF000) == 0x4000;   // directory
+            uint rino; ushort rmode; ushort ruid; ulong rsize;
+            if (!Syscall.ResolvePath(path, plen, out rino, out rmode, out ruid, out rsize)) return false;
+            if ((rmode & 0xF000) != 0x4000) return false;   // directory
+            ino = rino;
+            return true;
         }
 
-        // Insert `suffix[sufStart..sufStart+sufLen)` at the caret (ts+tl),
-        // shifting the rest right.
-        private static void AppendSuffix(char* line, ref int len, ref int cur, int ts, int tl,
-                                         char* suffix, int sufStart, int sufLen, int cap)
+        // Replace the token line[ts..ts+tl) with repl[0..replLen) (canonical
+        // case), shifting the rest right. The typed token is a case-insensitive
+        // prefix, so replLen >= tl. Adjusts len and cur (caret ends at
+        // ts + replLen).
+        private static bool ReplaceToken(char* line, ref int len, ref int cur, int ts, int tl,
+                                         char* repl, int replLen, int cap)
         {
-            if (sufLen <= 0) return;
-            int room = cap - 1 - len;
-            if (sufLen > room) sufLen = room;
-            if (sufLen <= 0) return;
-            int at = ts + tl;
-            for (int k = len - 1; k >= at; k--) line[k + sufLen] = line[k];
-            for (int k = 0; k < sufLen; k++) line[at + k] = suffix[sufStart + k];
-            len += sufLen;
-            cur = at + sufLen;
+            if (replLen < tl) { replLen = tl; }   // safety: never shrink below the token
+            int delta = replLen - tl;
+            bool changed = delta != 0;
+            if (delta > 0)
+            {
+                int room = cap - 1 - len;
+                if (delta > room) { replLen -= (delta - room); delta = replLen - tl; }
+                if (delta > 0)
+                    for (int k = len - 1; k >= ts + tl; k--) line[k + delta] = line[k];
+            }
+            for (int k = 0; k < replLen; k++)
+            {
+                if (line[ts + k] != repl[k]) changed = true;
+                line[ts + k] = repl[k];
+            }
+            len += delta;
+            cur = ts + replLen;
+            return changed;
+        }
+
+        // True when the single match only EXTENDS the line at the caret: the
+        // caret is at the end of the line and the typed prefix is already the
+        // canonical spelling, so echoing the new characters is enough (no
+        // redraw, §1.4 "extended in place"). `ts`/`tl` delimit the part of the
+        // token that the match replaces (the name for file completion).
+        private static bool Appended(char* line, int ts, int tl, int cur, int len, char* repl, int replLen)
+        {
+            if (cur != len || replLen < tl) return false;
+            for (int k = 0; k < tl; k++) if (line[ts + k] != repl[k]) return false;
+            return true;
         }
 
         private static char Upper(char c) => (c >= 'a' && c <= 'z') ? (char)(c - 32) : c;

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Directive-driven QEMU serial driver for the golden harness (F4b).
 
-Usage: drive.py <iso> <img> <case-file> [--out FILE] [--boot-delay SEC]
+Usage: drive.py <iso> <img> <case-file> [--out FILE] [--vga-out FILE]
+               [--boot-delay SEC]
 
 Case files:
   *.in   - simple format: the driver logs in as "root" (legacy default
@@ -9,7 +10,6 @@ Case files:
            the driver waits for the next shell prompt.
   *.scm  - directive format, one per line (# = comment):
       nologin            do not auto-login; the script drives login itself
-                         (required for 1b spec cases: login only exists in 1c)
       expect <text>      wait until <text> appears in the serial output
       expectre <regex>   wait until the regex matches the output
       prompt             wait for the shell prompt (legacy: "user@OSB path>",
@@ -17,13 +17,14 @@ Case files:
       send <line>        send the line + CRLF, then wait for the prompt
       sendnowait <line>  send the line + CRLF without waiting
       sendlf <line>      send the line + LF only (login name/password: the
-                         legacy ReadLine stops at CR and leaves the LF, which
-                         would be read as an empty line by the next prompt)
+                         legacy ReadLine leaves the LF for the next prompt)
       sendraw <hex>      send raw bytes (hex, no spaces)
       ctrl-c             send 0x03 on the serial console (Ctrl+C)
+      vga [label]        capture the 80x25 VGA text buffer + the CRTC cursor
+                         (see vga.py) into --vga-out, after serial goes idle
+      vgacursor          capture only the CRTC cursor
       key <name>         PS/2 keyboard via the QEMU monitor (sendkey): tab,
                          up, down, ret, spc, backspace, ctrl-c, ... then wait
-                         for the prompt
       keynowait <name>   same, without waiting
       sleep <sec>        idle wait (no I/O)
       timeout <sec>      overall case timeout from now on
@@ -31,11 +32,11 @@ Case files:
 By default the driver logs in as "root" before running a *.scm script; a
 leading `nologin` directive suppresses that so a case controls its own login.
 
-Output: the raw serial transcript (bytes) to --out or stdout.
+Output: the raw serial transcript (bytes) to --out or stdout; VGA captures
+(to --vga-out) are ASCII blocks: "=== VGA <label> ===", 25 screen lines
+(trailing spaces stripped, non-ASCII as '.'), "=== CRTC row=R col=C ===".
 Exit: 0 = all directives satisfied, 1 = failure (message + partial
 transcript on stderr), 2 = usage error.
-
-F4c: prints the elapsed wall time to stderr.
 """
 
 import os
@@ -45,6 +46,7 @@ import socket
 import subprocess
 import sys
 import time
+import vga
 
 PROMPT_RE = re.compile(r"> ?$")
 LOGIN_RE = re.compile(r"login: ?$")
@@ -73,10 +75,12 @@ def at_login(buf: bytes) -> bool:
 class Driver:
     def __init__(self, iso: str, img: str, boot_delay: float):
         self.buf = bytearray()
+        self.vga = bytearray()   # screen/cursor captures (see --vga-out)
         self.deadline = time.monotonic() + boot_delay + 60.0
         # QEMU monitor socket for the PS/2 path (sendkey): lets a case press
         # TAB / arrows / Ctrl+C on the virtual keyboard, not just serial bytes.
         self.mon_path = "/tmp/osb-mon-%d.sock" % os.getpid()
+        self.vga_cap = vga.Vga(self.mon_path)
         try:
             os.unlink(self.mon_path)
         except OSError:
@@ -212,6 +216,29 @@ class Driver:
             s.close()
         return True
 
+    # ---- VGA text buffer + CRTC capture (A2, see vga.py) ----
+
+    def settle(self, idle: float = 0.35, maxwait: float = 3.0) -> None:
+        """Wait until the serial output has been quiet for `idle` seconds."""
+        end = time.monotonic() + maxwait
+        quiet = time.monotonic() + idle
+        last = len(self.buf)
+        while time.monotonic() < end:
+            self.pump(0.05)
+            if len(self.buf) != last:
+                last = len(self.buf)
+                quiet = time.monotonic() + idle
+            elif time.monotonic() >= quiet:
+                return
+
+    def vga_dump(self, label: str) -> None:
+        self.settle()
+        self.vga += self.vga_cap.dump(label)
+
+    def vga_cursor(self) -> None:
+        self.settle()
+        self.vga += self.vga_cap.cursor()
+
     def close(self) -> bytes:
         # Drain trailing output: read until ~1s of idle (or the deadline).
         idle_end = time.monotonic() + 1.0
@@ -280,6 +307,12 @@ def run_scm(drv: Driver, path: str) -> bool:
             ok = drv.send_raw(arg)
         elif cmd == "ctrl-c":
             ok = drv.send_raw("03")
+        elif cmd == "vga":
+            drv.vga_dump(arg)
+            ok = True
+        elif cmd == "vgacursor":
+            drv.vga_cursor()
+            ok = True
         elif cmd == "key":
             drv.sendkey(arg)
             ok = drv.wait_prompt()
@@ -324,6 +357,7 @@ def run_in(drv: Driver, path: str) -> bool:
 
 def main() -> int:
     out_path = None
+    vga_path = None
     boot_delay = float(os.environ.get("BOOT_DELAY", "12"))
     args = []
     argv = sys.argv[1:]
@@ -331,6 +365,8 @@ def main() -> int:
     while i < len(argv):
         if argv[i] == "--out":
             out_path = argv[i + 1]; i += 2
+        elif argv[i] == "--vga-out":
+            vga_path = argv[i + 1]; i += 2
         elif argv[i] == "--boot-delay":
             boot_delay = float(argv[i + 1]); i += 2
         else:
@@ -352,6 +388,9 @@ def main() -> int:
             f.write(transcript)
     else:
         sys.stdout.buffer.write(transcript)
+    if vga_path:
+        with open(vga_path, "wb") as f:
+            f.write(bytes(drv.vga))
     print("drive.py: %s, %.1fs" % ("PASS" if ok else "FAIL",
                                    end - start), file=sys.stderr)
     return 0 if ok else 1
