@@ -1,17 +1,11 @@
 login: root
 
-root@OSB A:\OSB\ROOT>
-
 root@OSB A:\OSB\ROOT>CD
 A:\OSB\ROOT
-root@OSB A:\OSB\ROOT>
 root@OSB A:\OSB\ROOT>CD A:\OSB
 OK
-root@OSB A:\OSB>
 root@OSB A:\OSB>CD
 A:\OSB
-root@OSB A:\OSB>
 root@OSB A:\OSB>CD \
 OK
-root@OSB A:\>
 root@OSB A:\>

@@ -1,6 +1,18 @@
 # MIGRATION — legacy in-kernel shell → userspace shell
 
-**Status: Phase 0 (architecture) approved. Phase 1a completed and verified. Phase 1b completed and verified. The working tree is at phase-3: 1c (kernel-owned Users, session uid, LOGIN/LOGOUT/SUDO/WHOAMI, POWEROFF/REBOOT root-gated) and slices 2–3 (line editor/history/completion, environment 63h/64h, prompt, external dispatch over PATH) are also present in the tree as pre-existing committed work. Remaining: slices 4–11 per §5; out of scope per §6.**
+**Status: Phase 0 (architecture) approved. Phase 1a completed and verified. Phase 1b completed and verified. Phase 1c is **partially completed** — implemented and verified for identity syscalls (65h–69h), but the SUDO/END_SUDO elevation contract is broken in the current tree (see the status table below). Slices 2–3 (line editor/history/completion, environment 63h/64h, prompt, external dispatch over PATH) are present in the tree as pre-existing committed work. Remaining: slices 4–11 per §5; out of scope per §6.**
+
+### Verified status table (audit 2026-11-18)
+
+| Phase / slice | Status | Evidence |
+|---|---|---|
+| Phase 0 — architecture approved | **approved** | standing decisions §7; no code changes |
+| Phase 1a — build/tooling | **completed** | osb.core 32ce84e, osbkt df5778e, osb.shell d7ed7cd, osb.kernel 749f6e9; all four `dotnet build` green; `./build.sh` + `./build.sh check` green; smoke PASS |
+| Phase 1b — kernel hardening | **completed** | B1–B5 verified in source; golden 20/21/22/23/24/25/26/27 PASS; 24-ptr n=35 |
+| Phase 1c — identity foundation | **partially completed** | 65h/66h/69h verified (28-identity PASS, 29-logout-kills PASS). **67h SUDO + 68h END_SUDO broken**: `Scheduler.EndSudo()` is a no-op (`Processes/Session.cs:136-139`) — the effective-uid restore was deleted by commit `1378692` (Slice 3). Consequence: **30-sudo-scope FAILS** ("TSUDO: FAIL childuid"); mutation **M06-endsudo-noop** cannot apply because the line it deletes is already gone. Root elevation never reverts. |
+| Slice 2 — line editor / history / completion | **completed** | golden 10/11/31/32/33/34/35 PASS; host unit tests pass=52 fail=0 |
+| Slice 3 — prompt / env / expansion | **completed** | golden 03/36/37 PASS; **but** Slice 3 also introduced the EndSudo regression above |
+| Slices 4–11 | **pending** | no source changes beyond what is listed; golden cases at min-level > 3 are skipped |
 
 Phase 0 — approved architectural decisions (standing):
 
@@ -27,7 +39,7 @@ Phase 1b — completed and verified (kernel hardening + userspace foundation):
 * B4: osbkt public `GetChar()` and `SpawnPath(...)` wrappers; all syscall numbers, register layout and request-structure details stay in osbkt; zero managed allocations.
 * B5: existing syscalls `01h/09h/10h/20h-23h/30h/4Ch/80h-82h/40h-59h` unchanged; XWIN raw keyboard intact; `GETABI` unchanged.
 
-Remaining phases and slices: 1c and slices 2–3 are present in the tree (pre-existing). Slices 4–11 (filesystem writes, pipes, jobs, users, network, color, etc.) and the §6 out-of-scope items are NOT started by this task.
+Remaining phases and slices: Phase 1c is **partially completed** — 65h/66h/69h verified but 67h/68h broken (see the status table above). Slices 2–3 are present in the tree and verified passing. Slices 4–11 (filesystem writes, pipes, jobs, users, network, color, etc.) and the §6 out-of-scope items are NOT started by this task.
 
 Decisions and amendments recorded in §7 are preserved unchanged.
 
@@ -1147,6 +1159,9 @@ decision 9); 24h CHDIR; 60h STAT (metadata-only, A2); 62h READLINK.
 non-root with `CHMOD 600` file: `Permission denied` (kernel-enforced); DIR
 still lists the unreadable file (A2).
 
+**Slice 4 — STATUS: DONE.** Kernel: 24h CHDIR, 2Ah OPEN / 2Bh READ / 2Ch
+CLOSE, 60h STAT. I6 read-permission enforcement in OPEN. Shell: DIR, CD, PWD,
+TYPE, SIZE. Golden: 05-dir, 06-cd (recaptured).
 > **I6 — HARD GATE before slice 4 ships.** Slice 4 adds the first read
 > commands (TYPE/SIZE/GREP), so the permission story must be closed *first*:
 > 1. **READ/OPEN must enforce the file read permission.** The read path

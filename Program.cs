@@ -124,6 +124,11 @@ namespace Osb.Shell.Userspace
                 case Commands.HISTORY: DoHistory(line, len); return;
                 case Commands.ECHO: DoEcho(line, len); return;
                 case Commands.SET: DoSet(line, len); return;
+                case Commands.DIR: FileCommands.DoDir(line, len); return;
+                case Commands.CD: FileCommands.DoCd(line, len); return;
+                case Commands.PWD: FileCommands.DoPwd(); return;
+                case Commands.TYPE: FileCommands.DoType(line, len); return;
+                case Commands.SIZE: FileCommands.DoSize(line, len); return;
                 default:
                     // Unknown first token: an external program (C3). A known
                     // but not-yet-implemented command (NONE) just re-prompts.

@@ -25,6 +25,11 @@ namespace Osb.Shell.Userspace
         public const int HISTORY = 6;
         public const int ECHO = 7;
         public const int SET = 8;
+        public const int DIR = 9;
+        public const int CD = 10;
+        public const int PWD = 11;
+        public const int TYPE = 12;
+        public const int SIZE = 13;
 
         private struct Table
         {
@@ -49,11 +54,11 @@ namespace Osb.Shell.Userspace
             Add("CLEAR", NONE); Add("MEM", NONE); Add("HALT", NONE); Add("POWEROFF", NONE);
             Add("SHUTDOWN", NONE); Add("EXIT", EXIT); Add("QUIT", NONE); Add("REBOOT", NONE);
             Add("TIME", NONE); Add("DATE", NONE); Add("TICKS", NONE); Add("SLEEP", NONE);
-            Add("ECHO", ECHO); Add("SET", SET); Add("DIR", NONE); Add("CD", NONE);
-            Add("PWD", NONE); Add("TYPE", NONE); Add("DEL", NONE); Add("ERASE", NONE);
+            Add("ECHO", ECHO); Add("SET", SET); Add("DIR", DIR); Add("CD", CD);
+            Add("PWD", PWD); Add("TYPE", TYPE); Add("DEL", NONE); Add("ERASE", NONE);
             Add("DELETE", NONE); Add("MD", NONE); Add("MKDIR", NONE); Add("RD", NONE);
             Add("RMDIR", NONE); Add("REN", NONE); Add("RENAME", NONE); Add("MOVE", NONE);
-            Add("COPY", NONE); Add("CP", NONE); Add("SIZE", NONE); Add("COLOR", NONE);
+            Add("COPY", NONE); Add("CP", NONE); Add("SIZE", SIZE); Add("COLOR", NONE);
             Add("LN", NONE); Add("LNK", NONE); Add("OSLANG", NONE); Add("DEMO", NONE);
             Add("TASK", NONE); Add("PS", NONE); Add("KILL", NONE); Add("WAIT", NONE);
             Add("TAB", NONE); Add("SPAWN", NONE); Add("RING3", NONE); Add("TRASH", NONE);
