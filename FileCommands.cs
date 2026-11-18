@@ -68,10 +68,13 @@ namespace Osb.Shell.Userspace
                 }
             }
             if (i >= len) { Syscall.PrintString("Usage: DEL <file>\r\n"); return; }
-            var path = stackalloc byte[256];
+            // The kernel's delete syscall (0x27) expects "DEL <filename>" —
+            // it skips the command-name token before parsing the file path.
+            var buf = stackalloc byte[256];
             int n = 0;
-            for (int k = i; k < len && n < 255; k++) path[n++] = (byte)line[k];
-            Syscall.Delete(path, n);
+            buf[n++] = (byte)'D'; buf[n++] = (byte)'E'; buf[n++] = (byte)'L'; buf[n++] = (byte)' ';
+            for (int k = i; k < len && n < 255; k++) buf[n++] = (byte)line[k];
+            Syscall.Delete(buf, n);
         }
 
         public static void DoRen(char* line, int len)
