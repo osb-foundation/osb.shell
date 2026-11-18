@@ -65,6 +65,27 @@ namespace Osb.Shell.Userspace
             Syscall.Rename(p1, n1, p2, n2);
         }
 
+        public static void DoCopy(char* line, int len)
+        {
+            int i = 4;
+            while (i < len && line[i] == ' ') i++;
+            int s1 = i;
+            while (i < len && line[i] != ' ') i++;
+            int l1 = i - s1;
+            if (l1 <= 0) { Syscall.PrintString("Usage: COPY src dst\r\n"); return; }
+            while (i < len && line[i] == ' ') i++;
+            int s2 = i;
+            while (i < len && line[i] != ' ') i++;
+            int l2 = i - s2;
+            if (l2 <= 0) { Syscall.PrintString("Usage: COPY src dst\r\n"); return; }
+            var p1 = stackalloc byte[256];
+            var p2 = stackalloc byte[256];
+            int n1 = 0, n2 = 0;
+            for (int k = s1; k < s1 + l1 && n1 < 255; k++) p1[n1++] = (byte)line[k];
+            for (int k = s2; k < s2 + l2 && n2 < 255; k++) p2[n2++] = (byte)line[k];
+            Syscall.Copy(p1, n1, p2, n2);
+        }
+
         public static void DoPwd()
         {
             var buf = stackalloc byte[256];

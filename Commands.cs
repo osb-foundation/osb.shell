@@ -34,6 +34,7 @@ namespace Osb.Shell.Userspace
         public const int RD = 15;
         public const int DEL = 16;
         public const int REN = 17;
+        public const int COPY = 18;
 
         private struct Table
         {
@@ -62,7 +63,7 @@ namespace Osb.Shell.Userspace
             Add("PWD", PWD); Add("TYPE", TYPE); Add("DEL", DEL); Add("ERASE", DEL);
             Add("DELETE", DEL); Add("MD", MD); Add("MKDIR", MD); Add("RD", RD);
             Add("RMDIR", RD); Add("REN", REN); Add("RENAME", REN); Add("MOVE", REN);
-            Add("COPY", NONE); Add("CP", NONE); Add("SIZE", SIZE); Add("COLOR", NONE);
+            Add("COPY", COPY); Add("CP", COPY); Add("SIZE", SIZE); Add("COLOR", NONE);
             Add("LN", NONE); Add("LNK", NONE); Add("OSLANG", NONE); Add("DEMO", NONE);
             Add("TASK", NONE); Add("PS", NONE); Add("KILL", NONE); Add("WAIT", NONE);
             Add("TAB", NONE); Add("SPAWN", NONE); Add("RING3", NONE); Add("TRASH", NONE);
