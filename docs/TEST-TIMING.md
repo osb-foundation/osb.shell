@@ -12,12 +12,12 @@ by ~2-3x with load. The before/after ratios are the meaningful part.
 | `osb.kernel/build.sh` (incremental) | ~11 s idle | ~11 s idle (25-84 s loaded) | B3: no cache (see below) |
 | image copy per case (`cp osb.img`) | ~10 ms | ~10 ms | 16 MB, page-cached |
 | `patch_boot` (debugfs + e2fsck) | ~0.4 s | ~0.4 s | only `boot` cases |
-| QEMU boot to login (TCG) | ~1.0 s | ~1.0 s | kernel, not harness |
+| QEMU boot to login (TCG) | ~1.0 s | **~0.12 s** | F3: ATA PIO string I/O |
 | `drive.py` init wait | 0.8 s (login) / 12 s (nologin) | 0.8 s / **0 s** | B2: skip for `nologin` |
 | `drive.py` close (drain + QEMU exit) | 3.7 s | **0.3 s** | B2: monitor `quit` |
 | VGA `settle` + dump | 0.35 s + ~0.5 s per dump | same | monitor read without fixed sleep |
 | golden suite, 20 cases, `-j 1` | 203 s (TCG) / 268 s (KVM) | **~28 s idle / 72 s loaded** | B1+B2 |
-| golden suite, 20 cases, `-j 4` | — | **15 s idle / 33-39 s loaded** | B1 parallel |
+| golden suite, 20 cases, `-j 4` | — | **12-15 s idle / 25-39 s loaded** | B1 parallel + F3/F4 |
 
 Per-case `drive.py` before → after:
 
@@ -26,32 +26,65 @@ Per-case `drive.py` before → after:
 | `05-dir.in` (login) | 4.5 s | 1.2 s | close 3.5→0.3 s |
 | `23-print.scm` (nologin + boot) | 15.2 s | 1.2 s | init 12→0 s, close 3.2→0.3 s |
 | `24-ptr.scm` (nologin) | 15.2 s | 1.2 s | same |
-| `31-edit-wrap.scm` (6 VGA dumps) | 4.4 s | 4.2 s | settle-bound; monitor sleep removed |
-| `33-complete-wrap.scm` (2 dumps) | 10.6 s | 5.0 s | init skip; faster monitor |
+| `31-edit-wrap.scm` (6 VGA dumps) | 4.4 s | 4.3 s | settle-bound; monitor sleep removed |
+| `33-complete-wrap.scm` (2 dumps) | 10.6 s | 2.9 s | init skip + F3 boot + faster monitor |
 
-## Accelerator: KVM vs TCG (B0)
+## Accelerator: KVM vs TCG (B0, re-measured after F3/F4)
 
 `bench.py` (fresh image copy, QEMU to first serial byte, to `login:`, to prompt,
-script, shutdown; n=5 KVM, n=3 TCG):
+script, shutdown; n=5 both):
 
 | phase | KVM | TCG |
 |---|---|---|
-| qemu start → first serial byte | 0.480 s | 0.869 s |
-| first serial byte → `login:` | **3.431 s** | **0.217 s** |
-| login → prompt | 0.072 s | ~0.05 s |
-| script | 0.011 s | ~0.01 s |
-| shutdown (old close) | 0.032 s | ~0.03 s |
-| total | **4.05 s** | **1.16 s** |
+| qemu start → first serial byte | 0.462 s | 0.715 s |
+| first serial byte → `login:` | **1.087 s** | **0.118 s** |
+| login → prompt | 0.020 s | 0.019 s |
+| script | 0.016 s | 0.018 s |
+| shutdown (monitor `quit`) | 0.064 s | 0.015 s |
+| total | **1.626 s** | **0.907 s** |
 
-KVM is ~3.5x slower *here*. Root cause: the guest is ATA-PIO bound; every
-`inw`/`inb` is a VM exit, and the shell load alone is ~10K 16-bit transfers
-(plus ext4 metadata). Under TCG the I/O is serviced in-process without exits.
-`Ata.WaitBusy`/`WaitDrq` are unbounded spin loops, so the cost scales with the
-PIO count. On bare metal KVM would likely win; on this nested host it does not.
+Before F3 the same harness measured KVM **4.05 s** / TCG **1.16 s**; F3 cut
+KVM's first-to-login from 3.431 s to 1.087 s. KVM still loses because every ATA
+status/data port access is a VM exit; TCG services them in-process. On bare
+metal KVM would likely win; on this nested host it does not.
 
 Decision: `drive.py` defaults to **TCG**; `OSB_ACCEL=kvm` forces KVM
 (`-enable-kvm -cpu host -smp 1`). This is a deliberate, measured deviation
 from "force KVM" — the point of B is wall-clock test speed.
+
+## F3: ATA PIO string I/O (kernel)
+
+- `boot.S`: new `insw`/`outsw` primitives (GAS `rep insw`/`rep outsw`), exposed
+  through `NativeMethods`. The word count must move to `ECX` *before* `%dx` is
+  reused for the port; the first version clobbered the count (moved 0x1F0 words
+  per sector) and was caught by a stack-canary failfast during boot.
+- `Storage/Ata.cs`: one 512-byte sector per `ReadSector`/`WriteSector` via a
+  single string instruction; `WaitBusy`/`WaitDrq` are bounded (1,000,000 polls)
+  and return `bool`; `Ext4.Mount` checks the superblock/GDT reads and
+  `Ext4.ReadBlock`/`WriteBlock` propagate failures.
+- Effect: 256 `inw` VM exits per sector → 1. KVM total 4.05 → 1.63 s,
+  first-to-login 3.431 → 1.087 s; TCG total 1.16 → 0.91 s.
+- Multi-sector requests (8 sectors per command) were implemented and measured
+  **slower** (KVM 2.53 s / TCG 1.78 s) because per-sector DRQ/status polling
+  dominates, so the original one-sector-per-command shape is kept.
+- Data integrity: the kernel-read superblock (inode size 256, blocks/group 32768,
+  inodes/group 4096, inode table block 5) matches `dumpe2fs -h` on the host
+  image; the suite boots SHELL.EXE (19 KB) and five multi-KB test programs.
+
+## F4: CRTC cursor once per output syscall (kernel)
+
+`Vga.PutChar` no longer updates the CRTC per character; `Vga.FlushCursor()` runs
+after each console-output syscall (09h/01h), after the boot banner, and after the
+`login:` prompt. Same screen content, fewer port writes; the 31-35 VGA goldens
+are unchanged.
+
+## F1: fast-fail `expect` (harness)
+
+`drive.py` watches for guest death while waiting for `expect`/`prompt` (serial
+EOF, QEMU exit, or `Boot program exited` / `Failed to launch` / `PANIC` /
+`Exception`) and prints the transcript tail. A missing expected line fails in
+~1 s instead of burning the 25 s timeout (measured with `BOOT=TExit.EXE`:
+1.0 s).
 
 ## B1/B2: harness changes
 
@@ -84,12 +117,13 @@ include the compiler version and every linked source; with the suite at
 
 ## B4: mutation suite (baseline; parallel deferred)
 
-`tests/mutations.sh`: **11/11 caught, 0 missed, 0 broken**, **15m21s** on this
-host (each patch: rebuild ~11 s + the case, which can hit drive.py's 25 s
-timeout when the mutation makes the expected line disappear). The golden-side
-parallelism (B1) is the main wall-clock win; parallelizing mutations needs a
-git worktree per worker plus symlinked sibling repos (`build.sh` expects
-`../osb.shell`, `../osbkt`, `../osb.core`) and is deferred.
+`tests/mutations.sh`: **11/11 caught, 0 missed, 0 broken**, **~13 min** on this
+host (re-run on the final F3/F4 kernel; each patch: rebuild ~11 s + the case,
+which can hit drive.py's 25 s timeout when the mutation makes the expected line
+disappear). The golden-side parallelism (B1) is the main wall-clock win;
+parallelizing mutations needs a git worktree per worker plus symlinked sibling
+repos (`build.sh` expects `../osb.shell`, `../osbkt`, `../osb.core`) and is
+deferred.
 
 ## B5: legacy parity (hash gate)
 
@@ -136,7 +170,7 @@ ignore CONF/BOOT).
 | suite | before | after |
 |---|---|---|
 | golden, 20 cases, `-j 1` | 203 s (TCG) / 268 s (KVM) | ~28 s idle / 72 s loaded |
-| golden, 20 cases, `-j 4` | — | 15 s idle / 33-39 s loaded |
-| mutations | 15m21s (baseline) | 15m21s (unchanged; parallel deferred) |
+| golden, 20 cases, `-j 4` | — | 12-15 s idle / 25-39 s loaded |
+| mutations | 15m21s (baseline) | ~13 min (unchanged; parallel deferred) |
 | unit | — | 4.3 s (incl. build) |
 | smoke | 45 s timeout | 17 s with `OSB_TIMEOUT=8` |

@@ -5,8 +5,7 @@ Usage: drive.py <iso> <img> <case-file> [--out FILE] [--vga-out FILE]
                [--boot-delay SEC]
 
 Case files:
-  *.in   - simple format: log in as "root", send each non-empty line as a
-           shell command, wait for the next prompt.
+  *.in   - log in as "root", send each line, wait for the next prompt.
   *.scm  - directive format, one per line (# = comment):
       nologin            do not auto-login; the script drives login itself
       expect <text>      wait until <text> appears in the serial output
@@ -27,14 +26,12 @@ Case files:
       sleep <sec>        idle wait (no I/O)
       timeout <sec>      overall case timeout from now on
 
-By default the driver logs in as "root" before running a *.scm script; a
-leading `nologin` directive suppresses that so a case controls its own login.
+By default the driver logs in as "root"; a leading `nologin` suppresses that.
 
 Output: the raw serial transcript (bytes) to --out or stdout; VGA captures
 (to --vga-out) are ASCII blocks: "=== VGA <label> ===", 25 screen lines
 (trailing spaces stripped, non-ASCII as '.'), "=== CRTC row=R col=C ===".
-Exit: 0 = all directives satisfied, 1 = failure (message + partial
-transcript on stderr), 2 = usage error.
+Exit: 0 = all directives satisfied, 1 = failure (message + tail), 2 = usage.
 """
 
 import os
@@ -48,6 +45,8 @@ import vga
 
 PROMPT_RE = re.compile(r"> ?$")
 LOGIN_RE = re.compile(r"login: ?$")
+# Guest death: no 25 s timeout unless the expectation is that very line.
+FATAL_RE = re.compile(rb"Boot program exited\. Halting\.|Failed to launch boot program|PANIC|panic:|Exception|triple fault", re.I)
 
 def accel_args() -> list:
     """TCG by default (B0: ~2.5x faster than KVM here); OSB_ACCEL=kvm forces KVM."""
@@ -57,8 +56,7 @@ def accel_args() -> list:
 
 
 def last_line(buf: bytes) -> str:
-    # Last non-empty line; strip trailing CR/LF first (the post-login prompt
-    # is followed by "\r\n", so a naive split would be empty mid-read).
+    # Last non-empty line (strip CR/LF; login is followed by "\r\n").
     stripped = buf.rstrip(b"\r\n")
     line = stripped[stripped.rfind(b"\n") + 1:]
     return line.decode("latin-1").rstrip("\r")
@@ -75,6 +73,7 @@ def at_login(buf: bytes) -> bool:
 class Driver:
     def __init__(self, iso: str, img: str, boot_delay: float):
         self.buf = bytearray()
+        self.eof = False         # serial stream closed (QEMU exited)
         self.vga = bytearray()   # screen/cursor captures (see --vga-out)
         self.deadline = time.monotonic() + boot_delay + 60.0
         # QEMU monitor socket (PS/2 sendkey: TAB/arrows/Ctrl+C, not just serial).
@@ -117,15 +116,25 @@ class Driver:
         except OSError:
             return False
         if not chunk:
+            self.eof = True
             return False
         self.buf += chunk
         return True
 
+    def tail(self, n: int = 600) -> str:
+        return bytes(self.buf[-n:]).decode("latin-1", "replace")
+
+    def _dead(self, data: bytes) -> bool:
+        return self.eof or self.qemu.poll() is not None or FATAL_RE.search(data) is not None
+
     def wait_until(self, pred, timeout: float, since: int = 0) -> bool:
         end = min(time.monotonic() + timeout, self.deadline)
         while True:
-            if pred(bytes(self.buf[since:])):
+            data = bytes(self.buf[since:])
+            if pred(data):
                 return True
+            if self._dead(data):
+                return False
             left = end - time.monotonic()
             if left <= 0 or time.monotonic() > self.deadline:
                 return pred(bytes(self.buf[since:]))
@@ -136,21 +145,20 @@ class Driver:
         needle = text.encode("latin-1")
         ok = self.wait_until(lambda b: needle in b, timeout, self.mark)
         if not ok:
-            print("EXPECT FAILED: %r" % text, file=sys.stderr)
+            print("EXPECT FAILED: %r (tail: %r)" % (text, self.tail()), file=sys.stderr)
         return ok
 
     def expect_re(self, pattern: str, timeout: float = 25.0) -> bool:
         rx = re.compile(pattern.encode("latin-1"), re.DOTALL)
         ok = self.wait_until(lambda b: rx.search(b), timeout, self.mark)
         if not ok:
-            print("EXPECTRE FAILED: %r" % pattern, file=sys.stderr)
+            print("EXPECTRE FAILED: %r (tail: %r)" % (pattern, self.tail()), file=sys.stderr)
         return ok
 
     def wait_prompt(self, timeout: float = 25.0) -> bool:
         ok = self.wait_until(at_prompt, timeout, self.mark)
         if not ok:
-            print("PROMPT TIMEOUT (tail: %r)" % last_line(bytes(self.buf)),
-                  file=sys.stderr)
+            print("PROMPT TIMEOUT (tail: %r)" % self.tail(), file=sys.stderr)
         return ok
 
     def send_line(self, line: str) -> bool:
@@ -163,10 +171,7 @@ class Driver:
         return True
 
     def send_lf(self, line: str) -> bool:
-        # Line terminated by LF only. The legacy ReadLine stops at '\r' and
-        # leaves the '\n' in the ring, which the next reader (a password
-        # prompt) would consume as an empty line; login name/password entry
-        # must use LF so no stray byte is left behind.
+        # LF only: the legacy ReadLine leaves '\n' for the next reader.
         self.mark = len(self.buf)
         try:
             os.write(self.qemu.stdin.fileno(),
@@ -219,6 +224,8 @@ class Driver:
         quiet = time.monotonic() + idle
         last = len(self.buf)
         while time.monotonic() < end:
+            if self.eof or self.qemu.poll() is not None:
+                return
             self.pump(0.05)
             if len(self.buf) != last:
                 last = len(self.buf)
@@ -227,6 +234,8 @@ class Driver:
                 return
 
     def vga_dump(self, label: str) -> None:
+        if self.eof or self.qemu.poll() is not None:
+            return
         self.settle()
         self.vga += self.vga_cap.dump(label)
 
@@ -249,11 +258,7 @@ class Driver:
         try:
             self.qemu.wait(timeout=2)
         except subprocess.TimeoutExpired:
-            self.qemu.terminate()
-            try:
-                self.qemu.wait(timeout=3)
-            except subprocess.TimeoutExpired:
-                self.qemu.kill()
+            self.qemu.kill()
         try:
             os.unlink(self.mon_path)
         except OSError:
@@ -262,8 +267,7 @@ class Driver:
 
 
 def run_scm(drv: Driver, path: str) -> bool:
-    # A leading `nologin` directive means the script drives login itself
-    # (1b spec cases have no login at all). Otherwise log in as root first.
+    # A leading `nologin` means the script drives login itself; else log in.
     with open(path, "r", encoding="latin-1") as f:
         raw_lines = [ln.strip() for ln in f
                      if ln.strip() and not ln.startswith("#")]
@@ -295,8 +299,7 @@ def run_scm(drv: Driver, path: str) -> bool:
             drv.send_line(arg)
             ok = True
         elif cmd == "sendlf":
-            # LF-terminated send, no wait: the next prompt may be "Password: "
-            # rather than "> ", so the script follows with prompt/expect.
+            # LF send, no wait: the next prompt may be "Password: ", not "> ".
             drv.send_lf(arg)
             ok = True
         elif cmd == "sendraw":
@@ -329,13 +332,11 @@ def run_scm(drv: Driver, path: str) -> bool:
 
 
 def run_in(drv: Driver, path: str) -> bool:
-    # *.in format: every non-empty line is a shell command. The driver logs
-    # in as "root" (the legacy default account) before feeding the lines.
+    # *.in: every non-empty line is a shell command; log in as root first.
     with open(path, "r", encoding="latin-1") as f:
         lines = [ln.rstrip("\r\n") for ln in f if ln.strip()]
     if not drv.wait_until(at_login, 30.0):
-        # No login prompt (e.g. a shell that boots straight to a prompt):
-        # treat every line as a command.
+        # No login prompt: treat every line as a command.
         for line in lines:
             drv.send_line(line)
             if not drv.wait_prompt():
@@ -374,8 +375,7 @@ def main() -> int:
     start = time.monotonic()
     with open(case, "r", encoding="latin-1") as f:
         first = next((l.strip().split(None, 1)[0] for l in f if l.strip() and not l.lstrip().startswith("#")), "")
-    # A `nologin` case never shows a prompt: the init wait would burn the
-    # whole boot_delay, so skip it (its directives consume the boot output).
+    # `nologin` never shows a prompt: skip the init wait (it would burn it).
     drv = Driver(iso, img, 0.0 if first == "nologin" else boot_delay)
     if case.endswith(".scm"):
         ok = run_scm(drv, case)
