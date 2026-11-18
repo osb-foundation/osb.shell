@@ -16,6 +16,7 @@ login: root
 
 root@OSB A:\OSB\ROOT>ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 ccccccccccccccccccccccccccccccccccccccccc
+Bad command or file name.
 root@OSB A:\OSB\ROOT>
 
 
@@ -23,8 +24,7 @@ root@OSB A:\OSB\ROOT>
 
 
 
-
-=== CRTC row=17 col=21 ===
+=== CRTC row=18 col=21 ===
 === VGA recall ===
 OSB - Operating System Basic
 Bootable kernel prototype (C# / NativeAOT, bare metal)
@@ -43,6 +43,7 @@ login: root
 
 root@OSB A:\OSB\ROOT>ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 ccccccccccccccccccccccccccccccccccccccccc
+Bad command or file name.
 root@OSB A:\OSB\ROOT>ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 ccccccccccccccccccccccccccccccccccccccccc
 
@@ -50,8 +51,7 @@ ccccccccccccccccccccccccccccccccccccccccc
 
 
 
-
-=== CRTC row=18 col=41 ===
+=== CRTC row=19 col=41 ===
 === VGA draft ===
 OSB - Operating System Basic
 Bootable kernel prototype (C# / NativeAOT, bare metal)
@@ -70,6 +70,7 @@ login: root
 
 root@OSB A:\OSB\ROOT>ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 ccccccccccccccccccccccccccccccccccccccccc
+Bad command or file name.
 root@OSB A:\OSB\ROOT>
 
 
@@ -77,5 +78,4 @@ root@OSB A:\OSB\ROOT>
 
 
 
-
-=== CRTC row=17 col=21 ===
+=== CRTC row=18 col=21 ===

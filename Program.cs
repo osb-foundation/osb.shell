@@ -98,7 +98,11 @@ namespace Osb.Shell.Userspace
                 }
 
                 History.Push(line, len);
-                Dispatch(line, len);
+                // Expand $VAR references ($USER, $HOME, ...) before dispatch.
+                // Undefined names round-trip, so SET PROMPT=$P$G keeps its tokens.
+                var expanded = stackalloc char[Env.ExpandCap];
+                int elen = Env.Expand(line, len, expanded, Env.ExpandCap);
+                if (elen > 0) Dispatch(expanded, elen);
             }
         }
 
@@ -106,7 +110,8 @@ namespace Osb.Shell.Userspace
         // LOGIN/LOGOUT re-enter Login() in place; SUDO runs one command as root.
         private static void Dispatch(char* line, int len)
         {
-            switch (Commands.Identify(line, len))
+            int id = Commands.Identify(line, len);
+            switch (id)
             {
                 case Commands.EXIT:
                     Syscall.PrintString("bye\r\n");
@@ -118,7 +123,12 @@ namespace Osb.Shell.Userspace
                 case Commands.SUDO: DoSudo(line, len); return;
                 case Commands.HISTORY: DoHistory(line, len); return;
                 case Commands.ECHO: DoEcho(line, len); return;
-                default: return;   // NONE (known, unimplemented) or unknown: re-prompt
+                case Commands.SET: DoSet(line, len); return;
+                default:
+                    // Unknown first token: an external program (C3). A known
+                    // but not-yet-implemented command (NONE) just re-prompts.
+                    if (id < 0) External.Run(line, len);
+                    return;
             }
         }
 
@@ -211,22 +221,62 @@ namespace Osb.Shell.Userspace
             return Syscall.SpawnPath(&req);
         }
 
-        // "<user>@OSB <cwd>>" into dst; returns its length.
+        // SET [NAME[=VALUE]]: no args lists all, NAME lists matching entries,
+        // NAME=VALUE defines/redefines. Over 63h/64h (ABI v5).
+        private static void DoSet(char* line, int len)
+        {
+            int i = 3;   // skip "SET"
+            while (i < len && line[i] == ' ') i++;
+            if (i >= len) { ListEnv(null, 0); return; }
+            int eq = i;
+            while (eq < len && line[eq] != '=') eq++;
+            if (eq >= len) { ListEnv(line + i, len - i); return; }
+
+            int nl = eq - i;
+            int vs = eq + 1;
+            int vl = len - vs;
+            var nb = stackalloc byte[64];
+            var vb = stackalloc byte[256];
+            for (int k = 0; k < nl && k < 63; k++) nb[k] = (byte)line[i + k];
+            for (int k = 0; k < vl && k < 255; k++) vb[k] = (byte)line[vs + k];
+            if (nl <= 0 || nl > 63 || vl > 255 || !Syscall.SetEnv(nb, nl, vb, vl))
+                Syscall.PrintString("Cannot set: read-only or out of memory.\r\n");
+        }
+
+        // SET listing: 63h with nameLen 0 returns "NAME=VALUE\n" lines; print
+        // the ones whose name starts with `prefix` (case-insensitive), or all.
+        private static void ListEnv(char* prefix, int plen)
+        {
+            var buf = stackalloc byte[1024];
+            int n = Syscall.GetEnv(null, 0, buf, 1024);
+            bool any = false;
+            int i = 0;
+            while (i < n)
+            {
+                int st = i;
+                while (i < n && buf[i] != (byte)'\n') i++;
+                int lineLen = i - st;
+                if (i < n) i++;
+                if (plen > 0)
+                {
+                    bool match = lineLen >= plen;
+                    for (int k = 0; match && k < plen; k++)
+                        if (Commands.Upper((char)buf[st + k]) != Commands.Upper(prefix[k])) match = false;
+                    if (!match) continue;
+                }
+                Syscall.Write(buf + st, lineLen);
+                Syscall.PutChar('\r');
+                Syscall.PutChar('\n');
+                any = true;
+            }
+            if (!any && plen > 0) Syscall.PrintString("Environment variable not defined.\r\n");
+        }
+
+        // "<user>@OSB <cwd>>" into dst; returns its length. $PROMPT driven
+        // (Slice 3): the default is "$USER@OSB $P$G".
         private static int BuildPrompt(char* dst)
         {
-            var ubuf = stackalloc byte[NameCap];
-            int ulen = Syscall.WhoAmI(ubuf, NameCap);
-            if (ulen < 0) ulen = 0;
-            int n = 0;
-            for (int k = 0; k < ulen; k++) dst[n++] = (char)ubuf[k];
-            fixed (char* p = "@OSB ") for (int k = 0; k < 5; k++) dst[n++] = p[k];
-
-            var cbuf = stackalloc byte[CwdCap];
-            int clen = Syscall.GetCwd(cbuf, CwdCap);
-            if (clen < 0) clen = 0;
-            for (int k = 0; k < clen; k++) dst[n++] = (char)cbuf[k];
-            dst[n++] = '>';
-            return n;
+            return Env.RenderPrompt(dst, Env.PromptCap);
         }
 
         // Copy a string literal into a stack buffer; returns the length.

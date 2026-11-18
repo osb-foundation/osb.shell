@@ -1,0 +1,6 @@
+SET FOO=bar
+ECHO $FOO
+SET PROMPT=$P$G
+ECHO after
+SET FOO
+SET HOME=x

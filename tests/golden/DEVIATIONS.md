@@ -10,6 +10,36 @@ and not a regression.
 Each entry lists the legacy transcript (`legacy/<case>.out`) and the current one
 (`cases/<case>.out`).
 
+## 03-set
+
+- Legacy has the extra prompt line and a blank line before the first `SET`
+  (`root@OSB A:\OSB\ROOT>` then blank then `root@OSB A:\OSB\ROOT>SET`).
+- Current is tight: `root@OSB A:\OSB\ROOT>SET` directly.
+- Reason: same driver/echo timing as 04-whoami. The listing itself is
+  identical: the same nine variables in the same order, with
+  `PROMPT=$USER@OSB $P$G` unexpanded. (Slice 3 adds `SET`/`GETENV`/`SETENV`;
+  `03-set` is the legacy listing case, now reachable at level 3.)
+
+## 37-envapi (spec)
+
+- Spec case: TEnv.EXE runs as the boot program (session leader), logs in as
+  root, and exercises 63h/64h: get/set/redefine/delete, caps, read-only
+  USER/HOME, bad pointers, LOGOUT/LOGIN isolation, copy-at-spawn isolation,
+  table full. PASS line prints the case count.
+
+## Slice 3 deviations
+
+- **Relative PATH entries are ignored.** The legacy shell accepted relative
+  entries (resolved against the current drive/directory); the userspace shell
+  requires an absolute entry (drive letter or leading backslash) and skips
+  relative ones, because the current directory can change between the search
+  and the spawn. Documented in External.cs and MIGRATION.md.
+- **LOGOUT resets the whole environment to the boot defaults.** The legacy
+  shell kept user-set variables across LOGOUT/LOGIN; the kernel now drops
+  them so no value (including USER/HOME) leaks into the next session (C2).
+- **36-env is a spec case** capturing SET/GETENV/SETENV behaviour that has no
+  legacy counterpart (read-only HOME refusal).
+
 ## 04-whoami
 
 - Legacy has an extra prompt line and a blank line before the first `WHOAMI`

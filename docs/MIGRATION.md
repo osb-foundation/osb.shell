@@ -1103,6 +1103,12 @@ slice ordering: 1c already created the session, so `$USER` reflects the
 login state.
 *Acceptance:* `SET FOO=bar`, `ECHO $FOO`, `SET PROMPT=$P$G`, prompt shows cwd.
 
+**Slice 3 — STATUS: DONE.** Kernel per-task env (63h/64h, ABI v5), copy-at-spawn,
+USER/HOME locked, LOGOUT/LOGIN isolation, shell PROMPT rendering, SET, and
+external command dispatch over PATH (absolute entries only; relative entries
+ignored). Golden: 03-set, 36-env, 37-envapi. Mutations: M12+ (USER read-only,
+copy isolation, relative PATH ignored).
+
 **Slice 4 — filesystem read commands.**
 DIR (long + /W), CD (no permission check, parity — decision 2), PWD, TYPE,
 SIZE; kernel enforcement: read-checks in 20h/21h/2Bh (GREP included —

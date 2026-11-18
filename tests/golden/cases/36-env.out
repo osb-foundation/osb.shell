@@ -1,0 +1,13 @@
+login: root
+
+root@OSB A:\OSB\ROOT>SET FOO=bar
+root@OSB A:\OSB\ROOT>ECHO $FOO
+bar
+root@OSB A:\OSB\ROOT>SET PROMPT=$P$G
+A:\OSB\ROOT>ECHO after
+after
+A:\OSB\ROOT>SET FOO
+FOO=bar
+A:\OSB\ROOT>SET HOME=x
+Cannot set: read-only or out of memory.
+A:\OSB\ROOT>

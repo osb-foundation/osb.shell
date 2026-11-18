@@ -1,11 +1,15 @@
 login: root
 
 root@OSB A:\OSB\ROOT>ABC
+Bad command or file name.
 root@OSB A:\OSB\ROOT>ABX C
+Bad command or file name.
 root@OSB A:\OSB\ROOT>hello
 root@OSB A:\OSB\ROOT>a
+Bad command or file name.
 root@OSB A:\OSB\ROOT>a
 root@OSB A:\OSB\ROOT>
 root@OSB A:\OSB\ROOT>XY
+Bad command or file name.
 root@OSB A:\OSB\ROOT>
 root@OSB A:\OSB\ROOT>

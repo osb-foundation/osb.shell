@@ -24,6 +24,7 @@ namespace Osb.Shell.Userspace
         public const int SUDO = 5;
         public const int HISTORY = 6;
         public const int ECHO = 7;
+        public const int SET = 8;
 
         private struct Table
         {
@@ -48,7 +49,7 @@ namespace Osb.Shell.Userspace
             Add("CLEAR", NONE); Add("MEM", NONE); Add("HALT", NONE); Add("POWEROFF", NONE);
             Add("SHUTDOWN", NONE); Add("EXIT", EXIT); Add("QUIT", NONE); Add("REBOOT", NONE);
             Add("TIME", NONE); Add("DATE", NONE); Add("TICKS", NONE); Add("SLEEP", NONE);
-            Add("ECHO", ECHO); Add("SET", NONE); Add("DIR", NONE); Add("CD", NONE);
+            Add("ECHO", ECHO); Add("SET", SET); Add("DIR", NONE); Add("CD", NONE);
             Add("PWD", NONE); Add("TYPE", NONE); Add("DEL", NONE); Add("ERASE", NONE);
             Add("DELETE", NONE); Add("MD", NONE); Add("MKDIR", NONE); Add("RD", NONE);
             Add("RMDIR", NONE); Add("REN", NONE); Add("RENAME", NONE); Add("MOVE", NONE);

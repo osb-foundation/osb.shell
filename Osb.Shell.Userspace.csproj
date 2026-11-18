@@ -29,6 +29,8 @@
     <Compile Include="../osbkt/Fmt.cs" Link="osbkt/Fmt.cs" />
     <Compile Include="../osb.core/src/MiniCoreLib.cs" Link="MiniCoreLib.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Env.cs" />
+    <Compile Include="External.cs" />
     <Compile Include="LineEditor.cs" />
     <Compile Include="History.cs" />
     <Compile Include="Commands.cs" />

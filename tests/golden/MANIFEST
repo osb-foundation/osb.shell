@@ -10,6 +10,7 @@
 01-ver            9          legacy
 02-echo           9          legacy
 03-set            3          legacy
+36-env            3          spec
 04-whoami         1c         legacy
 05-dir            4          legacy
 06-cd             4          legacy
@@ -44,3 +45,4 @@
 33-complete-wrap  2          spec
 34-escape         2          spec
 35-edit-scroll    2          spec
+37-envapi        3          spec

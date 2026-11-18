@@ -1,0 +1,3 @@
+TENV child: FOO=parent BAR=parentbar
+TENV: PASS n=36
+Boot program exited. Halting.
