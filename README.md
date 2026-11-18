@@ -27,6 +27,15 @@ The shell is built on top of:
 - **osb.core** - canonical MiniCoreLib (linked from `src/MiniCoreLib.cs`)
 - **OSB Kernel** - provides the underlying OS services
 
+**Dependency model (verified):** osbkt is consumed by linked sources, not by a
+`ProjectReference`. A `ProjectReference` to `osbkt` was tested and is
+incompatible with this freestanding NoStdLib/MiniCoreLib arrangement (`csc`
+cannot import predefined types from a referenced NoStdLib library, and `osbkt`
+itself requires `MiniCoreLib` to compile `Syscall.cs`). Each consuming program
+compiles the single canonical `MiniCoreLib.cs` (from `osb.core`) plus the
+`osbkt` syscall wrappers as linked sources into one freestanding NativeAOT
+module — no `osbkt.dll` ships at runtime. See `AGENTS.md`.
+
 ## Building
 
 The OSB repos are expected **side by side** (sibling checkouts):

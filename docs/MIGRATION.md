@@ -1,6 +1,36 @@
 # MIGRATION — legacy in-kernel shell → userspace shell
 
-**Status: PHASE 1b.1 IN PROGRESS (branch `phase-1b.1` in each repo, from phase-1b). Phase 1b complete (commits osb.shell d03ce0d, osb.kernel ac53e53, osbkt aa8769f). Phase 1b.1 is the review round on phase 1b: B1 (all ring-3 strings are byte strings — 6Ah/20h, kernel converts to char*), B2 (20h rejects len>260, no clamp), B3 (6Ah resolves/type/exec-checks before task creation; CurrentUid() helper; owner/group/other x bit), B4 (6Ah error codes: -1 EFAULT bad pointer, -5 EINVAL bad content), B5 (new cases 25-getchar over serial+PS/2, 26-spawnerr, TPtr n=<count> incl. 42h/48h/50h/56h), B6 (legacy parity 3× + golden 1b 3× all green). Should-fix: S1 (PS/2 extended keys → ANSI sequences), S2 (flush cooked input on spawn), S3 (shell idle Sleep(1) on GETCHAR -1), S4 (ABI.md docs). `AbiVersion` stays 2 (6Ah/20h wire format unchanged; callers pass bytes).**
+**Status: Phase 0 (architecture) approved. Phase 1a completed and verified. Phase 1b completed and verified. The working tree is at phase-3: 1c (kernel-owned Users, session uid, LOGIN/LOGOUT/SUDO/WHOAMI, POWEROFF/REBOOT root-gated) and slices 2–3 (line editor/history/completion, environment 63h/64h, prompt, external dispatch over PATH) are also present in the tree as pre-existing committed work. Remaining: slices 4–11 per §5; out of scope per §6.**
+
+Phase 0 — approved architectural decisions (standing):
+
+* Layering `osb.shell -> osbkt -> INT 21h -> osb.kernel`; the shell calls only the public osbkt API.
+* The kernel enforces security (pointer validation, filesystem permissions, identity, privileged operations, process ownership); Ring 3 is never trusted.
+* `osbkt` owns `crt0.S`, the INT 21h syscall stub, `user.ld` and `mkosbx.py`.
+* `osb.core` owns the canonical MiniCoreLib (single source file, linked into each freestanding program).
+* No BCL convenience, no GC allocations, no exceptions for ordinary control flow; no source file > 400 lines.
+* DOS personality preserved (drive letters, backslash paths, DOS commands/aliases/flags/messages).
+* Legacy shell code is not deleted before behavior parity is tested and explicitly approved.
+
+Phase 1a — completed and verified (build/tooling):
+
+* `osbkt` public `Syscall` API + `osbkt/docs/ABI.md` v0; the shell compiles zero-alloc and checks `GETABI` at startup.
+* `crt0.S`, the INT 21h syscall stub, `user.ld` and `mkosbx.py` live in `osbkt`; `osb.kernel/build.sh` consumes them (no private kernel copies).
+* The osbkt dependency model: linked-source consumption of `osbkt`/`osb.core` is the verified model. A `ProjectReference` to `osbkt` was tested and is **incompatible** with the freestanding NoStdLib/MiniCoreLib arrangement (`csc` cannot import predefined types such as `System.Object` from a referenced NoStdLib library, and `osbkt` itself requires `MiniCoreLib` to compile `Syscall.cs`). Documented in `osb.shell/AGENTS.md` and `osb.shell/README.md`.
+* QEMU serial smoke harness + `A11` golden-transcript capture.
+
+Phase 1b — completed and verified (kernel hardening + userspace foundation):
+
+* B1: full overflow-safe pointer validation (`IsUserRange`/`UserPtr`) on every pointer-taking syscall; `EFAULT` on a bad range, never a Ring 0 page fault.
+* B2: `GETCHAR` (6Eh) cooked input merging serial + PS/2; returns `0..255` / `-1` empty / `-2` Ctrl+C (byte `0x03` never delivered); arrows as `ESC [ A/B`; raw `KEY` (52h) preserved for XWIN.
+* B3: `SPAWNPATH` (6Ah) via the `SpawnReq` block (40 bytes); block/path/args/handle validation, exec check before task creation, 128-byte args, child PID or `-1/-3/-4/-5/-6`.
+* B4: osbkt public `GetChar()` and `SpawnPath(...)` wrappers; all syscall numbers, register layout and request-structure details stay in osbkt; zero managed allocations.
+* B5: existing syscalls `01h/09h/10h/20h-23h/30h/4Ch/80h-82h/40h-59h` unchanged; XWIN raw keyboard intact; `GETABI` unchanged.
+
+Remaining phases and slices: 1c and slices 2–3 are present in the tree (pre-existing). Slices 4–11 (filesystem writes, pipes, jobs, users, network, color, etc.) and the §6 out-of-scope items are NOT started by this task.
+
+Decisions and amendments recorded in §7 are preserved unchanged.
+
 
 > **1b housekeeping H-B (CONF/BOOT):** `A:\OSB\CONF\BOOT` (owner root, mode 0644)
 > names the boot program; the kernel honors it **only** when built with
