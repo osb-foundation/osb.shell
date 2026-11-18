@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Golden-transcript acceptance run (A11 + F4): drives the CURRENT kernel ISO
 # over serial with the same directives as the legacy reference and diffs the
-# normalized output against cases/*.out.
+# normalized output against cases/*.out (plus cases/*.vga when present).
 #
-# Usage: tests/golden/golden.sh [iso]     (default: ../osb.kernel/osb.iso)
+# Usage: tests/golden/golden.sh [iso] [-j N]     (default iso: ../osb.kernel/osb.iso)
+#   -j N   run N cases in parallel (default: nproc/2; 1 = sequential)
 #
 # Gating (F4a): tests/golden/LEVEL is the level the shell has reached;
 # MANIFEST maps each case to the minimum level that must pass it. Cases
@@ -16,14 +17,28 @@
 # itself (no explicit ISO argument), it always builds with WITH_TESTS=1. To
 # run against an already-built image that already contains the test programs,
 # pass the ISO path explicitly: `golden.sh path/to/osb.iso`.
-set -euo pipefail
+set -uo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=lib.sh
 source "$HERE/lib.sh"
 
 ROOT="$(cd "$HERE/../.." && pwd)"
-ISO="${1:-}"
+ISO=""
+JOBS="${OSB_JOBS:-}"
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -j|--jobs) JOBS="${2:?usage: golden.sh [iso] [-j N]}"; shift 2 ;;
+        -*) echo "usage: golden.sh [iso] [-j N]" >&2; exit 2 ;;
+        *) if [[ -z "$ISO" ]]; then
+               ISO="$1"
+           else
+               echo "usage: golden.sh [iso] [-j N]" >&2
+               exit 2
+           fi
+           shift ;;
+    esac
+done
 BUILD=0
 if [[ -z "$ISO" ]]; then
     # No ISO given: build a fresh one with the test programs staged (item 6).
@@ -32,6 +47,10 @@ if [[ -z "$ISO" ]]; then
 fi
 IMG="$(dirname "$ISO")/osb.img"
 LEVEL="${GOLDEN_LEVEL:-$(cat "$HERE/LEVEL" 2>/dev/null || echo 1a.1)}"
+if [[ -z "$JOBS" ]]; then
+    JOBS="$(( $(nproc) / 2 ))"
+fi
+(( JOBS < 1 )) && JOBS=1
 
 if [[ "$BUILD" == "1" ]]; then
     echo "building kernel image (WITH_TESTS=1) ..."
@@ -59,95 +78,134 @@ patch_boot() {
     rm -f "$bf"
 }
 
+# Per-run scratch dir; each case runs in its own subdir so -j never races on
+# the image copy, the BOOT patch, the transcript, or the monitor socket.
+RES="$(mktemp -d /tmp/osb-golden-XXXXXX)"
+trap 'rm -rf "$RES"' EXIT
+
+# Run one case in a private temp dir; write "KIND|msg" to $RES/<i>. The
+# parent prints the results in case order after `wait`, so -j output is
+# deterministic (only the wall clock changes).
+run_case() {
+    local i="$1" name="$2" case="$3"
+    local d tmpimg raw vga scrip bootprog="" ok=1 dt
+    d="$(mktemp -d "$RES/run-$i-XXXXXX")"
+    tmpimg="$d/img"; raw="$d/out"; vga="$d/vga"; scrip="$case"
+    local t0=$SECONDS
+    if ! cp "$IMG" "$tmpimg"; then
+        echo "FAIL|image copy" > "$RES/$i"
+        rm -rf "$d"
+        return
+    fi
+    if grep -q '^boot ' "$case"; then
+        bootprog="$(sed -n 's/^boot //p' "$case" | head -1)"
+        scrip="$d/case.scm"
+        grep -v '^boot ' "$case" > "$scrip"
+    fi
+    if [[ -n "$bootprog" ]] && ! patch_boot "$tmpimg" "$bootprog"; then
+        echo "FAIL|BOOT patch" > "$RES/$i"
+        rm -rf "$d"
+        return
+    fi
+    if ! python3 "$HERE/drive.py" "$ISO" "$tmpimg" "$scrip" --out "$raw" --vga-out "$vga"; then
+        echo "FAIL|driver error" > "$RES/$i"
+        rm -rf "$d"
+        return
+    fi
+    normalize "$name" < "$raw" > "$d/norm"
+    if diff -u <(printf '%s\n' "$(cat "$HERE/cases/$name.out")") \
+               <(printf '%s\n' "$(cat "$d/norm")") > "$HERE/cases/$name.diff"; then
+        rm -f "$HERE/cases/$name.diff"
+    else
+        ok=0
+    fi
+    local vgaexp="$HERE/cases/$name.vga"
+    if [[ -s "$vga" ]]; then
+        if [[ ! -f "$vgaexp" ]]; then
+            echo "FAIL|unexpected VGA dump; run recapture.sh" > "$RES/$i"
+            rm -rf "$d"
+            return
+        fi
+        if ! diff -u "$vgaexp" "$vga" > "$HERE/cases/$name.vga.diff"; then
+            ok=0
+        else
+            rm -f "$HERE/cases/$name.vga.diff"
+        fi
+    elif [[ -f "$vgaexp" ]]; then
+        echo "FAIL|missing VGA dump" > "$RES/$i"
+        rm -rf "$d"
+        return
+    fi
+    dt=$((SECONDS - t0))
+    if (( ok )); then
+        echo "PASS|$dt" > "$RES/$i"
+    else
+        echo "FAIL|diff in cases/$name.diff" > "$RES/$i"
+    fi
+    rm -rf "$d"
+}
+
 start=$SECONDS
-pass=0 fail=0 skip=0
 shopt -s nullglob
+names=(); paths=(); skips=()
+i=0
 for case in "$HERE"/cases/*.in "$HERE"/cases/*.scm; do
     name="$(basename "$case")"
     name="${name%.*}"
     min="$(case_level "$name")"
     min="${min%% *}"
+    names[$i]="$name"
+    paths[$i]="$case"
+    skips[$i]=""
     if [[ -z "$min" ]]; then
-        echo "WARN: $name has no MANIFEST entry - skipped" >&2
-        skip=$((skip + 1))
-        continue
+        skips[$i]="no MANIFEST entry"
+    elif (( $(level_idx "$min") > $(level_idx "$LEVEL") )); then
+        skips[$i]="needs >= $min, at $LEVEL"
     fi
-    if (( $(level_idx "$min") > $(level_idx "$LEVEL") )); then
-        echo "SKIP: $name (needs >= $min, at $LEVEL)"
-        skip=$((skip + 1))
-        continue
-    fi
+    i=$((i + 1))
+done
 
-    echo "case $name ..."
-    # A `boot <prog>` directive overrides A:\OSB\CONF\BOOT for this case (the
-    # 6Ah spec case boots TWait.EXE directly). Strip it from the script handed
-    # to drive.py, which would otherwise reject it as an unknown directive.
-    bootprog=""
-    scrip="$case"
-    if grep -q '^boot ' "$case"; then
-        bootprog="$(sed -n 's/^boot //p' "$case" | head -1)"
-        scrip="$(mktemp /tmp/osb-scm-XXXXXX.scm)"
-        grep -v '^boot ' "$case" > "$scrip"
-    fi
-    # Throwaway image copy per case (mutating cases must not leak).
-    tmp="$(mktemp /tmp/osb-case-XXXXXX.raw)"
-    tmpimg="$(mktemp /tmp/osb-img-XXXXXX.img)"
-    tmpvga="$(mktemp /tmp/osb-vga-XXXXXX.txt)"
-    cp "$IMG" "$tmpimg"
-    if [[ -n "$bootprog" ]] && ! patch_boot "$tmpimg" "$bootprog"; then
-        echo "FAIL: $name (BOOT patch)"
-        fail=$((fail + 1))
-        rm -f "$tmp" "$tmpimg" "$tmpvga"
-        [[ "$scrip" != "$case" ]] && rm -f "$scrip"
+for i in "${!names[@]}"; do
+    if [[ -n "${skips[$i]}" ]]; then
+        echo "SKIP|${skips[$i]}" > "$RES/$i"
         continue
     fi
-    if ! python3 "$HERE/drive.py" "$ISO" "$tmpimg" "$scrip" --out "$tmp" --vga-out "$tmpvga"; then
-        echo "FAIL: $name (driver error)"
-        fail=$((fail + 1))
-        rm -f "$tmp" "$tmpimg" "$tmpvga"
-        [[ "$scrip" != "$case" ]] && rm -f "$scrip"
-        continue
-    fi
-    [[ "$scrip" != "$case" ]] && rm -f "$scrip"
-    rm -f "$tmpimg"
-    normalize "$name" < "$tmp" > "$tmp.n"
-    rm -f "$tmp"
-    expected="$HERE/cases/$name.out"
-    [[ -f "$expected" ]] || { echo "ERROR: missing golden $expected (run capture.sh)" >&2; exit 2; }
-    exp="$(cat "$expected")"
-    act="$(cat "$tmp.n")"
-    rm -f "$tmp.n"
-    ok=1
-    if diff -u <(printf '%s\n' "$exp") <(printf '%s\n' "$act") > "$HERE/cases/$name.diff"; then
-        rm -f "$HERE/cases/$name.diff"
-    else
-        echo "FAIL: $name (diff in cases/$name.diff)"
-        ok=0
-    fi
-    # VGA captures are optional: a case only compares them when it has a
-    # cases/<name>.vga golden. An unexpected dump is an error (recapture.sh).
-    vgaexp="$HERE/cases/$name.vga"
-    if [[ -s "$tmpvga" ]]; then
-        if [[ ! -f "$vgaexp" ]]; then
-            echo "FAIL: $name (unexpected VGA dump; run recapture.sh)"
-            ok=0
-        elif diff -u "$vgaexp" "$tmpvga" > "$HERE/cases/$name.vga.diff"; then
-            rm -f "$HERE/cases/$name.vga.diff"
-        else
-            echo "FAIL: $name (vga diff in cases/$name.vga.diff)"
-            ok=0
-        fi
-    elif [[ -f "$vgaexp" ]]; then
-        echo "FAIL: $name (missing VGA dump)"
-        ok=0
-    fi
-    rm -f "$tmpvga"
-    if [[ "$ok" == "1" ]]; then
-        echo "PASS: $name"
-        pass=$((pass + 1))
-    else
-        fail=$((fail + 1))
-    fi
+    while (( $(jobs -rp | wc -l) >= JOBS )); do
+        wait -n 2>/dev/null || true
+    done
+    run_case "$i" "${names[$i]}" "${paths[$i]}" &
+done
+wait
+
+pass=0 fail=0 skip=0
+for i in "${!names[@]}"; do
+    name="${names[$i]}"
+    r="$(cat "$RES/$i" 2>/dev/null || true)"
+    [[ -n "$r" ]] || r="FAIL|no result"
+    kind="${r%%|*}"
+    msg="${r#*|}"
+    case "$kind" in
+        PASS)
+            pass=$((pass + 1))
+            if [[ -n "${OSB_TIMING:-}" ]]; then
+                echo "PASS: $name (${msg}s)"
+            else
+                echo "PASS: $name"
+            fi
+            ;;
+        SKIP)
+            skip=$((skip + 1))
+            echo "SKIP: $name ($msg)"
+            ;;
+        FAIL)
+            fail=$((fail + 1))
+            echo "FAIL: $name ($msg)"
+            ;;
+        *)
+            fail=$((fail + 1))
+            echo "FAIL: $name (bad result: $r)"
+            ;;
+    esac
 done
 
 echo "runtime: $((SECONDS - start))s | pass=$pass fail=$fail skip=$skip"

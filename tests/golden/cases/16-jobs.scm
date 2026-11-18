@@ -2,7 +2,9 @@
 send TASK
 prompt
 sendnowait DEMO
-sleep 2
+# Wait for the shell's "Foreground [pid]" line instead of a fixed sleep:
+# DEMO is already the foreground task once that line is printed.
+expect Foreground [
 ctrl-c
 expect Foreground job aborted
 prompt

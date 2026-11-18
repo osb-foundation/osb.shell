@@ -49,9 +49,15 @@ Validation expectations:
 After `../osb.kernel/build.sh`:
 
 ```bash
-tests/smoke.sh                # QEMU serial smoke test (login prompt, headless)
-tests/golden/golden.sh        # golden transcripts vs the legacy shell (A11)
+tests/run.sh smoke            # QEMU serial smoke test (login prompt, headless)
+tests/run.sh unit             # host-side LineEditor/Completion tests (<5 s)
+tests/run.sh level            # golden transcripts vs the legacy shell (A11)
+tests/run.sh full             # level + mutation suite (11 patches, all caught)
 ```
+
+`tests/run.sh` builds the ISO with `WITH_TESTS=1` when it is missing. The
+golden tier runs cases in parallel (`-j GOLDEN_JOBS`, default `nproc/2`); see
+`docs/TEST-TIMING.md` for the measured wall clock and the TCG/KVM choice.
 
 ## Change Workflow for Agents
 

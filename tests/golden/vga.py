@@ -34,9 +34,17 @@ class Vga:
                     time.sleep(0.05)
             else:
                 raise OSError("monitor connect failed")
-            s.sendall((cmd + "\n").encode())
-            time.sleep(0.12)
             s.settimeout(0.8)
+            # Drain the banner/prompt first: without this, the first recv can
+            # return only the banner and the reply of the *previous* command
+            # is read as this one's output (no fixed sleep needed).
+            data = b""
+            while not data.rstrip().endswith(b"(qemu)"):
+                chunk = s.recv(65536)
+                if not chunk:
+                    break
+                data += chunk
+            s.sendall((cmd + "\n").encode())
             data = b""
             while True:
                 try:

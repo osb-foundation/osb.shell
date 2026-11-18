@@ -5,9 +5,8 @@ Usage: drive.py <iso> <img> <case-file> [--out FILE] [--vga-out FILE]
                [--boot-delay SEC]
 
 Case files:
-  *.in   - simple format: the driver logs in as "root" (legacy default
-           account), then each non-empty line is sent as a shell command and
-           the driver waits for the next shell prompt.
+  *.in   - simple format: log in as "root", send each non-empty line as a
+           shell command, wait for the next prompt.
   *.scm  - directive format, one per line (# = comment):
       nologin            do not auto-login; the script drives login itself
       expect <text>      wait until <text> appears in the serial output
@@ -16,8 +15,7 @@ Case files:
                          or a bare "path>" for the 1b shell)
       send <line>        send the line + CRLF, then wait for the prompt
       sendnowait <line>  send the line + CRLF without waiting
-      sendlf <line>      send the line + LF only (login name/password: the
-                         legacy ReadLine leaves the LF for the next prompt)
+      sendlf <line>      send the line + LF only (login name/password)
       sendraw <hex>      send raw bytes (hex, no spaces)
       ctrl-c             send 0x03 on the serial console (Ctrl+C)
       vga [label]        capture the 80x25 VGA text buffer + the CRTC cursor
@@ -51,14 +49,16 @@ import vga
 PROMPT_RE = re.compile(r"> ?$")
 LOGIN_RE = re.compile(r"login: ?$")
 
+def accel_args() -> list:
+    """TCG by default (B0: ~2.5x faster than KVM here); OSB_ACCEL=kvm forces KVM."""
+    if os.environ.get("OSB_ACCEL", "tcg") == "kvm" and os.access("/dev/kvm", os.R_OK | os.W_OK):
+        return ["-enable-kvm", "-cpu", "host", "-smp", "1"]
+    return []
+
 
 def last_line(buf: bytes) -> str:
-    # The last non-empty line. The legacy shell prints the prompt with no
-    # trailing newline, but the post-login prompt is followed by "\r\n"
-    # (Shell.cs LoginSequence -> Vga.PutChar('\n')), so a naive "text after
-    # the last \n" is empty exactly when the driver happens to read that
-    # chunk. Strip trailing CR/LF first so a prompt followed by a newline
-    # still matches (fixes the 13b-nonroot batch flake).
+    # Last non-empty line; strip trailing CR/LF first (the post-login prompt
+    # is followed by "\r\n", so a naive split would be empty mid-read).
     stripped = buf.rstrip(b"\r\n")
     line = stripped[stripped.rfind(b"\n") + 1:]
     return line.decode("latin-1").rstrip("\r")
@@ -77,8 +77,7 @@ class Driver:
         self.buf = bytearray()
         self.vga = bytearray()   # screen/cursor captures (see --vga-out)
         self.deadline = time.monotonic() + boot_delay + 60.0
-        # QEMU monitor socket for the PS/2 path (sendkey): lets a case press
-        # TAB / arrows / Ctrl+C on the virtual keyboard, not just serial bytes.
+        # QEMU monitor socket (PS/2 sendkey: TAB/arrows/Ctrl+C, not just serial).
         self.mon_path = "/tmp/osb-mon-%d.sock" % os.getpid()
         self.vga_cap = vga.Vga(self.mon_path)
         try:
@@ -93,20 +92,16 @@ class Driver:
              "-vga", "std", "-display", "none",
              "-monitor", "unix:%s,server,nowait" % self.mon_path,
              "-no-reboot",
-             # signal=off: pass a raw serial 0x03 (Ctrl+C) through to COM1
-             # instead of QEMU turning it into SIGINT for itself. The driver
-             # writes/reads the process stdin/stdout, so stdio is the chardev.
+             # signal=off: pass a raw 0x03 (Ctrl+C) through to COM1, not SIGINT.
              "-chardev", "stdio,id=ser0,signal=off",
-             "-serial", "chardev:ser0"],
+             "-serial", "chardev:ser0"] + accel_args(),
             stdin=subprocess.PIPE, stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL, bufsize=0)
         self.fd = self.qemu.stdout.fileno()
         os.set_blocking(self.fd, False)
-        # Position before the last send: prompt-waiting only accepts text
-        # produced after it, so a stale earlier prompt cannot satisfy a wait.
+        # Prompt waits only accept text after the last send (no stale prompt).
         self.mark = 0
-        # Drain the boot output until the first prompt/login shows up (or
-        # boot_delay elapses), so the driver starts at a known state.
+        # Drain the boot output until the first prompt/login (or boot_delay).
         self.wait_until(lambda b: at_prompt(b) or at_login(b), boot_delay)
 
     def pump(self, timeout: float) -> bool:
@@ -246,12 +241,13 @@ class Driver:
             if not self.pump(0.2):
                 break
             idle_end = time.monotonic() + 0.6
+        # stdio does not exit on stdin EOF; quit via the monitor, not SIGTERM.
         try:
-            self.qemu.stdin.close()
+            self.vga_cap.mon("quit")
         except OSError:
             pass
         try:
-            self.qemu.wait(timeout=3)
+            self.qemu.wait(timeout=2)
         except subprocess.TimeoutExpired:
             self.qemu.terminate()
             try:
@@ -376,7 +372,11 @@ def main() -> int:
         return 2
     iso, img, case = args
     start = time.monotonic()
-    drv = Driver(iso, img, boot_delay)
+    with open(case, "r", encoding="latin-1") as f:
+        first = next((l.strip().split(None, 1)[0] for l in f if l.strip() and not l.lstrip().startswith("#")), "")
+    # A `nologin` case never shows a prompt: the init wait would burn the
+    # whole boot_delay, so skip it (its directives consume the boot output).
+    drv = Driver(iso, img, 0.0 if first == "nologin" else boot_delay)
     if case.endswith(".scm"):
         ok = run_scm(drv, case)
     else:
