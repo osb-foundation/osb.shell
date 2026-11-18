@@ -8,6 +8,18 @@ namespace Osb.Shell.Userspace
         private const int NameCap = 256;
         private const int BufCap = 512;
 
+        public static void DoMd(char* line, int len)
+        {
+            int i = 2;
+            while (i < len && line[i] == ' ') i++;
+            if (i >= len) { Syscall.PrintString("Usage: MD <dir>\r\n"); return; }
+            var path = stackalloc byte[256];
+            int n = 0;
+            for (int k = i; k < len && n < 255; k++) path[n++] = (byte)line[k];
+            int r = Syscall.Mkdir(path, n);
+            if (r != 0) Syscall.PrintString("Error\r\n");
+        }
+
         public static void DoPwd()
         {
             var buf = stackalloc byte[256];

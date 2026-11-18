@@ -30,6 +30,7 @@ namespace Osb.Shell.Userspace
         public const int PWD = 11;
         public const int TYPE = 12;
         public const int SIZE = 13;
+        public const int MD = 14;
 
         private struct Table
         {
@@ -56,7 +57,7 @@ namespace Osb.Shell.Userspace
             Add("TIME", NONE); Add("DATE", NONE); Add("TICKS", NONE); Add("SLEEP", NONE);
             Add("ECHO", ECHO); Add("SET", SET); Add("DIR", DIR); Add("CD", CD);
             Add("PWD", PWD); Add("TYPE", TYPE); Add("DEL", NONE); Add("ERASE", NONE);
-            Add("DELETE", NONE); Add("MD", NONE); Add("MKDIR", NONE); Add("RD", NONE);
+            Add("DELETE", NONE); Add("MD", MD); Add("MKDIR", MD); Add("RD", NONE);
             Add("RMDIR", NONE); Add("REN", NONE); Add("RENAME", NONE); Add("MOVE", NONE);
             Add("COPY", NONE); Add("CP", NONE); Add("SIZE", SIZE); Add("COLOR", NONE);
             Add("LN", NONE); Add("LNK", NONE); Add("OSLANG", NONE); Add("DEMO", NONE);
