@@ -60,7 +60,7 @@ namespace Osb.Shell.Unit
             Program.Eq("H", line, "editor: H<TAB> line (lcp)");
             Program.EqInt(1, code, "editor: H<TAB> length");
             string screen = Syscall.Console.ScreenText();
-            Program.Check(screen.Contains("HELP  HALT  HISTORY"), "editor: H<TAB> lists candidates");
+            Program.Check(screen.Contains("HELP  HISTORY"), "editor: H<TAB> lists candidates");
             Program.Check(screen.Contains("OSB> H"), "editor: H<TAB> reprints prompt + line");
         }
 

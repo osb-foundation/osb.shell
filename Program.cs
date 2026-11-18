@@ -132,8 +132,111 @@ namespace Osb.Shell.Userspace
                 // Undefined names round-trip, so SET PROMPT=$P$G keeps its tokens.
                 var expanded = stackalloc char[Env.ExpandCap];
                 int elen = Env.Expand(line, len, expanded, Env.ExpandCap);
-                if (elen > 0) Dispatch(expanded, elen);
+                if (elen > 0)
+                {
+                    // Pipe: "left | right" — run left with stdout → temp file,
+                    // then right with stdin ← temp file (external programs only).
+                    int pipePos = -1;
+                    for (int k = 0; k < elen; k++)
+                        if (expanded[k] == '|') { pipePos = k; break; }
+                    if (pipePos >= 0) RunPipe(expanded, elen, pipePos);
+                    else Dispatch(expanded, elen);
+                }
             }
+        }
+
+        // Run "left | right" using a temp file for data transfer.
+        // Built-in commands are supported on both sides:
+        //   left built-in: stdout redirected to temp file via SetStdout
+        //   right built-in: runs normally (stdin not connected)
+        private static void RunPipe(char* line, int len, int pipePos)
+        {
+            int ls = 0;
+            while (ls < pipePos && line[ls] == ' ') ls++;
+            int le = pipePos;
+            while (le > ls && line[le - 1] == ' ') le--;
+            int ll = le - ls;
+
+            int rs = pipePos + 1;
+            while (rs < len && line[rs] == ' ') rs++;
+            int re = len;
+            while (re > rs && line[re - 1] == ' ') re--;
+            int rl = re - rs;
+
+            if (ll <= 0 || rl <= 0) { Syscall.PrintString("Bad command or file name.\r\n"); return; }
+
+            // temp file path: A:\OSB\TEMP\PIPE.TMP
+            var tmpPath = stackalloc byte[64];
+            int tmplen = 0;
+            tmpPath[tmplen++] = (byte)'A'; tmpPath[tmplen++] = (byte)':';
+            tmpPath[tmplen++] = (byte)'\\'; tmpPath[tmplen++] = (byte)'O';
+            tmpPath[tmplen++] = (byte)'S'; tmpPath[tmplen++] = (byte)'B';
+            tmpPath[tmplen++] = (byte)'\\'; tmpPath[tmplen++] = (byte)'T';
+            tmpPath[tmplen++] = (byte)'E'; tmpPath[tmplen++] = (byte)'M';
+            tmpPath[tmplen++] = (byte)'P'; tmpPath[tmplen++] = (byte)'\\';
+            tmpPath[tmplen++] = (byte)'P'; tmpPath[tmplen++] = (byte)'I';
+            tmpPath[tmplen++] = (byte)'P'; tmpPath[tmplen++] = (byte)'E';
+            tmpPath[tmplen++] = (byte)'.'; tmpPath[tmplen++] = (byte)'T';
+            tmpPath[tmplen++] = (byte)'M'; tmpPath[tmplen++] = (byte)'P';
+
+            int h1 = Syscall.CreateFile(tmpPath, tmplen);
+            if (h1 < 0) { Syscall.PrintString("Pipe: cannot create temp file\r\n"); return; }
+
+            // Left side: built-in (redirect stdout to temp file) or external (spawn with stdout handle)
+            int leftId = Commands.Identify(line + ls, ll);
+            if (leftId >= 0 && leftId != Commands.NONE)
+            {
+                Syscall.SetStdout(h1);
+                Dispatch(line + ls, ll);
+                Syscall.SetStdout(-1);
+            }
+            else if (leftId < 0)
+            {
+                int pid1 = SpawnCmdHandles(line + ls, ll, -1, h1);
+                if (pid1 < 0)
+                {
+                    Syscall.Close(h1);
+                    Syscall.PrintString("Pipe: cannot run left command\r\n");
+                    return;
+                }
+                Syscall.Wait(pid1);
+            }
+            // NONE: known but not implemented — skip
+
+            Syscall.Close(h1);
+
+            int h2 = Syscall.Open(tmpPath, tmplen);
+            if (h2 < 0)
+            {
+                Syscall.PrintString("Pipe: cannot read temp file\r\n");
+                return;
+            }
+
+            // Right side: built-in (runs normally) or external (spawn with stdin handle)
+            int rightId = Commands.Identify(line + rs, rl);
+            if (rightId >= 0 && rightId != Commands.NONE)
+            {
+                Dispatch(line + rs, rl);
+            }
+            else if (rightId < 0)
+            {
+                int pid2 = SpawnCmdHandles(line + rs, rl, h2, -1);
+                if (pid2 < 0)
+                {
+                    Syscall.Close(h2);
+                    Syscall.PrintString("Pipe: cannot run right command\r\n");
+                    return;
+                }
+                Syscall.Wait(pid2);
+            }
+
+            Syscall.Close(h2);
+            // Kernel delete syscall expects "DEL <path>" format.
+            var delBuf = stackalloc byte[64];
+            int dn = 0;
+            delBuf[dn++] = (byte)'D'; delBuf[dn++] = (byte)'E'; delBuf[dn++] = (byte)'L'; delBuf[dn++] = (byte)' ';
+            for (int k = 0; k < tmplen && dn < 63; k++) delBuf[dn++] = tmpPath[k];
+            Syscall.Delete(delBuf, dn);
         }
 
         // First command that matches the line's first token. EXIT exits;
@@ -231,7 +334,7 @@ namespace Osb.Shell.Userspace
             Syscall.PutChar('\r'); Syscall.PutChar('\n');
         }
 
-        // HISTORY [N]: list all entries, or the last N. Format "%5d  <line>".
+        // HISTORY [/N <n>]: list the last N entries (default 100). Format "%5d  <line>".
         private static void DoHistory(char* line, int len)
         {
             int i = 7;        // skip "HISTORY"
@@ -241,38 +344,56 @@ namespace Osb.Shell.Userspace
                 i++;
                 if (i < len && line[i] == '?')
                 {
-                    Syscall.PrintString("HISTORY [N] [list command history]\r\n");
+                    Syscall.PrintString("HISTORY [/N <n>] [list command history]\r\n");
+                    Syscall.PrintString("  default: last 100 entries\r\n");
+                    Syscall.PrintString("/N <n> [show last n entries]\r\n");
                     Syscall.PrintString("/? [show this help]\r\n");
                     return;
                 }
-            }
-            int count = -1;   // -1 = all
-            if (i < len)
-            {
-                count = 0;
-                bool any = false;
-                while (i < len && line[i] >= '0' && line[i] <= '9')
+                if (i < len && line[i] == 'N' || line[i] == 'n')
                 {
-                    count = count * 10 + (line[i] - '0'); i++; any = true;
+                    i++;
+                    while (i < len && line[i] == ' ') i++;
+                    int count = 0;
+                    bool any = false;
+                    while (i < len && line[i] >= '0' && line[i] <= '9')
+                    {
+                        count = count * 10 + (line[i] - '0'); i++; any = true;
+                    }
+                    if (!any || count <= 0) count = 100;
+                    int total = History.Count;
+                    int start = count < total ? total - count : 0;
+                    var num = stackalloc char[8];
+                    var ebuf = stackalloc char[History.LineCap];
+                    for (int idx = start; idx < total; idx++)
+                    {
+                        int nl = Fmt.U32(num, (uint)History.NumberOf(idx));
+                        for (int k = nl; k < 5; k++) Syscall.PutChar(' ');
+                        Syscall.Print(num, nl);
+                        Syscall.PrintString("  ");
+                        int elen;
+                        History.CopyVisible(idx, ebuf, out elen);
+                        Syscall.Print(ebuf, elen);
+                        Syscall.PutChar('\r'); Syscall.PutChar('\n');
+                    }
+                    return;
                 }
-                if (!any) count = -1;
             }
-
-            int total = History.Count;
-            int start = 0;
-            if (count >= 0 && count < total) start = total - count;
-
-            var num = stackalloc char[8];
-            var ebuf = stackalloc char[History.LineCap];
-            for (int idx = start; idx < total; idx++)
+            // default: last 100 entries
+            int count0 = 100;
+            int total0 = History.Count;
+            int start0 = count0 < total0 ? total0 - count0 : 0;
+            var num0 = stackalloc char[8];
+            var ebuf0 = stackalloc char[History.LineCap];
+            for (int idx = start0; idx < total0; idx++)
             {
-                int nl = Fmt.U32(num, (uint)History.NumberOf(idx));
+                int nl = Fmt.U32(num0, (uint)History.NumberOf(idx));
                 for (int k = nl; k < 5; k++) Syscall.PutChar(' ');
-                Syscall.Print(num, nl);
+                Syscall.Print(num0, nl);
                 Syscall.PrintString("  ");
                 int elen;
-                History.CopyVisible(idx, ebuf, out elen);
-                Syscall.Print(ebuf, elen);
+                History.CopyVisible(idx, ebuf0, out elen);
+                Syscall.Print(ebuf0, elen);
                 Syscall.PutChar('\r'); Syscall.PutChar('\n');
             }
         }
@@ -295,6 +416,31 @@ namespace Osb.Shell.Userspace
             }
             if (i >= len) { Syscall.PrintString("Usage: SUDO <command>\r\n"); return; }
 
+            // Password prompt unless already root.
+            var who = stackalloc byte[NameCap];
+            int wn = Syscall.WhoAmI(who, NameCap);
+            bool isRoot = wn == 4 && who[0] == (byte)'r' && who[1] == (byte)'o'
+                       && who[2] == (byte)'o' && who[3] == (byte)'t';
+            if (!isRoot)
+            {
+                var passP = stackalloc char[11];
+                int ppLen = CopyLit(passP, "Password: ");   // 10
+                var pass = stackalloc char[NameCap];
+                int plen = LineEditor.Read(passP, ppLen, pass, NameCap, false, false);
+                Syscall.PutChar('\n');
+                if (plen < 0) { Syscall.PrintString("SUDO: aborted\r\n"); return; }
+                var pbuf = stackalloc byte[NameCap];
+                Narrow(pass, pbuf, plen);
+                // verify password by re-logging in as the current user
+                var nbuf = stackalloc byte[NameCap];
+                Narrow((char*)who, nbuf, wn);
+                if (Syscall.Login(nbuf, wn, pbuf, plen) != 0)
+                {
+                    Syscall.PrintString("SUDO: password incorrect\r\n");
+                    return;
+                }
+            }
+
             if (Syscall.Sudo() != 0) { Syscall.PrintString("User is not in the sudoers file.\r\n"); return; }
 
             int pid = SpawnCmd(line + i, len - i);
@@ -307,6 +453,12 @@ namespace Osb.Shell.Userspace
         // Builds a SpawnReq on the stack (zero GC allocations).
         private static int SpawnCmd(char* cmd, int clen)
         {
+            return SpawnCmdHandles(cmd, clen, -1, -1);
+        }
+
+        // Spawn with custom stdin/stdout handles (for pipes).
+        private static int SpawnCmdHandles(char* cmd, int clen, int stdinHandle, int stdoutHandle)
+        {
             var path = stackalloc byte[260];
             int n = clen < 260 ? clen : 260;
             for (int k = 0; k < n; k++) path[k] = (byte)cmd[k];
@@ -316,8 +468,8 @@ namespace Osb.Shell.Userspace
                 PathLen = (uint)n,
                 ArgsPtr = 0,
                 ArgsLen = 0,
-                StdinHandle = -1,
-                StdoutHandle = -1
+                StdinHandle = stdinHandle,
+                StdoutHandle = stdoutHandle
             };
             return Syscall.SpawnPath(&req);
         }
@@ -498,7 +650,7 @@ namespace Osb.Shell.Userspace
                 Syscall.PrintString("  TIME DATE TICKS SLEEP ECHO SET DIR CD PWD TYPE SIZE MD RD\r\n");
                 Syscall.PrintString("  DEL REN MOVE COPY CP SIZE LN\r\n");
                 Syscall.PrintString("  TRASH GREP PING PCI NET IFCONFIG USER LOGIN LOGOUT WHOAMI\r\n");
-                Syscall.PrintString("  CHOWN CHMOD SUDO HISTORY TASK PS KILL WAIT TAB SPAWN\r\n");
+                Syscall.PrintString("  CHOWN CHMOD SUDO HISTORY TASK PS KILL WAIT TAB SPAWN PIPE\r\n");
                 Syscall.PrintString("  EXIT LOGOUT\r\n");
                 return;
             }
@@ -644,7 +796,8 @@ namespace Osb.Shell.Userspace
             }
             if (match(2, "LN"))
             {
-                Syscall.PrintString("LN <link> <target> [create link]\r\n");
+                Syscall.PrintString("LN [/S] <link> <target> [create link]\r\n");
+                Syscall.PrintString("/S [create symbolic link]\r\n");
                 Syscall.PrintString("/? [show this help]\r\n");
                 return;
             }
@@ -662,7 +815,7 @@ namespace Osb.Shell.Userspace
             }
             if (match(4, "USER"))
             {
-                Syscall.PrintString("USER [/ADD name [pass] | /CHANGE name [pass] | /DEL name | /SUDO name | /UNSUDO name]\r\n");
+                Syscall.PrintString("USER [/ADD name [pass] | /CHANGE name [pass] | /DEL name [/HOME] | /SUDO name | /UNSUDO name]\r\n");
                 Syscall.PrintString("/? [show this help]\r\n");
                 return;
             }
@@ -734,7 +887,9 @@ namespace Osb.Shell.Userspace
             }
             if (match(7, "HISTORY"))
             {
-                Syscall.PrintString("HISTORY [N] [list command history]\r\n");
+                Syscall.PrintString("HISTORY [/N N] [list command history]\r\n");
+                Syscall.PrintString("  default: last 100 entries\r\n");
+                Syscall.PrintString("/N <n> [show last n entries]\r\n");
                 Syscall.PrintString("/? [show this help]\r\n");
                 return;
             }
@@ -747,6 +902,67 @@ namespace Osb.Shell.Userspace
             if (match(4, "EXIT"))
             {
                 Syscall.PrintString("EXIT [exit the shell]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "PIPE"))
+            {
+                Syscall.PrintString("PIPE: left | right  [run left, pipe stdout to right stdin]\r\n");
+                Syscall.PrintString("  both built-in and external programs are supported\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(5, "CLEAR"))
+            {
+                Syscall.PrintString("CLEAR [clear the screen]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "MOVE"))
+            {
+                Syscall.PrintString("MOVE old new [rename file]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(2, "CP"))
+            {
+                Syscall.PrintString("CP src dst [copy file]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(2, "PS"))
+            {
+                Syscall.PrintString("PS [list tasks]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(3, "NET"))
+            {
+                Syscall.PrintString("NET [show network status]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(8, "IFCONFIG"))
+            {
+                Syscall.PrintString("IFCONFIG [show network interfaces]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "GREP"))
+            {
+                Syscall.PrintString("GREP <pattern> <file> [search file for pattern]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "PING"))
+            {
+                Syscall.PrintString("PING <host> [send ICMP echo]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(3, "PCI"))
+            {
+                Syscall.PrintString("PCI [list PCI devices]\r\n");
                 Syscall.PrintString("/? [show this help]\r\n");
                 return;
             }
@@ -1029,10 +1245,27 @@ namespace Osb.Shell.Userspace
             }
             if (FlagEq(flag, fn, "/DEL"))
             {
-                if (argL <= 0) { Syscall.PrintString("Usage: USER /DEL <name>\r\n"); return; }
+                if (argL <= 0) { Syscall.PrintString("Usage: USER /DEL <name> [/HOME]\r\n"); return; }
                 var nbuf = stackalloc byte[260];
                 Narrow(line + argS, nbuf, argL);
-                int rc = Syscall.UserOpDel(nbuf, argL);
+                // check for /HOME flag after the name (RDX bit 0)
+                uint flags = 0;
+                while (i < len && line[i] == ' ') i++;
+                if (i < len && line[i] == '/' && i + 5 <= len)
+                {
+                    bool isHome = true;
+                    char h0 = 'H', h1 = 'O', h2 = 'M', h3 = 'E';
+                    for (int k = 0; k < 4; k++)
+                    {
+                        char c = line[i + 1 + k];
+                        if (c >= 'a' && c <= 'z') c -= (char)32;
+                        char hk = k == 0 ? h0 : k == 1 ? h1 : k == 2 ? h2 : h3;
+                        if (c != hk) { isHome = false; break; }
+                    }
+                    if (isHome && (i + 5 == len || line[i + 5] == ' '))
+                        flags = 1;
+                }
+                int rc = Syscall.UserOpDel(nbuf, argL, flags);
                 if (rc == 0) Syscall.PrintString("OK\r\n");
                 else if (rc == -3) Syscall.PrintString("Permission denied\r\n");
                 else if (rc == -4) Syscall.PrintString("No such user\r\n");

@@ -148,7 +148,8 @@ namespace Osb.Shell.Userspace
                 i++;
                 if (i < len && line[i] == '?')
                 {
-                    Syscall.PrintString("LN <link> <target> [create link]\r\n");
+                    Syscall.PrintString("LN [/S] <link> <target> [create link]\r\n");
+                    Syscall.PrintString("/S [create symbolic link]\r\n");
                     Syscall.PrintString("/? [show this help]\r\n");
                     return;
                 }
