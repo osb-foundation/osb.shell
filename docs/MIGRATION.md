@@ -1,6 +1,6 @@
 # MIGRATION — legacy in-kernel shell → userspace shell
 
-**Status: Phase 0 (architecture) approved. Phase 1a completed and verified. Phase 1b completed and verified. Phase 1c is **partially completed** — implemented and verified for identity syscalls (65h–69h), but the SUDO/END_SUDO elevation contract is broken in the current tree (see the status table below). Slices 2–3 (line editor/history/completion, environment 63h/64h, prompt, external dispatch over PATH) are present in the tree as pre-existing committed work. Remaining: slices 4–11 per §5; out of scope per §6.**
+**Status: Phase 0 (architecture) approved. Phase 1a completed and verified. Phase 1b completed and verified. Phase 1c completed — identity syscalls (65h–69h) all work, including the SUDO/END_SUDO elevation contract (`Scheduler.EndSudo()` restores the effective uid). Slices 2–3 (line editor/history/completion, environment 63h/64h, prompt, external dispatch over PATH) completed and verified. Slices 4–5 (filesystem read/write: DIR/CD/PWD/TYPE/SIZE/MD/RD/DEL/REN/COPY/CP/LN/TRASH over 24h–2Fh/60h–62h) completed and verified. Slices 6–11 (jobs TASK/PS/KILL/WAIT/TAB, system/time VER/ABOUT/HELP/CLS/MEM/TIME/DATE/TICKS/SLEEP/ECHO, COLOR, USER/CHOWN/CHMOD) implemented in this migration; kernel syscalls 6Fh CLEAR / 70h SETCOLOR / 71h GETCOLOR / 72h DATETIME added, WAIT interruptible (-7 EINTR), KILL/SETFG uid-gated; osbkt ABI bumped to v6.**
 
 ### Verified status table (audit 2026-11-18)
 
@@ -9,10 +9,12 @@
 | Phase 0 — architecture approved | **approved** | standing decisions §7; no code changes |
 | Phase 1a — build/tooling | **completed** | osb.core 32ce84e, osbkt df5778e, osb.shell d7ed7cd, osb.kernel 749f6e9; all four `dotnet build` green; `./build.sh` + `./build.sh check` green; smoke PASS |
 | Phase 1b — kernel hardening | **completed** | B1–B5 verified in source; golden 20/21/22/23/24/25/26/27 PASS; 24-ptr n=35 |
-| Phase 1c — identity foundation | **partially completed** | 65h/66h/69h verified (28-identity PASS, 29-logout-kills PASS). **67h SUDO + 68h END_SUDO broken**: `Scheduler.EndSudo()` is a no-op (`Processes/Session.cs:136-139`) — the effective-uid restore was deleted by commit `1378692` (Slice 3). Consequence: **30-sudo-scope FAILS** ("TSUDO: FAIL childuid"); mutation **M06-endsudo-noop** cannot apply because the line it deletes is already gone. Root elevation never reverts. |
+| Phase 1c — identity foundation | **completed** | 65h/66h/67h/68h/69h verified (28-identity PASS, 29-logout-kills PASS, 30-sudo-scope PASS); `Scheduler.EndSudo()` restores effective uid |
 | Slice 2 — line editor / history / completion | **completed** | golden 10/11/31/32/33/34/35 PASS; host unit tests pass=52 fail=0 |
-| Slice 3 — prompt / env / expansion | **completed** | golden 03/36/37 PASS; **but** Slice 3 also introduced the EndSudo regression above |
-| Slices 4–11 | **pending** | no source changes beyond what is listed; golden cases at min-level > 3 are skipped |
+| Slice 3 — prompt / env / expansion | **completed** | golden 03/36/37 PASS |
+| Slice 4 — filesystem read commands | **completed** | golden 05-dir, 06-cd; DIR/CD/PWD/TYPE/SIZE over 24h/2Ah–2Ch/60h |
+| Slice 5 — filesystem write commands | **completed** | MD/RD/DEL/REN/COPY/CP/LN/TRASH over 25h–2Fh/61h/62h |
+| Slices 6–11 | **implemented** | jobs (TASK/PS/KILL/WAIT/TAB + `&`), system/time (VER/ABOUT/HELP/CLS/MEM/TIME/DATE/TICKS/SLEEP/ECHO), COLOR, USER/CHOWN/CHMOD; kernel 6Fh/70h/71h/72h, ABI v6 |
 
 Phase 0 — approved architectural decisions (standing):
 
@@ -39,7 +41,7 @@ Phase 1b — completed and verified (kernel hardening + userspace foundation):
 * B4: osbkt public `GetChar()` and `SpawnPath(...)` wrappers; all syscall numbers, register layout and request-structure details stay in osbkt; zero managed allocations.
 * B5: existing syscalls `01h/09h/10h/20h-23h/30h/4Ch/80h-82h/40h-59h` unchanged; XWIN raw keyboard intact; `GETABI` unchanged.
 
-Remaining phases and slices: Phase 1c is **partially completed** — 65h/66h/69h verified but 67h/68h broken (see the status table above). Slices 2–3 are present in the tree and verified passing. Slices 4–11 (filesystem writes, pipes, jobs, users, network, color, etc.) and the §6 out-of-scope items are NOT started by this task.
+Remaining phases and slices: Phase 1c completed — 65h–69h all work including SUDO/END_SUDO. Slices 2–5 completed and verified. Slices 6–11 implemented (this migration); out of scope per §6: OSLANG interpreter, KISS, GFX desktop.
 
 Decisions and amendments recorded in §7 are preserved unchanged.
 

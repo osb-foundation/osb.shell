@@ -37,6 +37,31 @@ namespace Osb.Shell.Userspace
         public const int COPY = 18;
         public const int LN = 19;
         public const int TRASH = 20;
+        public const int VER = 21;
+        public const int HELP = 23;
+        public const int CLS = 24;
+        public const int MEM = 25;
+        public const int REBOOT = 29;
+        public const int TIME = 30;
+        public const int DATE = 31;
+        public const int TICKS = 32;
+        public const int SLEEP = 33;
+        public const int OSLANG = 35;
+        public const int DEMO = 36;
+        public const int TASK = 37;
+        public const int PS = 37;
+        public const int KILL = 38;
+        public const int WAIT = 39;
+        public const int TAB = 40;
+        public const int SPAWN = 41;
+        public const int GREP = 42;
+        public const int PING = 43;
+        public const int PCI = 44;
+        public const int NET = 45;
+        public const int IFCONFIG = 45;
+        public const int USER = 46;
+        public const int CHOWN = 47;
+        public const int CHMOD = 48;
 
         private struct Table
         {
@@ -56,23 +81,23 @@ namespace Osb.Shell.Userspace
             if (_ready) return;
             _ready = true;
             // Full DOS-like command set (legacy parity) for completion. Only the
-            // 1c commands have real ids; the rest complete but are not run yet.
-            Add("VER", NONE); Add("ABOUT", NONE); Add("HELP", NONE); Add("CLS", NONE);
-            Add("CLEAR", NONE); Add("MEM", NONE); Add("HALT", NONE); Add("POWEROFF", NONE);
-            Add("SHUTDOWN", NONE); Add("EXIT", EXIT); Add("QUIT", NONE); Add("REBOOT", NONE);
-            Add("TIME", NONE); Add("DATE", NONE); Add("TICKS", NONE); Add("SLEEP", NONE);
+            // implemented commands have real ids; the rest complete but are not run yet.
+            Add("VER", VER); Add("HELP", HELP); Add("CLS", CLS);
+            Add("CLEAR", CLS); Add("MEM", MEM);
+            Add("EXIT", EXIT); Add("REBOOT", REBOOT);
+            Add("TIME", TIME); Add("DATE", DATE); Add("TICKS", TICKS); Add("SLEEP", SLEEP);
             Add("ECHO", ECHO); Add("SET", SET); Add("DIR", DIR); Add("CD", CD);
-            Add("PWD", PWD); Add("TYPE", TYPE); Add("DEL", DEL); Add("ERASE", DEL);
-            Add("DELETE", DEL); Add("MD", MD); Add("MKDIR", MD); Add("RD", RD);
-            Add("RMDIR", RD); Add("REN", REN); Add("RENAME", REN); Add("MOVE", REN);
-            Add("COPY", COPY); Add("CP", COPY); Add("SIZE", SIZE); Add("COLOR", NONE);
-            Add("LN", LN); Add("LNK", LN); Add("OSLANG", NONE); Add("DEMO", NONE);
-            Add("TASK", NONE); Add("PS", NONE); Add("KILL", NONE); Add("WAIT", NONE);
-            Add("TAB", NONE); Add("SPAWN", NONE); Add("RING3", NONE); Add("TRASH", TRASH);
-            Add("GREP", NONE); Add("PING", NONE); Add("PCI", NONE); Add("NET", NONE);
-            Add("IFCONFIG", NONE); Add("HISTORY", HISTORY); Add("USER", NONE);
+            Add("PWD", PWD); Add("TYPE", TYPE); Add("DEL", DEL);
+            Add("MD", MD); Add("MKDIR", MD); Add("RD", RD);
+            Add("RMDIR", RD); Add("REN", REN); Add("MOVE", REN);
+            Add("COPY", COPY); Add("CP", COPY); Add("SIZE", SIZE);
+            Add("LN", LN); Add("OSLANG", OSLANG); Add("DEMO", DEMO);
+            Add("TASK", TASK); Add("PS", PS); Add("KILL", KILL); Add("WAIT", WAIT);
+            Add("TAB", TAB); Add("SPAWN", SPAWN); Add("TRASH", TRASH);
+            Add("GREP", GREP); Add("PING", PING); Add("PCI", PCI); Add("NET", NET);
+            Add("IFCONFIG", NET); Add("HISTORY", HISTORY); Add("USER", USER);
             Add("LOGIN", LOGIN); Add("LOGOUT", LOGOUT); Add("WHOAMI", WHOAMI);
-            Add("CHOWN", NONE); Add("CHMOD", NONE); Add("SUDO", SUDO);
+            Add("CHOWN", CHOWN); Add("CHMOD", CHMOD); Add("SUDO", SUDO);
         }
 
         private static void Add(string s, int id)

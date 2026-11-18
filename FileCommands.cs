@@ -12,6 +12,16 @@ namespace Osb.Shell.Userspace
         {
             int i = 2;
             while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("MD <dir> [create directory]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             if (i >= len) { Syscall.PrintString("Usage: MD <dir>\r\n"); return; }
             var path = stackalloc byte[256];
             int n = 0;
@@ -24,6 +34,16 @@ namespace Osb.Shell.Userspace
         {
             int i = 2;
             while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("RD <dir> [remove directory]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             if (i >= len) { Syscall.PrintString("Usage: RD <dir>\r\n"); return; }
             var path = stackalloc byte[256];
             int n = 0;
@@ -37,6 +57,16 @@ namespace Osb.Shell.Userspace
         {
             int i = 3;
             while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("DEL <file> [delete file]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             if (i >= len) { Syscall.PrintString("Usage: DEL <file>\r\n"); return; }
             var path = stackalloc byte[256];
             int n = 0;
@@ -48,6 +78,16 @@ namespace Osb.Shell.Userspace
         {
             int i = 3;
             while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("REN old new [rename file]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             int s1 = i;
             while (i < len && line[i] != ' ') i++;
             int l1 = i - s1;
@@ -69,6 +109,16 @@ namespace Osb.Shell.Userspace
         {
             int i = 4;
             while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("COPY src dst [copy file]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             int s1 = i;
             while (i < len && line[i] != ' ') i++;
             int l1 = i - s1;
@@ -88,6 +138,18 @@ namespace Osb.Shell.Userspace
 
         public static void DoLn(char* line, int len)
         {
+            int i = 2;
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("LN <link> <target> [create link]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             var buf = stackalloc byte[256];
             int n = 0;
             for (int k = 0; k < len && n < 255; k++) buf[n++] = (byte)line[k];
@@ -96,14 +158,38 @@ namespace Osb.Shell.Userspace
 
         public static void DoTrash(char* line, int len)
         {
+            int i = 5;
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("TRASH [/F pattern] [/U name] [manage trash]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             var buf = stackalloc byte[256];
             int n = 0;
             for (int k = 0; k < len && n < 255; k++) buf[n++] = (byte)line[k];
             Syscall.Trash(buf, n);
         }
 
-        public static void DoPwd()
+        public static void DoPwd(char* line, int len)
         {
+            int i = 3;   // skip "PWD"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("PWD [print working directory]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             var buf = stackalloc byte[256];
             int n = Syscall.GetCwd(buf, 256);
             if (n < 0) n = 0;
@@ -115,9 +201,19 @@ namespace Osb.Shell.Userspace
         {
             int i = 2;
             while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("CD [path] [change directory]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             if (i >= len)
             {
-                DoPwd();
+                DoPwd(line, len);
                 return;
             }
             var path = stackalloc byte[256];
@@ -133,6 +229,16 @@ namespace Osb.Shell.Userspace
         {
             int i = 4;   // skip "SIZE"
             while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("SIZE <file> [show file size]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             if (i >= len) { Syscall.PrintString("Usage: SIZE <file>\r\n"); return; }
             var path = stackalloc byte[256];
             int n = 0;
@@ -155,6 +261,16 @@ namespace Osb.Shell.Userspace
         {
             int i = 4;   // skip "TYPE"
             while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("TYPE <file> [display file contents]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             if (i >= len) { Syscall.PrintString("Usage: TYPE <file>\r\n"); return; }
             var path = stackalloc byte[256];
             int n = 0;
@@ -179,32 +295,43 @@ namespace Osb.Shell.Userspace
 
         public static void DoDir(char* line, int len)
         {
-            // DIR [path] [/W]
+            // DIR [path] [/W] [/?] — long form shows type, permissions, owner, size
             bool wide = false;
+            bool help = false;
             int i = 3;   // skip "DIR"
             while (i < len && line[i] == ' ') i++;
-            // check for /W flag
-            // simple: parse path token
             var path = stackalloc byte[256];
             int pn = 0;
-            // find /W
             for (int k = i; k < len; k++)
             {
-                if (line[k] == '/' && k + 1 < len && (line[k+1] == 'W' || line[k+1] == 'w'))
+                if (line[k] == '/' && k + 1 < len)
                 {
-                    wide = true;
-                    // skip the flag
-                    k++; continue;
+                    if (line[k + 1] == 'W' || line[k + 1] == 'w')
+                    {
+                        wide = true;
+                        k++; continue;
+                    }
+                    if (line[k + 1] == '?')
+                    {
+                        help = true;
+                        k++; continue;
+                    }
                 }
-                if (line[k] != ' ') path[pn++] = (byte)line[k];
+                if (line[k] != ' ' && pn < 255) path[pn++] = (byte)line[k];
+            }
+            if (help)
+            {
+                Syscall.PrintString("DIR [path] [/W] [list directory contents]\r\n");
+                Syscall.PrintString("/W [wide format]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
             }
             if (pn == 0)
             {
-                // use cwd
                 var cwd = stackalloc byte[256];
                 int cl = Syscall.GetCwd(cwd, 256);
                 if (cl < 0) cl = 0;
-                for (int k = 0; k < cl; k++) path[pn++] = cwd[k];
+                for (int k = 0; k < cl && pn < 255; k++) path[pn++] = cwd[k];
             }
             uint ino; ushort mode, uid; ulong size;
             if (!Syscall.ResolvePath(path, pn, out ino, out mode, out uid, out size))
@@ -217,34 +344,83 @@ namespace Osb.Shell.Userspace
                 Syscall.PrintString("Path not found\r\n");
                 return;
             }
-            // iterate entries
+            // ensure path ends with separator for child resolution
+            if (pn > 0 && path[pn - 1] != '\\' && path[pn - 1] != '/' && pn < 255)
+                path[pn++] = (byte)'\\';
+
             var ebuf = stackalloc byte[256];
             int idx = 0;
+            bool any = false;
             for (;;)
             {
                 bool r = Syscall.DirNext(ino, idx, ebuf, 256);
                 if (!r) break;
+                uint cino = (uint)(ebuf[0] | (ebuf[1] << 8) | (ebuf[2] << 16) | (ebuf[3] << 24));
                 byte type = ebuf[4];
                 byte nlen = ebuf[5];
-                // print name
-                for (int k = 0; k < nlen; k++) Syscall.PutChar((char)ebuf[6 + k]);
-                if (!wide)
+
+                // build child path: parent path + name
+                int cpn = pn;
+                for (int k = 0; k < nlen && cpn < 255; k++) path[cpn++] = ebuf[6 + k];
+
+                ushort cmode; ushort cuid; ulong csize;
+                if (Syscall.ResolvePath(path, cpn, out cino, out cmode, out cuid, out csize))
                 {
-                    // long form: size for files
-                    if (type != 2)   // not directory
+                    any = true;
+                    if (wide)
                     {
-                        // get size via resolve of child? skip; print spaces
-                        Syscall.PrintString("        ");
+                        for (int k = 0; k < nlen; k++) Syscall.PutChar((char)ebuf[6 + k]);
+                        Syscall.PutChar(' ');
                     }
-                    Syscall.PutChar('\r'); Syscall.PutChar('\n');
-                }
-                else
-                {
-                    Syscall.PutChar(' ');
+                    else
+                    {
+                        Syscall.PutChar((cmode & 0x4000) != 0 ? (char)'d' : (char)'-');
+                        Syscall.PutChar((cmode & 0x100) != 0 ? (char)'r' : (char)'-');
+                        Syscall.PutChar((cmode & 0x080) != 0 ? (char)'w' : (char)'-');
+                        Syscall.PutChar((cmode & 0x040) != 0 ? (char)'x' : (char)'-');
+                        Syscall.PutChar((cmode & 0x020) != 0 ? (char)'r' : (char)'-');
+                        Syscall.PutChar((cmode & 0x010) != 0 ? (char)'w' : (char)'-');
+                        Syscall.PutChar((cmode & 0x008) != 0 ? (char)'x' : (char)'-');
+                        Syscall.PutChar((cmode & 0x004) != 0 ? (char)'r' : (char)'-');
+                        Syscall.PutChar((cmode & 0x002) != 0 ? (char)'w' : (char)'-');
+                        Syscall.PutChar((cmode & 0x001) != 0 ? (char)'x' : (char)'-');
+                        Syscall.PutChar(' ');
+                        PrintUInt((ulong)cuid);
+                        Syscall.PutChar(' ');
+                        PrintULong(csize);
+                        Syscall.PutChar(' ');
+                        for (int k = 0; k < nlen; k++) Syscall.PutChar((char)ebuf[6 + k]);
+                        Syscall.PutChar('\r'); Syscall.PutChar('\n');
+                    }
                 }
                 idx++;
             }
+            if (!any && !wide) Syscall.PrintString("Empty.\r\n");
             if (wide) { Syscall.PutChar('\r'); Syscall.PutChar('\n'); }
+        }
+
+        private static void PrintUInt(ulong v)
+        {
+            var buf = stackalloc char[24];
+            int n = 0;
+            if (v == 0) { PutChar2('0'); return; }
+            while (v != 0) { buf[n++] = (char)('0' + (int)(v % 10)); v /= 10; }
+            while (n > 0) PutChar2(buf[--n]);
+        }
+
+        private static void PrintULong(ulong v)
+        {
+            var buf = stackalloc char[24];
+            int n = 0;
+            if (v == 0) { PutChar2('0'); return; }
+            while (v != 0) { buf[n++] = (char)('0' + (int)(v % 10)); v /= 10; }
+            while (n > 0) PutChar2(buf[--n]);
+        }
+
+        private static void PutChar2(char c)
+        {
+            var b = stackalloc char[1]; b[0] = c;
+            Syscall.Print(b, 1);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Osb.Shell.Userspace
             }
 
             Commands.Init();
-            Login();
+            Login(null, 0);
             Session();   // returns only on EXIT (which exits the process)
         }
 
@@ -36,8 +36,20 @@ namespace Osb.Shell.Userspace
         // needed: we try an empty password first; a -3 means either an unknown
         // user or a user that has a password, so we prompt and retry (the two
         // cases stay indistinguishable to the caller — no user enumeration).
-        private static void Login()
+        private static void Login(char* line, int len)
         {
+            int i = 5;   // skip "LOGIN"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("LOGIN [log in as a user]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             var name = stackalloc char[NameCap];
             var pass = stackalloc char[NameCap];
             var nbuf = stackalloc byte[NameCap];
@@ -63,6 +75,24 @@ namespace Osb.Shell.Userspace
                 if (Syscall.Login(nbuf, nlen, pbuf, plen) == 0) { Syscall.PutChar('\n'); return; }
                 Syscall.PrintString("Login incorrect\r\n");
             }
+        }
+
+        private static void DoLogout(char* line, int len)
+        {
+            int i = 6;   // skip "LOGOUT"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("LOGOUT [log out the current user]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
+            Syscall.Logout();
+            Login(line, len);
         }
 
         // Command loop. Each line is read with the full line editor (history +
@@ -117,16 +147,16 @@ namespace Osb.Shell.Userspace
                     Syscall.PrintString("bye\r\n");
                     Syscall.Exit(0);
                     return;
-                case Commands.WHOAMI: DoWhoAmI(); return;
-                case Commands.LOGIN: Login(); return;
-                case Commands.LOGOUT: Syscall.Logout(); Login(); return;
+                case Commands.WHOAMI: DoWhoAmI(line, len); return;
+                case Commands.LOGIN: Login(line, len); return;
+                case Commands.LOGOUT: DoLogout(line, len); return;
                 case Commands.SUDO: DoSudo(line, len); return;
                 case Commands.HISTORY: DoHistory(line, len); return;
                 case Commands.ECHO: DoEcho(line, len); return;
                 case Commands.SET: DoSet(line, len); return;
                 case Commands.DIR: FileCommands.DoDir(line, len); return;
                 case Commands.CD: FileCommands.DoCd(line, len); return;
-                case Commands.PWD: FileCommands.DoPwd(); return;
+                case Commands.PWD: FileCommands.DoPwd(line, len); return;
                 case Commands.TYPE: FileCommands.DoType(line, len); return;
                 case Commands.SIZE: FileCommands.DoSize(line, len); return;
                 case Commands.MD: FileCommands.DoMd(line, len); return;
@@ -136,6 +166,23 @@ namespace Osb.Shell.Userspace
                 case Commands.COPY: FileCommands.DoCopy(line, len); return;
                 case Commands.LN: FileCommands.DoLn(line, len); return;
                 case Commands.TRASH: FileCommands.DoTrash(line, len); return;
+                case Commands.VER: DoVer(line, len); return;
+                case Commands.HELP: DoHelp(line, len); return;
+                case Commands.CLS: DoCls(line, len); return;
+                case Commands.MEM: DoMem(line, len); return;
+                case Commands.REBOOT: DoReboot(line, len); return;
+                case Commands.TIME: DoTime(line, len); return;
+                case Commands.DATE: DoDate(line, len); return;
+                case Commands.TICKS: DoTicks(line, len); return;
+                case Commands.SLEEP: DoSleep(line, len); return;
+                case Commands.USER: DoUser(line, len); return;
+                case Commands.CHOWN: DoChown(line, len); return;
+                case Commands.CHMOD: DoChmod(line, len); return;
+                case Commands.TASK: DoTask(line, len); return;
+                case Commands.KILL: DoKill(line, len); return;
+                case Commands.WAIT: DoWait(line, len); return;
+                case Commands.TAB: DoTab(line, len); return;
+                case Commands.SPAWN: DoSpawn(line, len); return;
                 default:
                     // Unknown first token: an external program (C3). A known
                     // but not-yet-implemented command (NONE) just re-prompts.
@@ -144,8 +191,20 @@ namespace Osb.Shell.Userspace
             }
         }
 
-        private static void DoWhoAmI()
+        private static void DoWhoAmI(char* line, int len)
         {
+            int i = 6;   // skip "WHOAMI"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("WHOAMI [show current user name]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             var buf = stackalloc byte[NameCap];
             int n = Syscall.WhoAmI(buf, NameCap);
             if (n < 0) n = 0;
@@ -158,6 +217,16 @@ namespace Osb.Shell.Userspace
         {
             int i = 4;   // skip "ECHO"
             while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("ECHO [text] [print text]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             if (i < len) Syscall.Print(line + i, len - i);
             Syscall.PutChar('\r'); Syscall.PutChar('\n');
         }
@@ -165,9 +234,19 @@ namespace Osb.Shell.Userspace
         // HISTORY [N]: list all entries, or the last N. Format "%5d  <line>".
         private static void DoHistory(char* line, int len)
         {
-            int count = -1;   // -1 = all
             int i = 7;        // skip "HISTORY"
             while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("HISTORY [N] [list command history]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
+            int count = -1;   // -1 = all
             if (i < len)
             {
                 count = 0;
@@ -204,6 +283,16 @@ namespace Osb.Shell.Userspace
         {
             int i = 5;   // skip "SUDO "
             while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("SUDO <command> [run command as root]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             if (i >= len) { Syscall.PrintString("Usage: SUDO <command>\r\n"); return; }
 
             if (Syscall.Sudo() != 0) { Syscall.PrintString("User is not in the sudoers file.\r\n"); return; }
@@ -239,6 +328,16 @@ namespace Osb.Shell.Userspace
         {
             int i = 3;   // skip "SET"
             while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("SET [NAME[=VALUE]] [get/set environment]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
             if (i >= len) { ListEnv(null, 0); return; }
             int eq = i;
             while (eq < len && line[eq] != '=') eq++;
@@ -315,6 +414,976 @@ namespace Osb.Shell.Userspace
             var buf = stackalloc char[8];
             int n = Fmt.U32(buf, v);
             Syscall.Print(buf, n);
+        }
+
+        // ---- slice 9: system & time commands ----
+
+        private static void DoVer(char* line, int len)
+        {
+            int i = 0;
+            while (i < len && line[i] == ' ') i++;
+            int ts = i;
+            while (i < len && line[i] != ' ') i++;
+
+            // Parse flags: concatenated (/A/S/O) or separate (/A /S /O)
+            bool showKernel = false;
+            bool showShell = false;
+            bool showAbout = false;
+            bool showHelp = false;
+            bool anyFlag = false;
+
+            while (i < len)
+            {
+                while (i < len && line[i] == ' ') i++;
+                if (i >= len) break;
+                int fs = i;
+                while (i < len && line[i] != ' ') i++;
+                int fk = fs;
+                while (fk < i)
+                {
+                    if (line[fk] == '/')
+                    {
+                        fk++;
+                        if (fk < i)
+                        {
+                            anyFlag = true;
+                            char f = line[fk];
+                            if (f >= 'a' && f <= 'z') f -= (char)32;
+                            switch (f)
+                            {
+                                case 'O': showKernel = true; break;
+                                case 'S': showShell = true; break;
+                                case 'A': showAbout = true; break;
+                                case '?': showHelp = true; break;
+                            }
+                            fk++;
+                        }
+                    }
+                    else
+                    {
+                        fk++;
+                    }
+                }
+            }
+
+            if (showHelp)
+            {
+                Syscall.PrintString("VER [show OSB version information]\r\n");
+                Syscall.PrintString("/O [show kernel version]\r\n");
+                Syscall.PrintString("/S [show shell version]\r\n");
+                Syscall.PrintString("/A [show about information]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+
+            if (!anyFlag) showKernel = true; // default: kernel version
+
+            if (showKernel)
+                Syscall.PrintString("OSB (dotnet) version 0.1 - bootable kernel\r\n");
+            if (showShell)
+                Syscall.PrintString("OSB shell version 0.1\r\n");
+            if (showAbout)
+                Syscall.PrintString("OSB: Operating System Basic, 2000-2026\r\n");
+        }
+
+        // HELP [<cmd>]: per-command page, or the overview.
+        private static void DoHelp(char* line, int len)
+        {
+            int i = 4;   // skip "HELP"
+            while (i < len && line[i] == ' ') i++;
+            if (i >= len)
+            {
+                Syscall.PrintString("OSB shell commands:\r\n");
+                Syscall.PrintString("  VER HELP CLS CLEAR MEM REBOOT\r\n");
+                Syscall.PrintString("  TIME DATE TICKS SLEEP ECHO SET DIR CD PWD TYPE SIZE MD RD\r\n");
+                Syscall.PrintString("  DEL REN MOVE COPY CP SIZE LN\r\n");
+                Syscall.PrintString("  TRASH GREP PING PCI NET IFCONFIG USER LOGIN LOGOUT WHOAMI\r\n");
+                Syscall.PrintString("  CHOWN CHMOD SUDO HISTORY TASK PS KILL WAIT TAB SPAWN\r\n");
+                Syscall.PrintString("  EXIT LOGOUT\r\n");
+                return;
+            }
+            // find the command name token
+            int s = i, e = i;
+            while (e < len && line[e] != ' ') e++;
+            int tl = e - s;
+
+            // Match command name (case-insensitive)
+            bool match(int slen, string lit)
+            {
+                if (tl != slen) return false;
+                fixed (char* p = lit)
+                {
+                    for (int k = 0; k < tl; k++)
+                    {
+                        char c = line[s + k];
+                        if (c >= 'a' && c <= 'z') c -= (char)32;
+                        if (c != p[k]) return false;
+                    }
+                }
+                return true;
+            }
+
+            if (match(3, "VER"))
+            {
+                Syscall.PrintString("VER [show OSB version information]\r\n");
+                Syscall.PrintString("/O [show kernel version]\r\n");
+                Syscall.PrintString("/S [show shell version]\r\n");
+                Syscall.PrintString("/A [show about information]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(3, "CLS"))
+            {
+                Syscall.PrintString("CLS [clear the screen]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(3, "MEM"))
+            {
+                Syscall.PrintString("MEM [show memory information]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "TIME"))
+            {
+                Syscall.PrintString("TIME [show uptime]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "DATE"))
+            {
+                Syscall.PrintString("DATE [show current date and time]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(5, "TICKS"))
+            {
+                Syscall.PrintString("TICKS [show tick count]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(5, "SLEEP"))
+            {
+                Syscall.PrintString("SLEEP <seconds> [sleep for N seconds]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "ECHO"))
+            {
+                Syscall.PrintString("ECHO [text] [print text]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(3, "SET"))
+            {
+                Syscall.PrintString("SET [NAME[=VALUE]] [get/set environment]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(3, "DIR"))
+            {
+                Syscall.PrintString("DIR [path] [/W] [list directory contents]\r\n");
+                Syscall.PrintString("  long: type perms owner size name\r\n");
+                Syscall.PrintString("/W [wide format]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(2, "CD"))
+            {
+                Syscall.PrintString("CD [path] [change directory]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(3, "PWD"))
+            {
+                Syscall.PrintString("PWD [print working directory]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "TYPE"))
+            {
+                Syscall.PrintString("TYPE <file> [display file contents]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "SIZE"))
+            {
+                Syscall.PrintString("SIZE <file> [show file size]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(2, "MD"))
+            {
+                Syscall.PrintString("MD <dir> [create directory]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(2, "RD"))
+            {
+                Syscall.PrintString("RD <dir> [remove directory]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(3, "DEL"))
+            {
+                Syscall.PrintString("DEL <file> [delete file]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(3, "REN"))
+            {
+                Syscall.PrintString("REN old new [rename file]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "COPY"))
+            {
+                Syscall.PrintString("COPY src dst [copy file]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(2, "LN"))
+            {
+                Syscall.PrintString("LN <link> <target> [create link]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(5, "TRASH"))
+            {
+                Syscall.PrintString("TRASH [/F pattern] [/U name] [manage trash]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(6, "REBOOT"))
+            {
+                Syscall.PrintString("REBOOT [reboot the system]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "USER"))
+            {
+                Syscall.PrintString("USER [/ADD name [pass] | /CHANGE name [pass] | /DEL name | /SUDO name | /UNSUDO name]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(5, "CHOWN"))
+            {
+                Syscall.PrintString("CHOWN <user> <path> [change file owner, root only]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(5, "CHMOD"))
+            {
+                Syscall.PrintString("CHMOD <octal> <path> [change file mode, owner or root]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "TASK"))
+            {
+                Syscall.PrintString("TASK [&] [list tasks or run in background]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "KILL"))
+            {
+                Syscall.PrintString("KILL <pid> [terminate a process]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "WAIT"))
+            {
+                Syscall.PrintString("WAIT <pid> [wait for a process]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(3, "TAB"))
+            {
+                Syscall.PrintString("TAB <pid> [set foreground process]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(5, "SPAWN"))
+            {
+                Syscall.PrintString("SPAWN <program> [&] [run an external program]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(6, "WHOAMI"))
+            {
+                Syscall.PrintString("WHOAMI [show current user name]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(5, "LOGIN"))
+            {
+                Syscall.PrintString("LOGIN [log in as a user]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(6, "LOGOUT"))
+            {
+                Syscall.PrintString("LOGOUT [log out the current user]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "SUDO"))
+            {
+                Syscall.PrintString("SUDO <command> [run command as root]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(7, "HISTORY"))
+            {
+                Syscall.PrintString("HISTORY [N] [list command history]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "HELP"))
+            {
+                Syscall.PrintString("HELP [<cmd>] [show command help]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            if (match(4, "EXIT"))
+            {
+                Syscall.PrintString("EXIT [exit the shell]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+            // Simple: print the same page as '/?' for known commands (minimal).
+            Syscall.PrintString("No help for ");
+            Syscall.Print(line + s, tl);
+            Syscall.PrintString("\r\n");
+        }
+
+        private static void DoCls(char* line, int len)
+        {
+            int i = 4;   // skip "CLS"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len)
+                {
+                    char f = line[i];
+                    if (f >= 'a' && f <= 'z') f -= (char)32;
+                    if (f == '?')
+                    {
+                        Syscall.PrintString("CLS [clear the screen]\r\n");
+                        Syscall.PrintString("/? [show this help]\r\n");
+                        return;
+                    }
+                }
+            }
+            Syscall.Clear();
+        }
+
+        private static void DoMem(char* line, int len)
+        {
+            int i = 3;   // skip "MEM"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("MEM [show memory information]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
+            var buf = stackalloc ulong[3];
+            Syscall.MemInfo(out buf[0], out buf[1], out buf[2]);
+            Syscall.PrintString("Physical frames: ");
+            PrintULong(buf[0] / 4);   // rough: KB/4 -> frames used; print total
+            Syscall.PrintString(" used / ");
+            PrintULong(buf[2] / 4);
+            Syscall.PrintString(" total (");
+            PrintULong(buf[0] / 1024);
+            Syscall.PrintString(" MiB usable)\r\n");
+        }
+
+        private static void DoReboot(char* line, int len)
+        {
+            int i = 6;   // skip "REBOOT"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("REBOOT [reboot the system]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
+            Syscall.PrintString("Rebooting ...\r\n");
+        }
+
+        private static void DoTime(char* line, int len)
+        {
+            int i = 4;   // skip "TIME"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("TIME [show uptime]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
+            Syscall.PrintString("Uptime: ");
+            PrintULong(Syscall.Ticks() / 100);
+            Syscall.PrintString(" s (");
+            PrintULong(Syscall.Ticks());
+            Syscall.PrintString(" ticks)\r\n");
+        }
+
+        private static void DoDate(char* line, int len)
+        {
+            int i = 4;   // skip "DATE"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("DATE [show current date and time]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
+            Syscall.DateTime(out int y, out int mo, out int d, out int h, out int mi, out int s);
+            PrintTwo(mo); Syscall.PutChar('/'); PrintTwo(d); Syscall.PrintString("/20");
+            PrintTwo(y); Syscall.PutChar(' ');
+            PrintTwo(h); Syscall.PutChar(':'); PrintTwo(mi); Syscall.PutChar(':'); PrintTwo(s);
+            Syscall.PutChar('\r'); Syscall.PutChar('\n');
+        }
+
+        private static void DoTicks(char* line, int len)
+        {
+            int i = 5;   // skip "TICKS"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("TICKS [show tick count]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
+            Syscall.PrintString("Ticks: ");
+            PrintULong(Syscall.Ticks());
+            Syscall.PutChar('\r'); Syscall.PutChar('\n');
+        }
+
+        private static void DoSleep(char* line, int len)
+        {
+            int i = 5;   // skip "SLEEP"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("SLEEP <seconds> [sleep for N seconds]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
+            ulong ticks = 0;
+            bool any = false;
+            while (i < len && line[i] >= '0' && line[i] <= '9')
+            {
+                ticks = ticks * 10 + (ulong)(line[i] - '0'); i++; any = true;
+            }
+            if (!any) { Syscall.PrintString("Usage: SLEEP <seconds>\r\n"); return; }
+            Syscall.PrintString("Sleeping ...\r\n");
+            Syscall.Sleep(ticks * 100);   // ticks ~ 10ms each; seconds * 100
+            Syscall.PrintString("Done.\r\n");
+        }
+
+        // ---- slice 11: COLOR ----
+
+        // ---- slice 7: USER / CHOWN / CHMOD ----
+
+        private static bool FlagEq(char* flag, int len, string lit)
+        {
+            if (len != lit.Length) return false;
+            fixed (char* p = lit)
+            {
+                for (int i = 0; i < len; i++)
+                    if (flag[i] != p[i]) return false;
+            }
+            return true;
+        }
+
+        private static void DoUserList()
+        {
+            var buf = stackalloc byte[512];
+            int n = Syscall.UserOpList(buf, 512);
+            if (n < 0) { Syscall.PrintString("USER: list failed\r\n"); return; }
+            Syscall.PrintString("  NAME          UID   HOME                              FLAGS\r\n");
+            int pos = 0;
+            while (pos < n)
+            {
+                int ns = pos;
+                while (pos < n && buf[pos] != ' ') pos++;
+                int nl = pos - ns;
+                if (pos < n) pos++;
+                int us = pos;
+                while (pos < n && buf[pos] != ' ') pos++;
+                int ul = pos - us;
+                if (pos < n) pos++;
+                int hs = pos;
+                while (pos < n && buf[pos] != ' ') pos++;
+                int hl = pos - hs;
+                if (pos < n) pos++;
+                char sf = (pos < n) ? (char)buf[pos++] : (char)'-';
+                if (pos < n) pos++;
+                bool starred = (pos < n && buf[pos] == '*');
+                if (starred) { pos++; if (pos < n && buf[pos] == ' ') pos++; }
+                while (pos < n && buf[pos] != '\n') pos++;
+                if (pos < n) pos++;
+
+                Syscall.PrintString("  ");
+                Syscall.Write(buf + ns, nl);
+                for (int k = nl; k < 14; k++) Syscall.PutChar(' ');
+                Syscall.Write(buf + us, ul);
+                for (int k = ul; k < 5; k++) Syscall.PutChar(' ');
+                Syscall.PrintString("  ");
+                Syscall.Write(buf + hs, hl);
+                for (int k = hl; k < 34; k++) Syscall.PutChar(' ');
+                Syscall.PrintString(sf == '1' ? "sudo" : "-");
+                if (starred) Syscall.PrintString(" *");
+                Syscall.PutChar('\r'); Syscall.PutChar('\n');
+            }
+        }
+
+        private static void DoUser(char* line, int len)
+        {
+            int i = 4;   // skip "USER"
+            while (i < len && line[i] == ' ') i++;
+            int fs = i;
+            while (i < len && line[i] != ' ') i++;
+            int fl = i - fs;
+
+            if (fl == 0 || line[fs] != '/')
+            {
+                DoUserList();
+                return;
+            }
+
+            char* flag = stackalloc char[16];
+            int fn = fl < 15 ? fl : 15;
+            for (int k = 0; k < fn; k++)
+            {
+                char c = line[fs + k];
+                if (c >= 'a' && c <= 'z') c -= (char)32;
+                flag[k] = c;
+            }
+
+            while (i < len && line[i] == ' ') i++;
+            int argS = i;
+            while (i < len && line[i] != ' ') i++;
+            int argL = i - argS;
+
+            if (FlagEq(flag, fn, "/ADD"))
+            {
+                if (argL <= 0) { Syscall.PrintString("Usage: USER /ADD <name> [password]\r\n"); return; }
+                while (i < len && line[i] == ' ') i++;
+                int ps = i;
+                while (i < len && line[i] != ' ') i++;
+                int plen = i - ps;
+                var nbuf = stackalloc byte[260];
+                var pbuf = stackalloc byte[260];
+                Narrow(line + argS, nbuf, argL);
+                Narrow(line + ps, pbuf, plen);
+                int rc = Syscall.UserOpAdd(nbuf, argL, pbuf, plen);
+                if (rc == 0) Syscall.PrintString("OK\r\n");
+                else if (rc == -3) Syscall.PrintString("Permission denied\r\n");
+                else Syscall.PrintString("Cannot add user\r\n");
+                return;
+            }
+            if (FlagEq(flag, fn, "/CHANGE"))
+            {
+                if (argL <= 0) { Syscall.PrintString("Usage: USER /CHANGE <name> [password]\r\n"); return; }
+                while (i < len && line[i] == ' ') i++;
+                int ps = i;
+                while (i < len && line[i] != ' ') i++;
+                int plen = i - ps;
+                var nbuf = stackalloc byte[260];
+                var pbuf = stackalloc byte[260];
+                Narrow(line + argS, nbuf, argL);
+                Narrow(line + ps, pbuf, plen);
+                int rc = Syscall.UserOpChangePass(nbuf, argL, pbuf, plen);
+                if (rc == 0) Syscall.PrintString("Password changed\r\n");
+                else if (rc == -3) Syscall.PrintString("Permission denied\r\n");
+                else if (rc == -4) Syscall.PrintString("No such user\r\n");
+                else Syscall.PrintString("Cannot change password\r\n");
+                return;
+            }
+            if (FlagEq(flag, fn, "/DEL"))
+            {
+                if (argL <= 0) { Syscall.PrintString("Usage: USER /DEL <name>\r\n"); return; }
+                var nbuf = stackalloc byte[260];
+                Narrow(line + argS, nbuf, argL);
+                int rc = Syscall.UserOpDel(nbuf, argL);
+                if (rc == 0) Syscall.PrintString("OK\r\n");
+                else if (rc == -3) Syscall.PrintString("Permission denied\r\n");
+                else if (rc == -4) Syscall.PrintString("No such user\r\n");
+                else if (rc == -5) Syscall.PrintString("Cannot delete root\r\n");
+                else Syscall.PrintString("Error\r\n");
+                return;
+            }
+            if (FlagEq(flag, fn, "/SUDO"))
+            {
+                if (argL <= 0) { Syscall.PrintString("Usage: USER /SUDO <name>\r\n"); return; }
+                var nbuf = stackalloc byte[260];
+                Narrow(line + argS, nbuf, argL);
+                int rc = Syscall.UserOpSudo(nbuf, argL);
+                if (rc == 0) Syscall.PrintString("OK\r\n");
+                else if (rc == -3) Syscall.PrintString("Permission denied\r\n");
+                else if (rc == -4) Syscall.PrintString("No such user\r\n");
+                else Syscall.PrintString("Error\r\n");
+                return;
+            }
+            if (FlagEq(flag, fn, "/UNSUDO"))
+            {
+                if (argL <= 0) { Syscall.PrintString("Usage: USER /UNSUDO <name>\r\n"); return; }
+                var nbuf = stackalloc byte[260];
+                Narrow(line + argS, nbuf, argL);
+                int rc = Syscall.UserOpUnsudo(nbuf, argL);
+                if (rc == 0) Syscall.PrintString("OK\r\n");
+                else if (rc == -3) Syscall.PrintString("Permission denied\r\n");
+                else if (rc == -4) Syscall.PrintString("No such user\r\n");
+                else Syscall.PrintString("Error\r\n");
+                return;
+            }
+            if (FlagEq(flag, fn, "/?"))
+            {
+                Syscall.PrintString("USER [/ADD name [pass] | /CHANGE name [pass] | /DEL name | /SUDO name | /UNSUDO name]\r\n");
+                Syscall.PrintString("/? [show this help]\r\n");
+                return;
+            }
+
+            Syscall.PrintString("Unknown USER flag. Use /ADD /CHANGE /DEL /SUDO /UNSUDO.\r\n");
+        }
+
+        private static void DoChown(char* line, int len)
+        {
+            int i = 5;   // skip "CHOWN"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("CHOWN <user> <path> [change file owner, root only]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
+            int us = i;
+            while (i < len && line[i] != ' ') i++;
+            int ul = i - us;
+            if (ul <= 0) { Syscall.PrintString("Usage: CHOWN <user> <path>\r\n"); return; }
+
+            // resolve username -> uid via USEROP LIST
+            var buf = stackalloc byte[512];
+            int n = Syscall.UserOpList(buf, 512);
+            if (n < 0) { Syscall.PrintString("CHOWN: list failed\r\n"); return; }
+            int uid = -1;
+            int pos = 0;
+            while (pos < n)
+            {
+                int ns = pos;
+                while (pos < n && buf[pos] != ' ') pos++;
+                int nl = pos - ns;
+                if (pos < n) pos++;
+                if (nl == ul)
+                {
+                    bool match = true;
+                    for (int k = 0; k < nl; k++)
+                    {
+                        char a = line[us + k];
+                        if (a >= 'a' && a <= 'z') a -= (char)32;
+                        char b = (char)buf[ns + k];
+                        if (b >= 'a' && b <= 'z') b -= (char)32;
+                        if (a != b) { match = false; break; }
+                    }
+                    if (match)
+                    {
+                        if (pos < n) pos++;
+                        int us2 = pos;
+                        while (pos < n && buf[pos] != ' ') pos++;
+                        int ulen = pos - us2;
+                        uid = 0;
+                        for (int k = 0; k < ulen; k++)
+                            uid = uid * 10 + ((char)buf[us2 + k] - '0');
+                        break;
+                    }
+                }
+                while (pos < n && buf[pos] != '\n') pos++;
+                if (pos < n) pos++;
+            }
+            if (uid < 0) { Syscall.PrintString("No such user\r\n"); return; }
+
+            while (i < len && line[i] == ' ') i++;
+            int ps = i;
+            while (i < len && line[i] != ' ') i++;
+            int pl = i - ps;
+            if (pl <= 0) { Syscall.PrintString("Usage: CHOWN <user> <path>\r\n"); return; }
+
+            var pbuf = stackalloc byte[260];
+            Narrow(line + ps, pbuf, pl);
+            int rc = Syscall.Chown(pbuf, pl, (uint)uid);
+            if (rc == 0) Syscall.PrintString("OK\r\n");
+            else if (rc == -3) Syscall.PrintString("Permission denied\r\n");
+            else Syscall.PrintString("Path not found\r\n");
+        }
+
+        private static void DoChmod(char* line, int len)
+        {
+            int i = 5;   // skip "CHMOD"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("CHMOD <octal> <path> [change file mode, owner or root]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
+            int ms = i;
+            while (i < len && line[i] != ' ') i++;
+            int ml = i - ms;
+            if (ml <= 0) { Syscall.PrintString("Usage: CHMOD <octal> <path>\r\n"); return; }
+
+            ushort bits = 0;
+            for (int k = 0; k < ml; k++)
+            {
+                char c = line[ms + k];
+                if (c < '0' || c > '7') { Syscall.PrintString("Invalid mode (octal digits)\r\n"); return; }
+                bits = (ushort)((bits << 3) | (c - '0'));
+            }
+
+            while (i < len && line[i] == ' ') i++;
+            int ps = i;
+            while (i < len && line[i] != ' ') i++;
+            int pl = i - ps;
+            if (pl <= 0) { Syscall.PrintString("Usage: CHMOD <octal> <path>\r\n"); return; }
+
+            var pbuf = stackalloc byte[260];
+            Narrow(line + ps, pbuf, pl);
+            int rc = Syscall.Chmod(pbuf, pl, bits);
+            if (rc == 0) Syscall.PrintString("OK\r\n");
+            else if (rc == -3) Syscall.PrintString("Operation not permitted\r\n");
+            else Syscall.PrintString("Path not found\r\n");
+        }
+
+        // ---- slice 6: jobs / processes ----
+
+        private static void DoTask(char* line, int len)
+        {
+            int i = 4;
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("TASK [&] [list tasks or run in background]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
+            bool background = false;
+            if (background)
+            {
+                // background listing: show tasks then return
+                ListTasks();
+                return;
+            }
+            ListTasks();
+        }
+
+        private static void DoKill(char* line, int len)
+        {
+            int i = 4;
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("KILL <pid> [terminate a process]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
+            if (i >= len) { Syscall.PrintString("Usage: WAIT <pid>\r\n"); return; }
+            int pid = 0; bool any = false;
+            while (i < len && line[i] >= '0' && line[i] <= '9') { pid = pid * 10 + (line[i] - '0'); i++; any = true; }
+            if (!any) { Syscall.PrintString("Usage: KILL <pid>\r\n"); return; }
+            if (Syscall.Kill(pid)) Syscall.PrintString("Killed pid ");
+            else { Syscall.PrintString("No such process.\r\n"); return; }
+            PrintULong((ulong)pid);
+            Syscall.PutChar('.'); Syscall.PutChar('\r'); Syscall.PutChar('\n');
+        }
+
+        private static void DoWait(char* line, int len)
+        {
+            int i = 4;
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("WAIT <pid> [wait for a process]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
+            if (i >= len) { Syscall.PrintString("Usage: WAIT <pid>\r\n"); return; }
+            int pid = 0; bool any = false;
+            while (i < len && line[i] >= '0' && line[i] <= '9') { pid = pid * 10 + (line[i] - '0'); i++; any = true; }
+            if (!any) { Syscall.PrintString("Usage: WAIT <pid>\r\n"); return; }
+            Syscall.PrintString("Waiting for pid ");
+            PrintULong((ulong)pid);
+            Syscall.PutChar(' ');
+            int code = Syscall.Wait(pid);
+            if (code == -7)
+            {
+                Syscall.PrintString("...\r\nForeground job aborted (Ctrl+C).\r\n");
+                return;
+            }
+            if (code < 0) { Syscall.PrintString("No such process (or already gone).\r\n"); return; }
+            Syscall.PrintString("Process ");
+            PrintULong((ulong)pid);
+            Syscall.PrintString(" exited, code ");
+            PrintULong((ulong)code);
+            Syscall.PutChar('.'); Syscall.PutChar('\r'); Syscall.PutChar('\n');
+        }
+
+        private static void DoTab(char* line, int len)
+        {
+            int i = 3;
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("TAB <pid> [set foreground process]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
+            if (i >= len) { Syscall.PrintString("Usage: TAB <pid>\r\n"); return; }
+            int pid = 0; bool any = false;
+            while (i < len && line[i] >= '0' && line[i] <= '9') { pid = pid * 10 + (line[i] - '0'); i++; any = true; }
+            if (!any) { Syscall.PrintString("Usage: TAB <pid>\r\n"); return; }
+            if (Syscall.SetForeground(pid)) { Syscall.PrintString("Foreground [pid "); PrintULong((ulong)pid); Syscall.PrintString("]\r\n"); }
+            else Syscall.PrintString("No such process.\r\n");
+        }
+
+        private static void DoSpawn(char* line, int len)
+        {
+            int i = 5;   // skip "SPAWN"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len && line[i] == '/')
+            {
+                i++;
+                if (i < len && line[i] == '?')
+                {
+                    Syscall.PrintString("SPAWN <program> [&] [run an external program]\r\n");
+                    Syscall.PrintString("/? [show this help]\r\n");
+                    return;
+                }
+            }
+            bool background = false;
+            if (i < len && line[i] == '&') { background = true; i++; }
+            while (i < len && line[i] == ' ') i++;
+            if (i >= len) { Syscall.PrintString("Usage: SPAWN <program> [&]\r\n"); return; }
+            int pid = SpawnCmd(line + i, len - i);
+            if (pid < 0)
+            {
+                Syscall.PrintString("Bad command or file name.\r\n");
+                return;
+            }
+            if (background)
+            {
+                Syscall.PrintString("Started in background [pid ");
+                PrintULong((ulong)pid);
+                Syscall.PutChar(']'); Syscall.PutChar('\r'); Syscall.PutChar('\n');
+                return;
+            }
+            Syscall.PrintString("Foreground [pid ");
+            PrintULong((ulong)pid);
+            Syscall.PrintString("]  (Ctrl+C returns to the shell)\r\n");
+            int code = Syscall.Wait(pid);
+            if (code == -7) { Syscall.PrintString("Foreground job aborted (Ctrl+C).\r\n"); return; }
+            if (code >= 0) { Syscall.PrintString("Job finished, exit code "); PrintULong((ulong)code); Syscall.PutChar('.'); }
+            else Syscall.PrintString("Job ended.");
+            Syscall.PutChar('\r'); Syscall.PutChar('\n');
+        }
+
+        // ---- helpers ----
+
+        private static void PrintULong(ulong v)
+        {
+            var buf = stackalloc char[24];
+            int n = 0;
+            if (v == 0) { PutCharBuf('0'); return; }
+            while (v != 0) { buf[n++] = (char)('0' + (int)(v % 10)); v /= 10; }
+            while (n > 0) PutCharBuf(buf[--n]);
+        }
+
+        private static void PrintTwo(int v)
+        {
+            if (v < 10) PutCharBuf('0');
+            PrintULong((ulong)v);
+        }
+
+        private static void PutCharBuf(char c)
+        {
+            var b = stackalloc char[1]; b[0] = c;
+            Syscall.Print(b, 1);
+        }
+
+        private static void ListTasks()
+        {
+            var buf = stackalloc byte[512];
+            int n = Syscall.TaskList(buf, 512);
+            int i = 0;
+            bool any = false;
+            while (i + 16 <= n)
+            {
+                int pid = buf[i] | (buf[i + 1] << 8) | (buf[i + 2] << 16) | (buf[i + 3] << 24);
+                int state = buf[i + 4] | (buf[i + 5] << 8) | (buf[i + 6] << 16) | (buf[i + 7] << 24);
+                any = true;
+                PrintULong((ulong)pid);
+                Syscall.PutChar(' ');
+                for (int k = 0; k < 8; k++)
+                {
+                    byte ch = buf[i + 8 + k];
+                    if (ch == 0) break;
+                    Syscall.PutChar((char)ch);
+                }
+                Syscall.PutChar(' ');
+                Syscall.PrintString(state == 1 ? "ready" : state == 2 ? "zombie" : "?");
+                Syscall.PutChar('\r'); Syscall.PutChar('\n');
+                i += 16;
+            }
+            if (!any) Syscall.PrintString("No tasks.\r\n");
         }
     }
 }
