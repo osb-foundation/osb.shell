@@ -135,6 +135,7 @@ namespace Osb.Shell.Userspace
                 case Commands.REN: FileCommands.DoRen(line, len); return;
                 case Commands.COPY: FileCommands.DoCopy(line, len); return;
                 case Commands.LN: FileCommands.DoLn(line, len); return;
+                case Commands.TRASH: FileCommands.DoTrash(line, len); return;
                 default:
                     // Unknown first token: an external program (C3). A known
                     // but not-yet-implemented command (NONE) just re-prompts.

@@ -36,6 +36,7 @@ namespace Osb.Shell.Userspace
         public const int REN = 17;
         public const int COPY = 18;
         public const int LN = 19;
+        public const int TRASH = 20;
 
         private struct Table
         {
@@ -67,7 +68,7 @@ namespace Osb.Shell.Userspace
             Add("COPY", COPY); Add("CP", COPY); Add("SIZE", SIZE); Add("COLOR", NONE);
             Add("LN", LN); Add("LNK", LN); Add("OSLANG", NONE); Add("DEMO", NONE);
             Add("TASK", NONE); Add("PS", NONE); Add("KILL", NONE); Add("WAIT", NONE);
-            Add("TAB", NONE); Add("SPAWN", NONE); Add("RING3", NONE); Add("TRASH", NONE);
+            Add("TAB", NONE); Add("SPAWN", NONE); Add("RING3", NONE); Add("TRASH", TRASH);
             Add("GREP", NONE); Add("PING", NONE); Add("PCI", NONE); Add("NET", NONE);
             Add("IFCONFIG", NONE); Add("HISTORY", HISTORY); Add("USER", NONE);
             Add("LOGIN", LOGIN); Add("LOGOUT", LOGOUT); Add("WHOAMI", WHOAMI);

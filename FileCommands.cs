@@ -94,6 +94,14 @@ namespace Osb.Shell.Userspace
             Syscall.Ln(buf, n);
         }
 
+        public static void DoTrash(char* line, int len)
+        {
+            var buf = stackalloc byte[256];
+            int n = 0;
+            for (int k = 0; k < len && n < 255; k++) buf[n++] = (byte)line[k];
+            Syscall.Trash(buf, n);
+        }
+
         public static void DoPwd()
         {
             var buf = stackalloc byte[256];
