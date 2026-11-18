@@ -20,6 +20,19 @@ namespace Osb.Shell.Userspace
             if (r != 0) Syscall.PrintString("Error\r\n");
         }
 
+        public static void DoRd(char* line, int len)
+        {
+            int i = 2;
+            while (i < len && line[i] == ' ') i++;
+            if (i >= len) { Syscall.PrintString("Usage: RD <dir>\r\n"); return; }
+            var path = stackalloc byte[256];
+            int n = 0;
+            for (int k = i; k < len && n < 255; k++) path[n++] = (byte)line[k];
+            int r = Syscall.Rmdir(path, n);
+            if (r != 0) Syscall.PrintString("Error\r\n");
+            else Syscall.PrintString("OK\r\n");
+        }
+
         public static void DoPwd()
         {
             var buf = stackalloc byte[256];
