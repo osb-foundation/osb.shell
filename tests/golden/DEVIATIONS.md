@@ -2,9 +2,10 @@
 
 The phase-1c shell is a kernel-owned login/session rewrite. Four golden cases
 (04-whoami, 12-login, 25-getchar, 27-ctrlc-order) were recaptured against the
-1c shell; their pre-1c (legacy) transcripts are preserved in `legacy/`. This
-file records every differing line and the reason, so a reviewer can see that
-the 1c behavior is intentional and not a regression.
+1c shell; their pre-1c (legacy) transcripts are preserved in `legacy/`. Slice 2
+recaptured 10-history for the same reason. This file records every differing
+line and the reason, so a reviewer can see that the 1c/2 behavior is intentional
+and not a regression.
 
 Each entry lists the legacy transcript (`legacy/<case>.out`) and the current one
 (`cases/<case>.out`).
@@ -16,6 +17,15 @@ Each entry lists the legacy transcript (`legacy/<case>.out`) and the current one
 - Current is tighter: `root@OSB A:\OSB\ROOT>WHOAMI` directly.
 - Reason: driver/echo timing (the legacy capture picked up a duplicate prompt
   after login). The command output (`WHOAMI` -> `root`) is identical.
+
+## 10-history
+
+- Legacy has the extra prompt/blank duplication around each step: the LF that
+  follows each CR is read as an empty command that reprints the prompt. Current
+  is tight: one prompt per command, the next command echoing on that line.
+- Reason: the 1c line reader swallows the LF that follows a CR (the `_skipLf`
+  flag), so a CRLF is one Enter, not two. The HISTORY / `(:N)` / HISTORY N
+  semantics are identical (all entries, recall, last-N, `No such history entry.`).
 
 ## 12-login
 

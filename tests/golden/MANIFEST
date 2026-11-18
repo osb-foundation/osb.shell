@@ -17,7 +17,7 @@
 08-trash          5          legacy
 09-help           9          legacy
 10-history        2          legacy
-11-completion     2          legacy
+11-completion     2          spec
 12-login          1c         legacy
 13-users          7          legacy
 13b-nonroot       7          legacy

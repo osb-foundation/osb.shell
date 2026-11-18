@@ -1,0 +1,13 @@
+login: root
+
+root@OSB A:\OSB\ROOT>ECHO one
+one
+root@OSB A:\OSB\ROOT>ECHO two
+two
+root@OSB A:\OSB\ROOT>HIroot@OSB A:\OSB\ROOT>HISTORY
+    1  ECHO one
+    2  ECHO two
+    3  HISTORY
+root@OSB A:\OSB\ROOT>ZZZ
+root@OSB A:\OSB\ROOT>CD Troot@OSB A:\OSB\ROOT>CD TRASH\
+root@OSB A:\OSB\ROOT>

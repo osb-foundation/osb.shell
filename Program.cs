@@ -2,20 +2,19 @@ using OsbKT;
 
 namespace Osb.Shell.Userspace
 {
-    // Phase 1c shell: kernel-owned session identity. Verifies the kernel ABI
-    // (>= 4), then runs the legacy login flow (login: / Password:) and a command
-    // loop with the `user@OSB cwd>` prompt. Commands: WHOAMI, LOGIN, LOGOUT,
-    // SUDO <cmd>, EXIT. No other commands yet. Zero GC allocations (stack
-    // buffers only; osbkt is called through its byte*/SpawnReq overloads).
+    // Phase 1c/2 shell: kernel-owned session identity plus the slice-2 line
+    // editor. Verifies the kernel ABI (>= 4), runs the login flow, then a
+    // command loop with the `user@OSB cwd>` prompt. Commands: WHOAMI, LOGIN,
+    // LOGOUT, SUDO <cmd>, ECHO <text>, HISTORY [N], EXIT, plus "(:N)" history
+    // recall. Editing (arrows/Home/End/Delete/Backspace), Up/Down history and
+    // TAB completion are handled by LineEditor/History/Completion; dispatch is
+    // table-driven (Commands). Zero GC allocations (stack buffers only; osbkt
+    // is called through its byte*/SpawnReq overloads).
     internal static unsafe class Program
     {
         private const int LineCap = 128;
         private const int NameCap = 32;
         private const int CwdCap = 256;
-
-        // Set when the previous line ended on a CR, so an LF that immediately
-        // follows a CR (CRLF) is swallowed instead of read as a second Enter.
-        private static bool _skipLf;
 
         private static void Main()
         {
@@ -27,6 +26,7 @@ namespace Osb.Shell.Userspace
                 return;
             }
 
+            Commands.Init();
             Login();
             Session();   // returns only on EXIT (which exits the process)
         }
@@ -42,17 +42,20 @@ namespace Osb.Shell.Userspace
             var pass = stackalloc char[NameCap];
             var nbuf = stackalloc byte[NameCap];
             var pbuf = stackalloc byte[NameCap];
+            var loginP = stackalloc char[8];
+            var passP = stackalloc char[11];
+            int lpLen = CopyLit(loginP, "login: ");      // 7
+            int ppLen = CopyLit(passP, "Password: ");    // 10
+
             for (;;)
             {
-                Syscall.PrintString("login: ");
-                int nlen = ReadLine(name, NameCap, true);
+                int nlen = LineEditor.Read(loginP, lpLen, name, NameCap, true, false);
                 if (nlen <= 0) continue;   // aborted or empty: re-prompt
                 Narrow(name, nbuf, nlen);  // char (UTF-16) -> byte string
 
                 if (Syscall.Login(nbuf, nlen, null, 0) == 0) { Syscall.PutChar('\n'); return; }
 
-                Syscall.PrintString("Password: ");
-                int plen = ReadLine(pass, NameCap, false);
+                int plen = LineEditor.Read(passP, ppLen, pass, NameCap, false, false);
                 Syscall.PutChar('\n');   // the extra newline the legacy flow prints
                 if (plen < 0) continue;
                 Narrow(pass, pbuf, plen);
@@ -62,28 +65,60 @@ namespace Osb.Shell.Userspace
             }
         }
 
-        // Command loop. EXIT exits the process; LOGIN/LOGOUT re-enter Login()
-        // in place.
+        // Command loop. Each line is read with the full line editor (history +
+        // completion), then "(:N)" recall is honoured, the line is recorded in
+        // history, and the first matching command runs.
         private static void Session()
         {
             var line = stackalloc char[LineCap];
+            var prompt = stackalloc char[CwdCap + NameCap + 8];
+            var rc = stackalloc char[History.LineCap];   // recall target (once)
             for (;;)
             {
-                PrintPrompt();
-                int len = ReadLine(line, LineCap, true);
+                int plen = BuildPrompt(prompt);
+                int len = LineEditor.Read(prompt, plen, line, LineCap, true, true);
                 if (len < 0) continue;   // Ctrl+C: re-prompt
+                if (len == 0) continue;  // empty line: re-prompt (CRLF already echoed)
 
-                if (IsEq(line, len, "EXIT"))
+                if (History.LooksLikeRecall(line, len))
                 {
+                    int rlen;
+                    if (History.ParseRecall(line, len, rc, out rlen))
+                    {
+                        Syscall.Print(rc, rlen);           // echo the line being re-run
+                        Syscall.PutChar('\r'); Syscall.PutChar('\n');
+                        History.Push(rc, rlen);            // record (consecutive dups skipped)
+                        Dispatch(rc, rlen);
+                    }
+                    else
+                    {
+                        Syscall.PrintString("No such history entry\r\n");
+                    }
+                    continue;
+                }
+
+                History.Push(line, len);
+                Dispatch(line, len);
+            }
+        }
+
+        // First command that matches the line's first token. EXIT exits;
+        // LOGIN/LOGOUT re-enter Login() in place; SUDO runs one command as root.
+        private static void Dispatch(char* line, int len)
+        {
+            switch (Commands.Identify(line, len))
+            {
+                case Commands.EXIT:
                     Syscall.PrintString("bye\r\n");
                     Syscall.Exit(0);
                     return;
-                }
-                if (IsEq(line, len, "WHOAMI")) { DoWhoAmI(); continue; }
-                if (IsEq(line, len, "LOGIN")) { Login(); continue; }
-                if (IsEq(line, len, "LOGOUT")) { Syscall.Logout(); Login(); continue; }
-                if (StartsWith(line, len, "SUDO ")) { DoSudo(line, len); continue; }
-                // No other commands yet: silently re-prompt.
+                case Commands.WHOAMI: DoWhoAmI(); return;
+                case Commands.LOGIN: Login(); return;
+                case Commands.LOGOUT: Syscall.Logout(); Login(); return;
+                case Commands.SUDO: DoSudo(line, len); return;
+                case Commands.HISTORY: DoHistory(line, len); return;
+                case Commands.ECHO: DoEcho(line, len); return;
+                default: return;   // NONE (known, unimplemented) or unknown: re-prompt
             }
         }
 
@@ -94,6 +129,51 @@ namespace Osb.Shell.Userspace
             if (n < 0) n = 0;
             Syscall.Write(buf, n);
             Syscall.PutChar('\r'); Syscall.PutChar('\n');
+        }
+
+        // ECHO [text]: prints the text after "ECHO" (leading spaces skipped).
+        private static void DoEcho(char* line, int len)
+        {
+            int i = 4;   // skip "ECHO"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len) Syscall.Print(line + i, len - i);
+            Syscall.PutChar('\r'); Syscall.PutChar('\n');
+        }
+
+        // HISTORY [N]: list all entries, or the last N. Format "%5d  <line>".
+        private static void DoHistory(char* line, int len)
+        {
+            int count = -1;   // -1 = all
+            int i = 7;        // skip "HISTORY"
+            while (i < len && line[i] == ' ') i++;
+            if (i < len)
+            {
+                count = 0;
+                bool any = false;
+                while (i < len && line[i] >= '0' && line[i] <= '9')
+                {
+                    count = count * 10 + (line[i] - '0'); i++; any = true;
+                }
+                if (!any) count = -1;
+            }
+
+            int total = History.Count;
+            int start = 0;
+            if (count >= 0 && count < total) start = total - count;
+
+            var num = stackalloc char[8];
+            var ebuf = stackalloc char[History.LineCap];
+            for (int idx = start; idx < total; idx++)
+            {
+                int nl = Fmt.U32(num, (uint)History.NumberOf(idx));
+                for (int k = nl; k < 5; k++) Syscall.PutChar(' ');
+                Syscall.Print(num, nl);
+                Syscall.PrintString("  ");
+                int elen;
+                History.CopyVisible(idx, ebuf, out elen);
+                Syscall.Print(ebuf, elen);
+                Syscall.PutChar('\r'); Syscall.PutChar('\n');
+            }
         }
 
         // SUDO <cmd>: elevate, run the external program, de-elevates. A
@@ -131,89 +211,34 @@ namespace Osb.Shell.Userspace
             return Syscall.SpawnPath(&req);
         }
 
-        private static void PrintPrompt()
+        // "<user>@OSB <cwd>>" into dst; returns its length.
+        private static int BuildPrompt(char* dst)
         {
             var ubuf = stackalloc byte[NameCap];
             int ulen = Syscall.WhoAmI(ubuf, NameCap);
             if (ulen < 0) ulen = 0;
-            Syscall.Write(ubuf, ulen);
-            Syscall.PrintString("@OSB ");
+            int n = 0;
+            for (int k = 0; k < ulen; k++) dst[n++] = (char)ubuf[k];
+            fixed (char* p = "@OSB ") for (int k = 0; k < 5; k++) dst[n++] = p[k];
 
             var cbuf = stackalloc byte[CwdCap];
             int clen = Syscall.GetCwd(cbuf, CwdCap);
             if (clen < 0) clen = 0;
-            Syscall.Write(cbuf, clen);
-            Syscall.PrintString(">");
+            for (int k = 0; k < clen; k++) dst[n++] = (char)cbuf[k];
+            dst[n++] = '>';
+            return n;
         }
 
-        // Read one line from GETCHAR. Returns the length (0..cap-1), or -1 if
-        // Ctrl+C aborted. Echoes printable chars unless `echo` is false;
-        // Backspace erases. On Enter prints CRLF (normalized to LF).
-        private static int ReadLine(char* buf, int cap, bool echo)
+        // Copy a string literal into a stack buffer; returns the length.
+        private static int CopyLit(char* dst, string s)
         {
-            int len = 0;
-            for (;;)
+            int n = s.Length;
+            fixed (char* p = s)
             {
-                int ch = Syscall.GetChar();
-                if (ch == -1) { Syscall.Sleep(1); continue; }
-                if (ch == -2) { Syscall.PutChar('\r'); Syscall.PutChar('\n'); return -1; }
-
-                if (ch == '\r')
-                {
-                    Syscall.PutChar('\r'); Syscall.PutChar('\n');
-                    buf[len] = '\0';
-                    _skipLf = true;
-                    return len;
-                }
-                if (ch == '\n')
-                {
-                    if (_skipLf) { _skipLf = false; continue; }
-                    Syscall.PutChar('\r'); Syscall.PutChar('\n');
-                    buf[len] = '\0';
-                    return len;
-                }
-                _skipLf = false;
-
-                if (ch == '\b' || ch == 0x7F)
-                {
-                    if (len > 0)
-                    {
-                        len--;
-                        if (echo) { Syscall.PutChar('\b'); Syscall.PutChar(' '); Syscall.PutChar('\b'); }
-                    }
-                    continue;
-                }
-                if (ch >= ' ' && ch < 127 && len < cap - 1)
-                {
-                    buf[len++] = (char)ch;
-                    if (echo) Syscall.PutChar((char)ch);
-                }
+                for (int k = 0; k < n; k++) dst[k] = p[k];
             }
+            return n;
         }
-
-        private static bool IsEq(char* buf, int len, string lit)
-        {
-            if (len != lit.Length) return false;
-            fixed (char* p = lit)
-            {
-                for (int k = 0; k < len; k++)
-                    if (Upper(buf[k]) != Upper(p[k])) return false;
-            }
-            return true;
-        }
-
-        private static bool StartsWith(char* buf, int len, string lit)
-        {
-            if (len < lit.Length) return false;
-            fixed (char* p = lit)
-            {
-                for (int k = 0; k < lit.Length; k++)
-                    if (Upper(buf[k]) != Upper(p[k])) return false;
-            }
-            return true;
-        }
-
-        private static char Upper(char c) => (c >= 'a' && c <= 'z') ? (char)(c - 32) : c;
 
         // char (UTF-16) -> byte string: the byte-string syscalls (LOGIN/WHOAMI/
         // GETCWD) carry ASCII bytes, not UTF-16 chars, so a char* buffer cannot
