@@ -131,6 +131,7 @@ namespace Osb.Shell.Userspace
                 case Commands.SIZE: FileCommands.DoSize(line, len); return;
                 case Commands.MD: FileCommands.DoMd(line, len); return;
                 case Commands.RD: FileCommands.DoRd(line, len); return;
+                case Commands.DEL: FileCommands.DoDel(line, len); return;
                 default:
                     // Unknown first token: an external program (C3). A known
                     // but not-yet-implemented command (NONE) just re-prompts.

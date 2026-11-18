@@ -33,6 +33,17 @@ namespace Osb.Shell.Userspace
             else Syscall.PrintString("OK\r\n");
         }
 
+        public static void DoDel(char* line, int len)
+        {
+            int i = 3;
+            while (i < len && line[i] == ' ') i++;
+            if (i >= len) { Syscall.PrintString("Usage: DEL <file>\r\n"); return; }
+            var path = stackalloc byte[256];
+            int n = 0;
+            for (int k = i; k < len && n < 255; k++) path[n++] = (byte)line[k];
+            Syscall.Delete(path, n);
+        }
+
         public static void DoPwd()
         {
             var buf = stackalloc byte[256];
