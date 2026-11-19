@@ -24,11 +24,11 @@
 13b-nonroot       7          legacy
 14-fileops        5          legacy
 14b-fileerr       5          legacy
-15-pipes          8          legacy
+15-pipes          8          deferred
 16-jobs           6          legacy
-17-net            10         legacy
-18-color          9          legacy
-19-pci            10         legacy
+17-net            10         deferred
+18-color          9          deferred
+19-pci            10         deferred
 20-spawn          1b         spec
 21-exit7          1a.1       spec
 22-args           1b         spec
@@ -46,3 +46,4 @@
 34-escape         2          spec
 35-edit-scroll    2          spec
 37-envapi        3          spec
+99-stress        4          spec

@@ -1,0 +1,4003 @@
+login: root
+
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1
+stress-1
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-7
+stress-7
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-13
+stress-13
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-19
+stress-19
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-25
+stress-25
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-31
+stress-31
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-37
+stress-37
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-43
+stress-43
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-49
+stress-49
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-55
+stress-55
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-61
+stress-61
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-67
+stress-67
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-73
+stress-73
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-79
+stress-79
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-85
+stress-85
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-91
+stress-91
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-97
+stress-97
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-103
+stress-103
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-109
+stress-109
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-115
+stress-115
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-121
+stress-121
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-127
+stress-127
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-133
+stress-133
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-139
+stress-139
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-145
+stress-145
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-151
+stress-151
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-157
+stress-157
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-163
+stress-163
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-169
+stress-169
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-175
+stress-175
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-181
+stress-181
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-187
+stress-187
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-193
+stress-193
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-199
+stress-199
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-205
+stress-205
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-211
+stress-211
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-217
+stress-217
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-223
+stress-223
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-229
+stress-229
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-235
+stress-235
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-241
+stress-241
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-247
+stress-247
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-253
+stress-253
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-259
+stress-259
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-265
+stress-265
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-271
+stress-271
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-277
+stress-277
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-283
+stress-283
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-289
+stress-289
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-295
+stress-295
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-301
+stress-301
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-307
+stress-307
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-313
+stress-313
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-319
+stress-319
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-325
+stress-325
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-331
+stress-331
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-337
+stress-337
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-343
+stress-343
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-349
+stress-349
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-355
+stress-355
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-361
+stress-361
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-367
+stress-367
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-373
+stress-373
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-379
+stress-379
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-385
+stress-385
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-391
+stress-391
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-397
+stress-397
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-403
+stress-403
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-409
+stress-409
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-415
+stress-415
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-421
+stress-421
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-427
+stress-427
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-433
+stress-433
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-439
+stress-439
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-445
+stress-445
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-451
+stress-451
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-457
+stress-457
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-463
+stress-463
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-469
+stress-469
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-475
+stress-475
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-481
+stress-481
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-487
+stress-487
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-493
+stress-493
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-499
+stress-499
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-505
+stress-505
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-511
+stress-511
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-517
+stress-517
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-523
+stress-523
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-529
+stress-529
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-535
+stress-535
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-541
+stress-541
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-547
+stress-547
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-553
+stress-553
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-559
+stress-559
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-565
+stress-565
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-571
+stress-571
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-577
+stress-577
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-583
+stress-583
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-589
+stress-589
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-595
+stress-595
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-601
+stress-601
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-607
+stress-607
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-613
+stress-613
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-619
+stress-619
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-625
+stress-625
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-631
+stress-631
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-637
+stress-637
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-643
+stress-643
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-649
+stress-649
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-655
+stress-655
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-661
+stress-661
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-667
+stress-667
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-673
+stress-673
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-679
+stress-679
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-685
+stress-685
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-691
+stress-691
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-697
+stress-697
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-703
+stress-703
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-709
+stress-709
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-715
+stress-715
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-721
+stress-721
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-727
+stress-727
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-733
+stress-733
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-739
+stress-739
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-745
+stress-745
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-751
+stress-751
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-757
+stress-757
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-763
+stress-763
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-769
+stress-769
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-775
+stress-775
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-781
+stress-781
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-787
+stress-787
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-793
+stress-793
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-799
+stress-799
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-805
+stress-805
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-811
+stress-811
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-817
+stress-817
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-823
+stress-823
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-829
+stress-829
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-835
+stress-835
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-841
+stress-841
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-847
+stress-847
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-853
+stress-853
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-859
+stress-859
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-865
+stress-865
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-871
+stress-871
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-877
+stress-877
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-883
+stress-883
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-889
+stress-889
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-895
+stress-895
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-901
+stress-901
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-907
+stress-907
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-913
+stress-913
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-919
+stress-919
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-925
+stress-925
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-931
+stress-931
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-937
+stress-937
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-943
+stress-943
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-949
+stress-949
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-955
+stress-955
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-961
+stress-961
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-967
+stress-967
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-973
+stress-973
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-979
+stress-979
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-985
+stress-985
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-991
+stress-991
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-997
+stress-997
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1003
+stress-1003
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1009
+stress-1009
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1015
+stress-1015
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1021
+stress-1021
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1027
+stress-1027
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1033
+stress-1033
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1039
+stress-1039
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1045
+stress-1045
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1051
+stress-1051
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1057
+stress-1057
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1063
+stress-1063
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1069
+stress-1069
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1075
+stress-1075
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1081
+stress-1081
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1087
+stress-1087
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1093
+stress-1093
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1099
+stress-1099
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1105
+stress-1105
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1111
+stress-1111
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1117
+stress-1117
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1123
+stress-1123
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1129
+stress-1129
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1135
+stress-1135
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1141
+stress-1141
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1147
+stress-1147
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1153
+stress-1153
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1159
+stress-1159
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1165
+stress-1165
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1171
+stress-1171
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1177
+stress-1177
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1183
+stress-1183
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1189
+stress-1189
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1195
+stress-1195
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1201
+stress-1201
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1207
+stress-1207
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1213
+stress-1213
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1219
+stress-1219
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1225
+stress-1225
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1231
+stress-1231
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1237
+stress-1237
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1243
+stress-1243
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1249
+stress-1249
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1255
+stress-1255
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1261
+stress-1261
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1267
+stress-1267
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1273
+stress-1273
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1279
+stress-1279
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1285
+stress-1285
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1291
+stress-1291
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1297
+stress-1297
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1303
+stress-1303
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1309
+stress-1309
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1315
+stress-1315
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1321
+stress-1321
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1327
+stress-1327
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1333
+stress-1333
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1339
+stress-1339
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1345
+stress-1345
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1351
+stress-1351
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1357
+stress-1357
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1363
+stress-1363
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1369
+stress-1369
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1375
+stress-1375
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1381
+stress-1381
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1387
+stress-1387
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1393
+stress-1393
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1399
+stress-1399
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1405
+stress-1405
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1411
+stress-1411
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1417
+stress-1417
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1423
+stress-1423
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1429
+stress-1429
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1435
+stress-1435
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1441
+stress-1441
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1447
+stress-1447
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1453
+stress-1453
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1459
+stress-1459
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1465
+stress-1465
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1471
+stress-1471
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1477
+stress-1477
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1483
+stress-1483
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1489
+stress-1489
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1495
+stress-1495
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1501
+stress-1501
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1507
+stress-1507
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1513
+stress-1513
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1519
+stress-1519
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1525
+stress-1525
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1531
+stress-1531
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1537
+stress-1537
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1543
+stress-1543
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1549
+stress-1549
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1555
+stress-1555
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1561
+stress-1561
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1567
+stress-1567
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1573
+stress-1573
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1579
+stress-1579
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1585
+stress-1585
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1591
+stress-1591
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1597
+stress-1597
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1603
+stress-1603
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1609
+stress-1609
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1615
+stress-1615
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1621
+stress-1621
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1627
+stress-1627
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1633
+stress-1633
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1639
+stress-1639
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1645
+stress-1645
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1651
+stress-1651
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1657
+stress-1657
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1663
+stress-1663
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1669
+stress-1669
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1675
+stress-1675
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1681
+stress-1681
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1687
+stress-1687
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1693
+stress-1693
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1699
+stress-1699
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1705
+stress-1705
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1711
+stress-1711
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1717
+stress-1717
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1723
+stress-1723
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1729
+stress-1729
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1735
+stress-1735
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1741
+stress-1741
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1747
+stress-1747
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1753
+stress-1753
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1759
+stress-1759
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1765
+stress-1765
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1771
+stress-1771
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1777
+stress-1777
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1783
+stress-1783
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1789
+stress-1789
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1795
+stress-1795
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1801
+stress-1801
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1807
+stress-1807
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1813
+stress-1813
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1819
+stress-1819
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1825
+stress-1825
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1831
+stress-1831
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1837
+stress-1837
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1843
+stress-1843
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1849
+stress-1849
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1855
+stress-1855
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1861
+stress-1861
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1867
+stress-1867
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1873
+stress-1873
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1879
+stress-1879
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1885
+stress-1885
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1891
+stress-1891
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1897
+stress-1897
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1903
+stress-1903
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1909
+stress-1909
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1915
+stress-1915
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1921
+stress-1921
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1927
+stress-1927
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1933
+stress-1933
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1939
+stress-1939
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1945
+stress-1945
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1951
+stress-1951
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1957
+stress-1957
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1963
+stress-1963
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1969
+stress-1969
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1975
+stress-1975
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1981
+stress-1981
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1987
+stress-1987
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1993
+stress-1993
+root@OSB A:\OSB\ROOT>DATE
+<DATE>
+root@OSB A:\OSB\ROOT>TIME
+Uptime: <N> s (<T> ticks)
+root@OSB A:\OSB\ROOT>WHOAMI
+root
+root@OSB A:\OSB\ROOT>TICKS
+Ticks: <T>
+root@OSB A:\OSB\ROOT>VER /O
+OSB (dotnet) version 0.1 - bootable kernel
+root@OSB A:\OSB\ROOT>ECHO stress-1999
+stress-1999
+root@OSB A:\OSB\ROOT>

@@ -19,6 +19,9 @@ ISO="${OSB_ISO:-$ROOT/../osb.kernel/osb.iso}"
 IMG="$(dirname "$ISO")/osb.img"
 TIER="${1:-level}"
 
+# Gate: ABI version must agree across ABI.md, osbkt, and kernel (A7).
+"$ROOT/../osbkt/tools/check-abi.sh" >/dev/null || { echo "ABI version mismatch; fix before testing" >&2; exit 1; }
+
 usage() {
     echo "usage: tests/run.sh [smoke|unit|level|full]" >&2
     exit 2

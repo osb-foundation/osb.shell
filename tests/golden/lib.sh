@@ -55,6 +55,13 @@ normalize() {
                     -e 's/tick [0-9][0-9]*/tick <T>/g' \
                     -e '/^DEMO \[[0-9][0-9]*\]: round/d'
                 ;;
+            99-stress)
+                # Tick counters increase monotonically; DATE wall-clock and
+                # TIME uptime differ between runs; mask for stability.
+                sed -e 's#[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]#<DATE>#g' \
+                    -e 's/Uptime: [0-9][0-9]* s ([0-9][0-9]* ticks)/Uptime: <N> s (<T> ticks)/g' \
+                    -e 's/Ticks: [0-9][0-9]*/Ticks: <T>/g'
+                ;;
             *)
                 cat
                 ;;

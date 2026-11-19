@@ -46,19 +46,12 @@ namespace Osb.Shell.Userspace
         public const int DATE = 31;
         public const int TICKS = 32;
         public const int SLEEP = 33;
-        public const int OSLANG = 35;
-        public const int DEMO = 36;
         public const int TASK = 37;
         public const int PS = 37;
         public const int KILL = 38;
         public const int WAIT = 39;
         public const int TAB = 40;
         public const int SPAWN = 41;
-        public const int GREP = 42;
-        public const int PING = 43;
-        public const int PCI = 44;
-        public const int NET = 45;
-        public const int IFCONFIG = 45;
         public const int USER = 46;
         public const int CHOWN = 47;
         public const int CHMOD = 48;
@@ -91,11 +84,10 @@ namespace Osb.Shell.Userspace
             Add("MD", MD); Add("MKDIR", MD); Add("RD", RD);
             Add("RMDIR", RD); Add("REN", REN); Add("MOVE", REN);
             Add("COPY", COPY); Add("CP", COPY); Add("SIZE", SIZE);
-            Add("LN", LN); Add("OSLANG", OSLANG); Add("DEMO", DEMO);
+            Add("LN", LN);
             Add("TASK", TASK); Add("PS", PS); Add("KILL", KILL); Add("WAIT", WAIT);
             Add("TAB", TAB); Add("SPAWN", SPAWN); Add("TRASH", TRASH);
-            Add("GREP", GREP); Add("PING", PING); Add("PCI", PCI); Add("NET", NET);
-            Add("IFCONFIG", NET); Add("HISTORY", HISTORY); Add("USER", USER);
+            Add("HISTORY", HISTORY); Add("USER", USER);
             Add("LOGIN", LOGIN); Add("LOGOUT", LOGOUT); Add("WHOAMI", WHOAMI);
             Add("CHOWN", CHOWN); Add("CHMOD", CHMOD); Add("SUDO", SUDO);
         }

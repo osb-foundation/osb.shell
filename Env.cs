@@ -45,6 +45,8 @@ namespace Osb.Shell.Userspace
         {
             int o = 0;
             int i = 0;
+            char* nm = stackalloc char[64];
+            var vbuf = stackalloc byte[ValueCap];
             while (i < slen && o < dcap - 1)
             {
                 if (src[i] != '$') { dst[o++] = src[i++]; continue; }
@@ -57,9 +59,7 @@ namespace Osb.Shell.Userspace
                 while (j < slen && (((src[j] >= 'A' && src[j] <= 'Z') || (src[j] >= 'a' && src[j] <= 'z') ||
                                      (src[j] >= '0' && src[j] <= '9') || src[j] == '_'))) j++;
                 int nameLen = j - st;
-                char* nm = stackalloc char[64];
                 for (int k = 0; k < nameLen && k < 63; k++) nm[k] = src[st + k];
-                var vbuf = stackalloc byte[ValueCap];
                 int vl = Get(nm, nameLen, vbuf, ValueCap);
                 if (vl >= 0)
                 {
@@ -94,6 +94,8 @@ namespace Osb.Shell.Userspace
             var cwd = stackalloc byte[256];
             int clen = Syscall.GetCwd(cwd, 256);
             if (clen < 0) clen = 0;
+            char* nm = stackalloc char[64];
+            var vbuf = stackalloc byte[ValueCap];
 
             int o = 0;
             for (int k = 0; k < tlen; k++)
@@ -121,9 +123,7 @@ namespace Osb.Shell.Userspace
                 if (j > st)
                 {
                     int nlen = j - st;
-                    char* nm = stackalloc char[64];
                     for (int q = 0; q < nlen && q < 63; q++) nm[q] = tmpl[st + q];
-                    var vbuf = stackalloc byte[ValueCap];
                     int vl = Get(nm, nlen, vbuf, ValueCap);
                     if (vl >= 0)
                     {

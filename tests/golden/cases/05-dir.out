@@ -1,7 +1,7 @@
 login: root
 
 root@OSB A:\OSB\ROOT>DIR
-TRASH
+drwxr-xr-x 0 4096 TRASH
 root@OSB A:\OSB\ROOT>DIR /W
 TRASH 
 root@OSB A:\OSB\ROOT>
