@@ -41,7 +41,7 @@ Phase 1b — completed and verified (kernel hardening + userspace foundation):
 * B4: osbkt public `GetChar()` and `SpawnPath(...)` wrappers; all syscall numbers, register layout and request-structure details stay in osbkt; zero managed allocations.
 * B5: existing syscalls `01h/09h/10h/20h-23h/30h/4Ch/80h-82h/40h-59h` unchanged; XWIN raw keyboard intact; `GETABI` unchanged.
 
-Remaining phases and slices: Phase 1c completed — 65h–69h all work including SUDO/END_SUDO. Slices 2–5 completed and verified. Slices 6–11 implemented (this migration); out of scope per §6: OSLANG interpreter, KISS, GFX desktop.
+Remaining phases and slices: Phase 1c completed — 65h–69h all work including SUDO/END_SUDO. Slices 2–5 completed and verified. Slices 6–11 implemented (this migration); out of scope per §6: GFX desktop. **OSLANG and KISS were removed from the kernel in phase O0 (2026-11-19); they return in O6 as `A:\OSB\BIN\OSLANG.EXE`.**
 
 Decisions and amendments recorded in §7 are preserved unchanged.
 
@@ -224,8 +224,8 @@ names are printed literally as `$NAME`). Default when unset: `$P$G`.
 | WHOAMI / HISTORY [n] | — | identity/history |
 | SPAWN [BAD\|SPAWNER] [&] | RING3 | built-in ring-3 programs |
 | DEMO [&] / TASK / KILL <pid> / WAIT <pid> / TAB <pid> | TASK: PS | jobs |
-| OSLANG <script.OSL> [args] | — | embedded interpreter |
-| KISS [file] | — | runs `OSLANG A:\OSB\BIN\KISS.OSL [file]` |
+| OSLANG <script.OSL> [args] | — | **removed from kernel (O0).** Re-added in O6 as `A:\OSB\BIN\OSLANG.EXE` |
+| KISS [file] | — | **removed from kernel (O0).** Runs via `OSLANG KISS.OSL` once O6 lands |
 | NET [ip\|DHCP\|AUTO] / PING <ip> [n] / PCI [net\|scan\|B:D.F] | NET: IFCONFIG | network |
 
 #### 1.7a Coverage table (H4): every 1.7 command → golden case
@@ -266,7 +266,7 @@ Cases live in `osb.shell/tests/golden/cases/`; the level each needs is in
 | SPAWNPATH (6Ah) + WAIT exit code | `21-exit7` | 1a.1 minimal form: TWait.EXE SPAWNPATHs TExit.EXE, WAIT returns 7 |
 | DEMO [&] / TASK (PS) / KILL <pid> / WAIT <pid> | `16-jobs` | task list, ctrl-c abort, kill/wait errors |
 | TAB <pid> | NO GOLDEN YET | needs a background job to foreground; no deterministic case |
-| OSLANG <script.OSL> [args] / KISS [file] | NO GOLDEN | out of scope (A12); OSLANG stays in kernel |
+| OSLANG <script.OSL> [args] / KISS [file] | NO GOLDEN | **removed from the kernel in O0 (2026-11-19).** Re-added in O6 as `A:\OSB\BIN\OSLANG.EXE` with `.OSL` dispatch (§D4) |
 | NET [ip\|DHCP\|AUTO] (IFCONFIG) | `17-net` | interface info |
 | PING <ip> [n] | NO GOLDEN YET | round-trip timing is non-deterministic |
 | PCI [net\|scan\|B:D.F] | `19-pci` | bus list + device detail |
@@ -355,7 +355,7 @@ code today — the syscalls do not check anything.**
 | NET/IFCONFIG | `adapter …`, `address … netmask …`, `gateway … dns …`, `source …`; `DHCP: lease obtained.`, `DHCP: no response from a server (no offer)/(offer, no acknowledgement)/(out of memory)`, `address set to X`, `adapter     not started yet (PCI net for hardware detail)` | none (hardware state, single console) |
 | PING | `Usage: PING <host> [count]`, `PING: cannot resolve host X`, `PING: no network interface (error N)`, per probe `unreachable` / `reply from IP: seq=N time=Nms` / `Request timed out.` | none |
 | PCI | list rows; `PCI net`; `PCI B:D.F` detail (BARs, IRQ) | none |
-| OSLANG / KISS | interpreter runs the script (`OSL.CONSOLE/FILE/APP` built-ins) | none (runs as the session user) |
+| OSLANG / KISS | **removed from kernel in O0 (2026-11-19).** Re-added in O6 as `A:\OSB\BIN\OSLANG.EXE`; scripts run via the shell's `.OSL` dispatch (§D4). | none (runs as the session user) |
 
 ---
 
@@ -402,8 +402,8 @@ the class.
 | TIME / DATE / TICKS / SLEEP | B (54h/55h/56h exist; DATE needs adding) | keep + extend |
 | Pipes `A \| B` | B | needs stdout redirection (3.1); pipeline parsing stays in the shell |
 | NET / PING / PCI | C (exposed via B syscalls) | hardware drivers stay in the kernel; syscalls: net config/info, one-shot ping, PCI enumerate/detail |
-| OSLANG interpreter | C (stays) / out of scope | see §6 — becomes OSLANG.EXE later |
-| KISS | out of scope | OSLANG script launcher |
+| OSLANG interpreter | **removed from the kernel in O0 (2026-11-19).** Sources archived read-only at `osb.oslang/archive/kernel-port/`; the new engine lives in `osb.oslang/engine/` and ships as `A:\OSB\BIN\OSLANG.EXE` in O6. | see §6 |
+| KISS | **removed from the kernel in O0.** Runs via `OSLANG KISS.OSL` once O6 lands. | OSLANG script launcher |
 | GFX desktop (Shell/Desktop*.cs) | out of scope | replaced by osb.xwin XWIN.EXE; currently unreachable from dispatch |
 | Session identity per task/console, open-file table, stdout target | C | kernel state |
 
@@ -1243,7 +1243,7 @@ FSTAT→STAT metadata-only) is listed in the slice summary.
 
 | Item | Recommendation |
 |---|---|
-| OSLANG interpreter (`OslangKernel.cs` + ~8 partials, ~6.7 kLOC, inside the kernel) | **Stays in the kernel for this project (A12).** It is kernel code, not shell logic; no OSLANG migration happens here. Consequence: the `OSLANG` shell command and `.osl` scripts are **temporarily lost** while the legacy shell is retired — documented deviation. A later project moves OSLANG to an external `OSLANG.EXE` (osb.oslang exists) and re-adds external dispatch. |
+| OSLANG interpreter (`OslangKernel.cs` + ~8 partials, ~6.7 kLOC, inside the kernel) | **Removed from the kernel in O0 (2026-11-19).** Sources archived read-only at `osb.oslang/archive/kernel-port/`; the new engine lives in `osb.oslang/engine/` and ships as `A:\OSB\BIN\OSLANG.EXE` in O6. The `OSLANG` shell command and `.osl` scripts are **lost until O6** — documented deviation. |
 | KISS command | **Drop as built-in.** It is a launcher: `OSLANG A:\OSB\BIN\KISS.OSL [file]`; users run `OSLANG …` or a `KISS.EXE` wrapper later. |
 | GFX desktop (`Shell/Desktop*.cs`, ~580 lines, currently unreachable from dispatch) | **Do not migrate.** Superseded by osb.xwin (`XWIN.EXE`, ring 3, uses 40h–59h). Delete from the kernel after XWIN parity is confirmed; XWIN remains a separate userspace program. |
 | DEMO task | **Keep kernel-side** (scheduler test fixture). Optionally expose as a built-in SPAWN id for `TASK`/`KILL` testing; no shell feature. |
@@ -1347,8 +1347,7 @@ Amendments applied to this document:
   shell stopped being used (or a throwaway patched kernel in /tmp that calls
   `Shell.Run()`), capture per-command serial transcripts as fixtures;
   acceptance = automated QEMU serial scripts comparing output.
-* **A12** — OSLANG stays in the kernel for this project; temporary loss of
-  the `OSLANG` command and `.osl` scripts documented (§6).
+* **A12** — OSLANG was removed from the kernel in O0 (2026-11-19). Temporary loss of the `OSLANG` command and `.osl` scripts until O6 ships `A:\OSB\BIN\OSLANG.EXE`. Kernel port archived at `osb.oslang/archive/kernel-port/`.
 
 Remaining open questions (to resolve during 1b/1c, not blocking 1a):
 

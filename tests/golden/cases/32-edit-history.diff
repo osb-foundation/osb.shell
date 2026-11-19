@@ -1,0 +1,10 @@
+--- /dev/fd/63	2026-11-18 20:51:32.473499686 -0300
++++ /dev/fd/62	2026-11-18 20:51:32.473499686 -0300
+@@ -2,5 +2,5 @@
+ 
+ root@OSB A:\OSB\ROOT>cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ Bad command or file name.
+-root@OSB A:\OSB\ROOT>root@OSB A:\OSB\ROOT>ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccroot@OSB A:\OSB\ROOT>                                                                                                    
+-root@OSB A:\OSB\ROOT>
++root@OSB A:\OSB\ROOT>root@OSB A:\OSB\ROOT>ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccroot@OSB A:\OSB\ROOT>                                                                                                    Boo
++root@OSB A:\OSB\ROOT>t program exited. Halting.

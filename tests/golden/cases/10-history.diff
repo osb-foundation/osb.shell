@@ -1,0 +1,12 @@
+--- /dev/fd/63	2026-11-18 21:12:53.721260474 -0300
++++ /dev/fd/62	2026-11-18 21:12:53.722260463 -0300
+@@ -20,6 +20,9 @@
+ root@OSB A:\OSB\ROOT>(:99)
+ No such history entry
+ root@OSB A:\OSB\ROOT>HISTORY 2
++    1  HISTORY
++    2  ECHO alpha
++    3  ECHO beta
+     4  HISTORY
+     5  HISTORY 2
+ root@OSB A:\OSB\ROOT>
