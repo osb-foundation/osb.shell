@@ -27,7 +27,7 @@
          into SHELL.EXE. Sibling checkout required (A10). -->
     <Compile Include="../osbkt/Syscall.cs" Link="osbkt/Syscall.cs" />
     <Compile Include="../osbkt/Fmt.cs" Link="osbkt/Fmt.cs" />
-    <Compile Include="../osb.core/src/MiniCoreLib.cs" Link="MiniCoreLib.cs" />
+    <Compile Include="../osb.core/src/*.cs" Link="osb.core/%(Filename)%(Extension)" />
     <Compile Include="Program.cs" />
     <Compile Include="Program.Commands.cs" />
     <Compile Include="Program.Users.cs" />

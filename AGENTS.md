@@ -20,7 +20,7 @@ This file guides coding agents working in the `osb.shell` repository.
    - Depends on `osbkt` for INT 21h syscall wrappers (linked sources:
      `../osbkt/Syscall.cs` — sibling checkout required, see README.md).
    - Depends on `osb.core` for the canonical MiniCoreLib (linked from
-     `../osb.core/src/MiniCoreLib.cs` — never keep a local copy).
+     `../osb.core/src/*.cs` — never keep a local copy).
    - Communicates with OSB kernel via syscalls (`osbkt/docs/ABI.md` is the
      contract).
    - **Verified dependency model (A1):** osbkt is consumed by linked sources,
@@ -29,7 +29,7 @@ This file guides coding agents working in the `osb.shell` repository.
      `csc` cannot import predefined types (`System.Object`, `System.Int32`, …)
      from a referenced NoStdLib library, and `osbkt` itself requires
      `MiniCoreLib` to compile `Syscall.cs`. Each consuming program therefore
-     compiles the single canonical `MiniCoreLib.cs` (from `osb.core`) plus the
+     compiles the canonical mini-CoreLib sources (`osb.core/src/*.cs`) plus the
      `osbkt` syscall wrappers as linked sources into one freestanding
      NativeAOT module — no `osbkt.dll` ships at runtime.
 
