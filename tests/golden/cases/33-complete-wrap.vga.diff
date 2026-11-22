@@ -1,0 +1,24 @@
+--- /mnt/Data/Nextcloud/Projects/osb/osb.shell/tests/golden/cases/33-complete-wrap.vga	2026-11-21 01:43:45.546744972 -0300
++++ /tmp/osb-golden-0ZHHaZ/run-35-sMOrBl/vga	2026-11-21 14:52:18.959702857 -0300
+@@ -43,8 +43,8 @@
+ 
+ root@OSB A:\OSB\ROOT>ECHO xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ xxxxxx A:\OSB\ROOT\TRASH\
+-root@OSB A:\OSB\ROOT>ECHO xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+-xxxxxx A:\OSB\
++root@OSB A:\OSB\ROOT>Boot program exited. Halting.
++ECHO xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx A:\OSB\
+ BIN  CONF  HELP  HOME  TEMP  APPS  ROOT  README.TXT
+ root@OSB A:\OSB\ROOT>ECHO xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ xxxxxx A:\OSB\
+@@ -70,8 +70,8 @@
+ 
+ root@OSB A:\OSB\ROOT>ECHO xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ xxxxxx A:\OSB\ROOT\TRASH\
+-root@OSB A:\OSB\ROOT>ECHO xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+-xxxxxx A:\OSB\
++root@OSB A:\OSB\ROOT>Boot program exited. Halting.
++ECHO xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx A:\OSB\
+ BIN  CONF  HELP  HOME  TEMP  APPS  ROOT  README.TXT
+ root@OSB A:\OSB\ROOT>ECHO xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ xxxxxx A:\OSB\
