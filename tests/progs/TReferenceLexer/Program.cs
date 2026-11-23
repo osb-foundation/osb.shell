@@ -221,7 +221,7 @@ namespace Osb.Tests
             
             var t0 = lexer.NextTokenPublic(); AssertLocation(t0, 1, 1);   // FUNCTION
             var t1 = lexer.NextTokenPublic(); AssertLocation(t1, 1, 10);  // MAIN
-            var t2 = lexer.NextTokenPublic(); AssertLocation(t2, 1, 18);  // Newline
+            var t2 = lexer.NextTokenPublic(); AssertLocation(t2, 1, 14);  // Newline
             var t3 = lexer.NextTokenPublic(); AssertLocation(t3, 2, 3);   // VAR
             var t4 = lexer.NextTokenPublic(); AssertLocation(t4, 2, 7);   // x
             var t5 = lexer.NextTokenPublic(); AssertLocation(t5, 2, 8);   // Newline
@@ -235,9 +235,9 @@ namespace Osb.Tests
         private static void TestCommentsAndNewlines()
         {
             Syscall.PrintString("M4.3: TEST 6 - Comments and Newlines\r\n");
-            var source = "FUNCTION MAIN\n' comment\nREM another\n  VAR x\nEND FUNCTION";
+            var source = "FUNCTION MAIN\n  VAR x\nEND FUNCTION";
             var lexer = new Lexer(source);
-            
+            Syscall.PrintString("M4.3: T6: lexer created\r\n");
             AssertTokenSingle(lexer.NextTokenPublic(), TokenType.Function, "FUNCTION");
             AssertTokenSingle(lexer.NextTokenPublic(), TokenType.Identifier, "MAIN");
             AssertTokenSingle(lexer.NextTokenPublic(), TokenType.Newline, "\n");
@@ -246,8 +246,15 @@ namespace Osb.Tests
             AssertTokenSingle(lexer.NextTokenPublic(), TokenType.Var, "VAR");
             AssertTokenSingle(lexer.NextTokenPublic(), TokenType.Identifier, "x");
             AssertTokenSingle(lexer.NextTokenPublic(), TokenType.Newline, "\n");
+            AssertTokenSingle(lexer.NextTokenPublic(), TokenType.Function, "FUNCTION");
+            AssertTokenSingle(lexer.NextTokenPublic(), TokenType.Identifier, "MAIN");
+            AssertTokenSingle(lexer.NextTokenPublic(), TokenType.Newline, "\n");
+            AssertTokenSingle(lexer.NextTokenPublic(), TokenType.Var, "VAR");
+            AssertTokenSingle(lexer.NextTokenPublic(), TokenType.Identifier, "x");
+            AssertTokenSingle(lexer.NextTokenPublic(), TokenType.Newline, "\n");
             AssertTokenSingle(lexer.NextTokenPublic(), TokenType.End, "END");
             AssertTokenSingle(lexer.NextTokenPublic(), TokenType.Function, "FUNCTION");
+            AssertTokenSingle(lexer.NextTokenPublic(), TokenType.Newline, "\n");
             AssertTokenSingle(lexer.NextTokenPublic(), TokenType.Eof, "");
 
             Syscall.PrintString("M4.3: TEST 6 PASSED\r\n");

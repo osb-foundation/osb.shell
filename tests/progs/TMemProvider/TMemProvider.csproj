@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>false</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <RuntimeMetadataVersion>v4.0.30319</RuntimeMetadataVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <DisableImplicitUsings>true</DisableImplicitUsings>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateRuntimeConfigurationFiles>false</GenerateRuntimeConfigurationFiles>
+    <UseAppHost>false</UseAppHost>
+    <DefineConstants>$(DefineConstants);TARGET_64BIT</DefineConstants>
+    <AssemblyName>TMemProvider</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="../../../../osbkt/Syscall.cs" Link="osbkt/Syscall.cs" />
+    <Compile Include="../../../../osbkt/Fmt.cs" Link="osbkt/Fmt.cs" />
+    <Compile Include="../../../../osb.core/src/*.cs" Link="osb.core/%(Filename)%(Extension)" />
+    <Compile Include="../../../../osb.oslang/engine/Core/Providers/*.cs" Link="engine/Core/Providers/%(Filename)%(Extension)" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="../../../../osb.oslang/engine/Core/obj/**/*.cs" />
+  </ItemGroup>
+
+  <Target Name="CheckSiblings" BeforeTargets="CoreCompile">
+    <Error Condition="!Exists('$(MSBuildThisFileDirectory)../../../../osbkt/Syscall.cs')"
+           Text="osbkt sibling repo not found. Clone the OSB repos side by side; see ../../README.md." />
+    <Error Condition="!Exists('$(MSBuildThisFileDirectory)../../../../osb.core/src/MiniCoreLib.cs')"
+           Text="osb.core sibling repo not found. Clone the OSB repos side by side; see ../../README.md." />
+    <Error Condition="!Exists('$(MSBuildThisFileDirectory)../../../../osb.oslang/engine/Core/Providers/OsbMemoryProvider.cs')"
+           Text="osb.oslang engine Core not found. Clone the OSB repos side by side; see ../../README.md." />
+  </Target>
+
+  <Target Name="CustomizeReferences" BeforeTargets="BeforeCompile" AfterTargets="FindReferenceAssembliesForReferences">
+    <ItemGroup>
+      <ReferencePathWithRefAssemblies Remove="@(ReferencePathWithRefAssemblies)" />
+      <ReferencePath Remove="@(ReferencePath)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="RemoveHostConfigurationOptions" BeforeTargets="WriteIlcRspFileForCompilation" DependsOnTargets="PrepareForILLink">
+    <ItemGroup>
+      <RuntimeHostConfigurationOption Remove="@(RuntimeHostConfigurationOption)" />
+    </ItemGroup>
+  </Target>
+
+</Project>

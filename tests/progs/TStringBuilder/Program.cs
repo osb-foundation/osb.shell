@@ -11,9 +11,6 @@ namespace Osb.Tests
     internal static unsafe class Program
     {
         [DllImport("osbnative")]
-        private static extern ulong osb_tls_tp();
-
-        [DllImport("osbnative")]
         private static extern ulong osb_tls_get_alloc();
 
         [DllImport("osbnative")]
@@ -185,6 +182,8 @@ namespace Osb.Tests
             string result = sb.ToString();
             Check(result.Length == 4, "AppendCharArray.Length==4");
             Check(result[0] == 'A', "AppendCharArray[0]=='A'");
+            Check(result[1] == 'B', "AppendCharArray[1]=='B'");
+            Check(result[2] == 'C', "AppendCharArray[2]=='C'");
             Check(result[3] == 'D', "AppendCharArray[3]=='D'");
         }
 
@@ -195,7 +194,6 @@ namespace Osb.Tests
             sb.AppendLine("Line1");
             sb.AppendLine("Line2");
             string result = sb.ToString();
-            // "Line1\nLine2\n" = 12 chars
             Check(result.Length == 12, "AppendLine.Length==12");
             Check(result[5] == '\n', "AppendLine[5]=='\\n'");
             Check(result[11] == '\n', "AppendLine[11]=='\\n'");
@@ -215,8 +213,8 @@ namespace Osb.Tests
         private static void TestCapacityGrowth()
         {
             Syscall.PrintString("TSTRINGBUILDER: Test 10 - Capacity Growth\r\n");
-            var sb = new StringBuilder(4); // Small initial capacity
-            sb.Append("0123456789"); // 10 chars, should trigger growth
+            var sb = new StringBuilder(4);
+            sb.Append("0123456789");
             string result = sb.ToString();
             Check(result.Length == 10, "CapacityGrowth.Length==10");
             Check(result[0] == '0', "CapacityGrowth[0]=='0'");
@@ -229,15 +227,28 @@ namespace Osb.Tests
             var sb = new StringBuilder();
             sb.Append("Original");
             string result1 = sb.ToString();
+            // Check result1 BEFORE creating result2
+            bool r1Len8b = (result1.Length == 8);
+            bool r1C0Ob = (result1[0] == 'O');
+            bool r1C7Lb = (result1[7] == 'l');
             sb.Append("Modified");
             string result2 = sb.ToString();
-            // result1 should be unchanged
-            Check(result1.Length == 8, "Independence.Result1.Length==8");
-            Check(result1[0] == 'O', "Independence.Result1[0]=='O'");
-            Check(result1[7] == 'l', "Independence.Result1[7]=='l'");
-            // result2 should have the appended text
-            Check(result2.Length == 16, "Independence.Result2.Length==16");
-            Check(result2[8] == 'M', "Independence.Result2[8]=='M'");
+            char c1_0 = result1[0];
+            char c1_7 = result1[7];
+            char c2_8 = result2[8];
+            bool r1Len8 = (result1.Length == 8);
+            bool r1C0O = (c1_0 == 'O');
+            bool r1C7L = (c1_7 == 'l');
+            bool r2Len16 = (result2.Length == 16);
+            bool r2C8M = (c2_8 == 'M');
+            Check(r1Len8b, "Independence.Result1.Length==8 (before)");
+            Check(r1C0Ob, "Independence.Result1[0]=='O' (before)");
+            Check(r1C7Lb, "Independence.Result1[7]=='l' (before)");
+            Check(r1Len8, "Independence.Result1.Length==8 (after)");
+            Check(r1C0O, "Independence.Result1[0]=='O' (after)");
+            Check(r1C7L, "Independence.Result1[7]=='l' (after)");
+            Check(r2Len16, "Independence.Result2.Length==16");
+            Check(r2C8M, "Independence.Result2[8]=='M'");
         }
     }
 }

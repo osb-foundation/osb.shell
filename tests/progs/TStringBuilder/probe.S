@@ -1,16 +1,19 @@
-/* M3.4.2 Phase 6: link the real NativeAOT allocation helpers into a Ring 3
- * program.
+/* TStringBuilder probe.S: TLS state provider for AllocFast_real.o wrappers.
  *
- * - tls_CurrentThread: the 208-byte TLS object the helpers address as
- *   FS:0 - 0xD0. The linker relaxes the helpers' R_X86_64_TLSGD relocations
- *   to Local Exec (mov %fs:0,%rax ; lea -0xD0(%rax),%rax) because this is the
- *   only TLS object and it is hidden. No ELF TLS loader is needed: the kernel
- *   initializes the object at TP-0xD0 (Scheduler.InitTaskTls) and sets FS base.
+ * AllocFast_real.o provides wrapper functions (RhpNewArrayFast, RhNewString,
+ * RhpNewPtrArrayFast, RhpNewFast) that:
+ *   1. Do size calculation and bounds-check preparation
+ *   2. Call _Xxx(tls_addr) which must return a pointer to [limit:8][alloc_ptr:8]
+ *   3. Do bounds checking and object header writing
+ *   4. Return the allocated object pointer
  *
- * - Fallback stubs: the real GC path is not linked. RhpNewVariableSizeObject
- *   returns NULL, RhExceptionHandling_FailedAllocation halts. The success test
- *   never reaches them (the bounded heap is large enough); the report must not
- *   claim fallback allocation works.
+ * This probe.S provides only the _Xxx entry points and TLS infrastructure.
+ * It does NOT define RhpNewArrayFast/RhNewString/etc. (those come from
+ * AllocFast_real.o and would cause duplicate-symbol conflicts).
+ *
+ * TLS layout:
+ *   FS:0 - 0xD0 = limit (allocation ceiling)
+ *   FS:0 - 0xC8 = alloc_ptr (allocation pointer, grows UPWARD)
  */
 
 .section .tbss,"awT",@nobits
@@ -63,7 +66,34 @@ osb_tls_set_limit:
     movq %rdi, -0xD0(%rax)
     ret
 
-/* ---- fallback stubs (NOT a GC allocator) ---- */
+/* ---- Exception handling stubs ---- */
+
+.global RhpThrowEx
+.type RhpThrowEx, @function
+RhpThrowEx:
+1:  hlt
+    jmp 1b
+
+.global RhpAssignRef
+.type RhpAssignRef, @function
+RhpAssignRef:
+    movq %rsi, (%rdi)
+    movq %rsi, %rax
+    ret
+
+.global RhpByRefAssignRef
+.type RhpByRefAssignRef, @function
+RhpByRefAssignRef:
+    movq %rsi, (%rdi)
+    ret
+
+.global RhpCheckedAssignRef
+.type RhpCheckedAssignRef, @function
+RhpCheckedAssignRef:
+    movq %rsi, (%rdi)
+    ret
+
+/* ---- Fallback stubs (NOT a GC allocator) ---- */
 
 .global RhpNewVariableSizeObject
 .type RhpNewVariableSizeObject, @function
@@ -83,12 +113,6 @@ RhpGcAlloc:
     xorl %eax, %eax
     ret
 
-.global RhpAssignRef
-.type RhpAssignRef, @function
-RhpAssignRef:
-    /* Write barrier - no-op in freestanding */
-    ret
-
 .global RhpNewObject
 .type RhpNewObject, @function
 RhpNewObject:
@@ -101,11 +125,39 @@ RhpNewFinalizable:
     xorl %eax, %eax
     ret
 
-.global RhpThrowEx
-.type RhpThrowEx, @function
-RhpThrowEx:
-    /* Exception throwing - halt */
-1:  hlt
-    jmp 1b
+/* ---- _Xxx entry points for AllocFast_real.o wrappers ----
+ *
+ * Each _Xxx function receives rdi = TLS hint (from lea %rip in wrapper),
+ * which is ignored. Returns rax = pointer to TLS state struct
+ * at FS:0 - 0xD0, i.e. [limit:8][alloc_ptr:8].
+ */
+
+.global _RhpNewArrayFast
+.type _RhpNewArrayFast, @function
+_RhpNewArrayFast:
+    movq %fs:0, %rax
+    subq $0xD0, %rax
+    ret
+
+.global _RhpNewPtrArrayFast
+.type _RhpNewPtrArrayFast, @function
+_RhpNewPtrArrayFast:
+    movq %fs:0, %rax
+    subq $0xD0, %rax
+    ret
+
+.global _RhNewString
+.type _RhNewString, @function
+_RhNewString:
+    movq %fs:0, %rax
+    subq $0xD0, %rax
+    ret
+
+.global _RhpNewFast
+.type _RhpNewFast, @function
+_RhpNewFast:
+    movq %fs:0, %rax
+    subq $0xD0, %rax
+    ret
 
 .section .note.GNU-stack, "", @progbits
