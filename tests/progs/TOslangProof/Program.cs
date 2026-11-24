@@ -27,8 +27,10 @@ namespace Osb.Tests
         private static void Main()
         {
             // Initialize TLS heap for NativeAOT allocation helpers
-            // User heap region: 0x207C000 to 0x2200000 (2 MiB)
-            const ulong HeapBase = 0x207C000;
+            // Heap placed above the user stack ([0x207C000, 0x2080000)) and above
+            // all TLS slots ([0x2100000, 0x2108000)), at UserTlsEnd.
+            // User heap region: 0x2108000 to 0x2200000.
+            const ulong HeapBase = 0x2108000;
             const ulong HeapLimit = 0x2200000;
 
             osb_tls_set_alloc(HeapBase);

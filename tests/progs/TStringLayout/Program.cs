@@ -39,7 +39,9 @@ namespace Osb.Tests
         public static void Main()
         {
             // Initialize TLS heap
-            const ulong HeapBase = 0x207C000;
+            // Heap placed above the user stack ([0x207C000, 0x2080000)) and above
+            // all TLS slots ([0x2100000, 0x2108000)), at UserTlsEnd.
+            const ulong HeapBase = 0x2108000;
             const ulong HeapLimit = 0x2200000;
             osb_tls_set_alloc(HeapBase);
             osb_tls_set_limit(HeapLimit);

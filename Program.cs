@@ -59,6 +59,31 @@ namespace Osb.Shell.Userspace
         // history, and the first matching command runs.
         private static void Dispatch(char* line, int len)
         {
+            int s = 0;
+            while (s < len && line[s] == ' ') s++;
+            int e = s;
+            while (e < len && line[e] != ' ') e++;
+            int nameLen = e - s;
+
+            // Narrow the first token to bytes (osbkt path arguments are B1
+            // byte strings; the source line is UTF-16 char*).
+            var name = stackalloc byte[128];
+            int nb = nameLen > 127 ? 127 : nameLen;
+            for (int k = 0; k < nb; k++) name[k] = (byte)line[s + k];
+
+            // Current-directory .OSL wins over internal Shell commands
+            // (extensionless names only).
+            if (nb > 0 && !External.HasExt(name, nb))
+            {
+                int argS = e;
+                while (argS < len && line[argS] == ' ') argS++;
+                int argLen = len - argS;
+                var args = stackalloc byte[128];
+                int ab = argLen > 127 ? 127 : argLen;
+                for (int k = 0; k < ab; k++) args[k] = (byte)line[argS + k];
+                if (External.TryOslInCwd(name, nb, args, ab)) return;
+            }
+
             int id = Commands.Identify(line, len);
             switch (id)
             {
