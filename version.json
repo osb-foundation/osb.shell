@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "generation": 0,
   "release": false,
+  "codename": "Olorun",
   "description": "Freestanding OSB userspace shell (SHELL.EXE), built on osbkt + osb.core.",
   "repository": "osb-foundation/osb.shell"
 }

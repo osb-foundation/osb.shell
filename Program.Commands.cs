@@ -66,12 +66,21 @@ namespace Osb.Shell.Userspace
 
             if (!anyFlag) showKernel = true; // default: kernel version
 
+            if (!anyFlag)
+            {
+                Syscall.PrintString("OSB 0.1.0 Olorun\r\n");
+                Syscall.PrintString("Kernel: 0.1.0\r\n");
+                Syscall.PrintString("Shell: 0.1.0\r\n");
+                Syscall.PrintString("Core: 0.1.0\r\n");
+                Syscall.PrintString("osbkt: 0.1.0\r\n");
+                Syscall.PrintString("OSLANG: 0.8.0\r\n");
+            }
             if (showKernel)
-                Syscall.PrintString("OSB (dotnet) version 0.1 - bootable kernel\r\n");
+                Syscall.PrintString("OSB (dotnet) version 0.1.0 - bootable kernel (Olorun)\r\n");
             if (showShell)
-                Syscall.PrintString("OSB shell version 0.1\r\n");
+                Syscall.PrintString("OSB shell version 0.1.0 (Olorun)\r\n");
             if (showAbout)
-                Syscall.PrintString("OSB: Operating System Basic, 2000-2026\r\n");
+                Syscall.PrintString("OSB: Operating System Basic, 2000-2026 - Olorun\r\n");
         }
 
         private static void DoCls(char* line, int len)
