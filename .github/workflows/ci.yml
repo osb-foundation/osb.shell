@@ -1,0 +1,42 @@
+name: CI (develop)
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.400
+
+      - name: Validate version metadata (SemVer)
+        run: |
+          python3 - <<'PY'
+          import json, re
+          d = json.load(open("version.json"))
+          v = d["version"]
+          assert re.match(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z\-.]+)?(?:\+[0-9A-Za-z\-.]+)?$", v), v
+          print(f"version OK: {d['component']} {v}")
+          PY
+
+      - name: Build OSB shell
+        run: dotnet build -c Release Osb.Shell.Userspace.csproj -v q -nologo
+
+      - name: Run host unit tests
+        run: dotnet test -c Release tests/unit/Osb.Shell.Unit.csproj -v q -nologo

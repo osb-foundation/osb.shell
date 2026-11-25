@@ -1,0 +1,9 @@
+{
+  "schema": "osb.version.v1",
+  "component": "osb.shell",
+  "version": "0.1.0",
+  "generation": 0,
+  "release": false,
+  "description": "Freestanding OSB userspace shell (SHELL.EXE), built on osbkt + osb.core.",
+  "repository": "osb-foundation/osb.shell"
+}
