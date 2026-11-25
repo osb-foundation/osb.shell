@@ -25,6 +25,15 @@
     <Compile Include="../../../../osbkt/Syscall.cs" Link="osbkt/Syscall.cs" />
     <Compile Include="../../../../osbkt/Fmt.cs" Link="osbkt/Fmt.cs" />
     <Compile Include="../../../../osb.core/src/*.cs" Link="osb.core/%(Filename)%(Extension)" />
+    <!-- O8.24 M3: OsbMemoryProvider (the real OSLANG memory provider) is linked
+         from osb.oslang as linked sources, exactly like TMemProvider does. EngineHeap
+         cannot be linked here: its type graph pulls in the full OSLANG object
+         model/compiler (Value -> AstNodes/Math), which is hosted-GC based and
+         lives in osb.oslang. EngineHeap is initialized in the OSLANG runtime
+         (OsbMain.cs); this test initializes its foundation, OsbMemoryProvider,
+         directly over the kernel-validated process-owned heap region. -->
+    <Compile Include="../../../../osb.oslang/engine/Core/Providers/OsbMemoryProvider.cs" Link="osb.oslang/Providers/OsbMemoryProvider.cs" />
+    <Compile Include="../../../../osb.oslang/engine/Core/Providers/IMemoryProvider.cs" Link="osb.oslang/Providers/IMemoryProvider.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 
@@ -33,6 +42,8 @@
            Text="osbkt sibling repo not found. Clone the OSB repos side by side; see ../../README.md." />
     <Error Condition="!Exists('$(MSBuildThisFileDirectory)../../../../osb.core/src/MiniCoreLib.cs')"
            Text="osb.core sibling repo not found. Clone the OSB repos side by side; see ../../README.md." />
+    <Error Condition="!Exists('$(MSBuildThisFileDirectory)../../../../osb.oslang/engine/Core/Providers/OsbMemoryProvider.cs')"
+           Text="osb.oslang engine Core not found. Clone the OSB repos side by side; see ../../README.md." />
   </Target>
 
   <Target Name="CustomizeReferences" BeforeTargets="BeforeCompile" AfterTargets="FindReferenceAssembliesForReferences">

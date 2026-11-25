@@ -1,4 +1,17 @@
-/* O8.23 M2 OSLANG NativeAOT Ring 3 Entry Adapter: TLS access and fallback stubs */
+/* O8.24 M3 OSLANG Ring 3 memory/TLS/allocation integration.
+ *
+ * Real NativeAOT allocation helpers backed by the process-owned heap region
+ * validated against the kernel (osb.kernel/Memory/Layout.cs +
+ * osb.kernel/Processes/Scheduler.cs InitTaskTls):
+ *
+ *   Heap = [UserTlsEnd, UserTlsHeapEnd) = [0x2180000, 0x21FFFF0)
+ *   TLS alloc_ptr at FS:0 - 0xC8, combined_limit at FS:0 - 0xD0
+ *
+ * The kernel provisions each task a private 2 MiB block (present, RW, user,
+ * one huge page) and initializes FS:0 to the task's TP, so the TLS bump
+ * pointer is per-process and the heap memory is process-owned. No helper
+ * returns a silent success: exhaustion yields NULL.
+ */
 
 .section .tbss,"awT",@nobits
 .align 8
@@ -10,6 +23,8 @@ tls_CurrentThread:
     .zero 208
 
 .section .text
+
+/* ---- TLS primitives (FS-relative, C# cannot emit segment access) ---- */
 
 /* ulong osb_tls_tp(): return FS:0. */
 .global osb_tls_tp
@@ -50,21 +65,73 @@ osb_tls_set_limit:
     movq %rdi, -0xD0(%rax)
     ret
 
-/* ---- fallback stubs (NOT a GC allocator) ---- */
+/* ---- bump allocator over the thread-local [alloc, limit) arena ---- */
+
+/* Private: bump_alloc(size in rdi) -> rax = object or NULL on exhaustion.
+ * Aligns size up to 8 bytes; advances TLS alloc_ptr; never writes past limit. */
+.align 4
+bump_alloc:
+    movq %fs:0, %rax           /* rax = TP */
+    movq -0xC8(%rax), %rcx     /* rcx = alloc_ptr (old value = result) */
+    movq -0xD0(%rax), %rdx     /* rdx = limit */
+    movq %rcx, %r9             /* r9 = old alloc_ptr (object address) */
+    movq %rdi, %r8             /* r8 = size */
+    addq $7, %r8
+    andq $-8, %r8              /* r8 = size aligned up to 8 */
+    addq %r8, %rcx             /* rcx = alloc + aligned */
+    cmpq %rdx, %rcx
+    ja  bump_fail              /* alloc + aligned > limit -> out of memory */
+    movq %rcx, -0xC8(%rax)     /* set alloc_ptr = alloc + aligned */
+    movq %r9, %rax             /* rax = old alloc_ptr (object) */
+    ret
+bump_fail:
+    xorl %eax, %eax            /* return NULL */
+    ret
+
+/* ---- NativeAOT allocation helpers (real MethodTable*-based ABI) ---- */
+
+/* void* RhpNewFast(MethodTable* mt): size = mt->BaseSize (uint32 @ +4). */
+.global RhpNewFast
+.type RhpNewFast, @function
+RhpNewFast:
+    movl 4(%rdi), %eax         /* eax = BaseSize */
+    movq %rax, %rdi            /* rdi = size (ulong) */
+    jmp bump_alloc
+
+/* void* RhpNewArrayFast(MethodTable* mt, int length):
+ *   size = mt->BaseSize + length * mt->ComponentSize (uint16 @ +0). */
+.global RhpNewArrayFast
+.type RhpNewArrayFast, @function
+RhpNewArrayFast:
+    movq %rdi, %rax
+    movl 4(%rax), %eax         /* eax = BaseSize */
+    movzwq (%rdi), %rcx        /* rcx = ComponentSize (uint16 @ +0) */
+    movslq %esi, %rsi          /* rsi = length (sign-extended int) */
+    imulq %rsi, %rcx           /* rcx = length * ComponentSize */
+    addq %rcx, %rax            /* rax = BaseSize + length * ComponentSize */
+    movq %rax, %rdi            /* rdi = size */
+    jmp bump_alloc
+
+/* void* RhpNewPtrArrayFast(MethodTable* mt, int length) == RhpNewArrayFast. */
+.global RhpNewPtrArrayFast
+.type RhpNewPtrArrayFast, @function
+RhpNewPtrArrayFast:
+    jmp RhpNewArrayFast
+
+/* void* RhNewString(MethodTable* mt, nint length) == RhpNewArrayFast. */
+.global RhNewString
+.type RhNewString, @function
+RhNewString:
+    jmp RhpNewArrayFast
+
+/* ---- GC-related helpers: not implemented in this no-GC runtime. Return NULL
+ * honestly rather than pretending an allocation succeeded. ---- */
 
 .global RhpNewVariableSizeObject
 .type RhpNewVariableSizeObject, @function
 RhpNewVariableSizeObject:
     xorl %eax, %eax
     ret
-
-.global RhExceptionHandling_FailedAllocation
-.type RhExceptionHandling_FailedAllocation, @function
-RhExceptionHandling_FailedAllocation:
-    /* Exit with error code 1 instead of hlt (privileged in ring 3) */
-    movq $0x4C01, %rax  /* INT 21h AH=4Ch Exit with code 1 */
-    int  $0x21
-1:  jmp 1b
 
 .global RhpGcAlloc
 .type RhpGcAlloc, @function
@@ -84,7 +151,8 @@ RhpNewFinalizable:
     xorl %eax, %eax
     ret
 
-/* Additional stubs needed by MiniCoreLib */
+/* ---- Write barriers: real stores (no GC in this runtime, so plain assign). ---- */
+
 .global RhpAssignRef
 .type RhpAssignRef, @function
 RhpAssignRef:
@@ -97,40 +165,19 @@ RhpByRefAssignRef:
     movq %rsi, (%rdi)
     ret
 
-.global RhpThrowEx
-.type RhpThrowEx, @function
-RhpThrowEx:
-    /* Exit with error code 1 instead of hlt (privileged in ring 3) */
-    movq $0x4C01, %rax  /* INT 21h AH=4Ch Exit with code 1 */
-    int  $0x21
-1:  jmp 1b
-
 .global RhpCheckedAssignRef
 .type RhpCheckedAssignRef, @function
 RhpCheckedAssignRef:
-    /* Signature: void RhpCheckedAssignRef(void** dest, void* src, ulong index, ulong length) */
-    /* Simple unchecked version for freestanding */
     movq %rsi, (%rdi)
     ret
 
-/* Additional symbols for string/array allocation */
-.global RhpNewFast
-.type RhpNewFast, @function
-RhpNewFast:
-    xorl %eax, %eax
-    ret
+/* ---- Exception throwing: hlt is privileged in Ring 3, so spin forever
+ * (matches the original C while(1){} intent; no fake success). ---- */
 
-.global RhNewString
-.type RhNewString, @function
-RhNewString:
-    xorl %eax, %eax
-    ret
-
-.global RhpNewArrayFast
-.type RhpNewArrayFast, @function
-RhpNewArrayFast:
-    xorl %eax, %eax
-    ret
+.global RhpThrowEx
+.type RhpThrowEx, @function
+RhpThrowEx:
+1:  jmp 1b
 
 .global _RhpNewFast
 .type _RhpNewFast, @function
