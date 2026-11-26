@@ -7,7 +7,7 @@
 - Freestanding userspace shell (SHELL.EXE) implementing a REPL with OsbKT console I/O and file operations.
 - Ring-3 program staging (built with `WITH_TESTS=1`): TSpawn, TExit, TArgs, TPrint, TWait, TPtr, TSpawnErr, TQuiet, TId, TSpin, TLogout, TMemGrow, TMemProvider, TMkdir, TEnv, TFileIO, TFileManip, TPath, TSudo, TTlsProof, TAlloc, TOslangProof, TReferenceLexer, TStringBuilder, TStringLayout, TEETypeLayout, TOslangEntry.
 - Test proofs: THello (Ring-3 Hello World, exit 42), TNX (EACCES non-exec mode 0100644), ROOTONLY (0700 root-only exec), TQuiet (0600 silent copy).
-- `VER` command reads component versions and the Olorun codename from the generated `/OSB/CONF/VERSION.JSON` artifact (no hardcoded version table); supports `/O /S /C /T /L /A` flags.
+- `VER` command reads component versions and the Olorun codename from the generated `/OSB/CONF/VERSION.dat` artifact (line-oriented format, not JSON; no hardcoded version table); supports `/O /S /C /T /L /A` flags.
 - Compiled as a native AOT executable (SHELL.EXE) placed at /OSB/BIN/SHELL.EXE.
 
 ### Stable
