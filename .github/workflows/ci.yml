@@ -19,6 +19,25 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+        with:
+          path: osb.shell
+
+      # The shell consumes osbkt and osb.core by linked sources (sibling
+      # checkouts), not by ProjectReference. CI must place them side by side
+      # at deterministic refs or the build fails the CheckSiblings target.
+      - name: Checkout osbkt (sibling)
+        uses: actions/checkout@v4
+        with:
+          repository: osb-foundation/osbkt
+          ref: develop
+          path: osbkt
+
+      - name: Checkout osb.core (sibling)
+        uses: actions/checkout@v4
+        with:
+          repository: osb-foundation/osb.core
+          ref: develop
+          path: osb.core
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
@@ -30,9 +49,12 @@ jobs:
 
       - name: Validate version metadata (SemVer)
         run: dotnet cake scripts/validate-version.cake --versionJson=version.json --expectGeneration=0 --expectCodename=Olorun
+        working-directory: osb.shell
 
       - name: Build OSB shell
         run: dotnet build -c Release Osb.Shell.Userspace.csproj -v q -nologo
+        working-directory: osb.shell
 
       - name: Run host unit tests
         run: dotnet test -c Release tests/unit/Osb.Shell.Unit.csproj -v q -nologo
+        working-directory: osb.shell
