@@ -76,9 +76,9 @@ namespace Osb.Shell.Userspace
                 Syscall.PrintString("OSLANG: 0.8.0\r\n");
             }
             if (showKernel)
-                Syscall.PrintString("OSB (dotnet) version 0.1.0 - bootable kernel (Olorun)\r\n");
+                Syscall.PrintString("Kernel: 0.1.0\r\n");
             if (showShell)
-                Syscall.PrintString("OSB shell version 0.1.0 (Olorun)\r\n");
+                Syscall.PrintString("Shell: 0.1.0\r\n");
             if (showAbout)
                 Syscall.PrintString("OSB: Operating System Basic, 2000-2026 - Olorun\r\n");
         }

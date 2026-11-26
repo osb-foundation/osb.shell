@@ -3,7 +3,12 @@ login: root
 root@OSB A:\OSB\ROOT>
 
 root@OSB A:\OSB\ROOT>VER
-OSB (dotnet) version 0.1 - bootable kernel
+OSB 0.1.0 Olorun
+Kernel: 0.1.0
+Shell: 0.1.0
+Core: 0.1.0
+osbkt: 0.1.0
+OSLANG: 0.8.0
 root@OSB A:\OSB\ROOT>
 root@OSB A:\OSB\ROOT>VER /V
 Bad command or file name.
