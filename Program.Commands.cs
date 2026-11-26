@@ -16,6 +16,9 @@ namespace Osb.Shell.Userspace
             // Parse flags: concatenated (/A/S/O) or separate (/A /S /O)
             bool showKernel = false;
             bool showShell = false;
+            bool showCore = false;
+            bool showToolkit = false;
+            bool showOslang = false;
             bool showAbout = false;
             bool showHelp = false;
             bool anyFlag = false;
@@ -41,6 +44,9 @@ namespace Osb.Shell.Userspace
                             {
                                 case 'O': showKernel = true; break;
                                 case 'S': showShell = true; break;
+                                case 'C': showCore = true; break;
+                                case 'T': showToolkit = true; break;
+                                case 'L': showOslang = true; break;
                                 case 'A': showAbout = true; break;
                                 case '?': showHelp = true; break;
                             }
@@ -59,28 +65,117 @@ namespace Osb.Shell.Userspace
                 Syscall.PrintString("VER [show OSB version information]\r\n");
                 Syscall.PrintString("/O [show kernel version]\r\n");
                 Syscall.PrintString("/S [show shell version]\r\n");
+                Syscall.PrintString("/C [show core version]\r\n");
+                Syscall.PrintString("/T [show toolkit version]\r\n");
+                Syscall.PrintString("/L [show OSLANG version]\r\n");
                 Syscall.PrintString("/A [show about information]\r\n");
                 Syscall.PrintString("/? [show this help]\r\n");
                 return;
             }
 
-            if (!anyFlag) showKernel = true; // default: kernel version
-
             if (!anyFlag)
             {
-                Syscall.PrintString("OSB 0.1.0 Olorun\r\n");
-                Syscall.PrintString("Kernel: 0.1.0\r\n");
-                Syscall.PrintString("Shell: 0.1.0\r\n");
-                Syscall.PrintString("Core: 0.1.0\r\n");
-                Syscall.PrintString("osbkt: 0.1.0\r\n");
-                Syscall.PrintString("OSLANG: 0.8.0\r\n");
+                // Default: show all versions
+                char* kernelVer = stackalloc char[32]; int kvl;
+                char* shellVer = stackalloc char[32]; int svl;
+                char* coreVer = stackalloc char[32]; int cvl;
+                char* toolkitVer = stackalloc char[32]; int tvl;
+                char* oslangVer = stackalloc char[32]; int olvl;
+                char* codename = stackalloc char[32]; int cl;
+
+                fixed (char* ckernel = "osb.kernel")
+                fixed (char* cshell = "osb.shell")
+                fixed (char* ccore = "osb.core")
+                fixed (char* ctoolkit = "osbkt")
+                fixed (char* coslang = "osb.oslang")
+                {
+                    GetVersionString(ckernel, kernelVer, 32, out kvl);
+                    GetVersionString(cshell, shellVer, 32, out svl);
+                    GetVersionString(ccore, coreVer, 32, out cvl);
+                    GetVersionString(ctoolkit, toolkitVer, 32, out tvl);
+                    GetVersionString(coslang, oslangVer, 32, out olvl);
+                    GetCodename(codename, 32, out cl);
+                }
+
+                // Print OSB version line
+                Syscall.PrintString("OSB ");
+                for (int k = 0; k < kvl; k++) Syscall.PutChar(kernelVer[k]);
+                Syscall.PutChar(' ');
+                for (int k = 0; k < cl; k++) Syscall.PutChar(codename[k]);
+                Syscall.PrintString("\r\n");
+
+                // Print component versions
+                Syscall.PrintString("Kernel: ");
+                for (int k = 0; k < kvl; k++) Syscall.PutChar(kernelVer[k]);
+                Syscall.PrintString("\r\n");
+
+                Syscall.PrintString("Shell: ");
+                for (int k = 0; k < svl; k++) Syscall.PutChar(shellVer[k]);
+                Syscall.PrintString("\r\n");
+
+                Syscall.PrintString("Core: ");
+                for (int k = 0; k < cvl; k++) Syscall.PutChar(coreVer[k]);
+                Syscall.PrintString("\r\n");
+
+                Syscall.PrintString("osbkt: ");
+                for (int k = 0; k < tvl; k++) Syscall.PutChar(toolkitVer[k]);
+                Syscall.PrintString("\r\n");
+
+                Syscall.PrintString("OSLANG: ");
+                for (int k = 0; k < olvl; k++) Syscall.PutChar(oslangVer[k]);
+                Syscall.PrintString("\r\n");
             }
-            if (showKernel)
-                Syscall.PrintString("Kernel: 0.1.0\r\n");
-            if (showShell)
-                Syscall.PrintString("Shell: 0.1.0\r\n");
-            if (showAbout)
-                Syscall.PrintString("OSB: Operating System Basic, 2000-2026 - Olorun\r\n");
+            else
+            {
+                if (showKernel)
+                {
+                    char* v = stackalloc char[32]; int vl;
+                    fixed (char* c = "osb.kernel") GetVersionString(c, v, 32, out vl);
+                    Syscall.PrintString("Kernel: ");
+                    for (int k = 0; k < vl; k++) Syscall.PutChar(v[k]);
+                    Syscall.PrintString("\r\n");
+                }
+                if (showShell)
+                {
+                    char* v = stackalloc char[32]; int vl;
+                    fixed (char* c = "osb.shell") GetVersionString(c, v, 32, out vl);
+                    Syscall.PrintString("Shell: ");
+                    for (int k = 0; k < vl; k++) Syscall.PutChar(v[k]);
+                    Syscall.PrintString("\r\n");
+                }
+                if (showCore)
+                {
+                    char* v = stackalloc char[32]; int vl;
+                    fixed (char* c = "osb.core") GetVersionString(c, v, 32, out vl);
+                    Syscall.PrintString("Core: ");
+                    for (int k = 0; k < vl; k++) Syscall.PutChar(v[k]);
+                    Syscall.PrintString("\r\n");
+                }
+                if (showToolkit)
+                {
+                    char* v = stackalloc char[32]; int vl;
+                    fixed (char* c = "osbkt") GetVersionString(c, v, 32, out vl);
+                    Syscall.PrintString("osbkt: ");
+                    for (int k = 0; k < vl; k++) Syscall.PutChar(v[k]);
+                    Syscall.PrintString("\r\n");
+                }
+                if (showOslang)
+                {
+                    char* v = stackalloc char[32]; int vl;
+                    fixed (char* c = "osb.oslang") GetVersionString(c, v, 32, out vl);
+                    Syscall.PrintString("OSLANG: ");
+                    for (int k = 0; k < vl; k++) Syscall.PutChar(v[k]);
+                    Syscall.PrintString("\r\n");
+                }
+                if (showAbout)
+                {
+                    char* c = stackalloc char[32]; int cl;
+                    GetCodename(c, 32, out cl);
+                    Syscall.PrintString("OSB: Operating System Basic, 2000-2026 - ");
+                    for (int k = 0; k < cl; k++) Syscall.PutChar(c[k]);
+                    Syscall.PrintString("\r\n");
+                }
+            }
         }
 
         private static void DoCls(char* line, int len)

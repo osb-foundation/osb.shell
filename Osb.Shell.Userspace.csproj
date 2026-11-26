@@ -30,6 +30,7 @@
     <Compile Include="../osb.core/src/*.cs" Link="osb.core/%(Filename)%(Extension)" />
     <Compile Include="Program.cs" />
     <Compile Include="Program.Commands.cs" />
+    <Compile Include="Program.Version.cs" />
     <Compile Include="Program.Users.cs" />
     <Compile Include="Program.Tasks.cs" />
     <Compile Include="Env.cs" />
