@@ -73,6 +73,15 @@ namespace Osb.Shell.Userspace
                 return;
             }
 
+            // Zero-allocation: stack-allocated backing storage for version
+            // entries, valid for the entire VER operation. No heap-allocated
+            // byte array; the buffer is passed as a pointer to the version
+            // routines (see Program.Version.cs).
+            var verStorage = stackalloc byte[MaxVersionEntries * VersionEntrySize];
+            int verCount;
+            bool verAvailable;
+            LoadVersions(verStorage, out verCount, out verAvailable);
+
             if (!anyFlag)
             {
                 // Default: show all versions
@@ -89,12 +98,12 @@ namespace Osb.Shell.Userspace
                 fixed (char* ctoolkit = "osbkt")
                 fixed (char* coslang = "osb.oslang")
                 {
-                    GetVersionString(ckernel, kernelVer, 32, out kvl);
-                    GetVersionString(cshell, shellVer, 32, out svl);
-                    GetVersionString(ccore, coreVer, 32, out cvl);
-                    GetVersionString(ctoolkit, toolkitVer, 32, out tvl);
-                    GetVersionString(coslang, oslangVer, 32, out olvl);
-                    GetCodename(codename, 32, out cl);
+                    GetVersionString(ckernel, kernelVer, 32, out kvl, verStorage, verCount, verAvailable);
+                    GetVersionString(cshell, shellVer, 32, out svl, verStorage, verCount, verAvailable);
+                    GetVersionString(ccore, coreVer, 32, out cvl, verStorage, verCount, verAvailable);
+                    GetVersionString(ctoolkit, toolkitVer, 32, out tvl, verStorage, verCount, verAvailable);
+                    GetVersionString(coslang, oslangVer, 32, out olvl, verStorage, verCount, verAvailable);
+                    GetCodename(codename, 32, out cl, verStorage, verCount, verAvailable);
                 }
 
                 // Print OSB version line
@@ -130,7 +139,7 @@ namespace Osb.Shell.Userspace
                 if (showKernel)
                 {
                     char* v = stackalloc char[32]; int vl;
-                    fixed (char* c = "osb.kernel") GetVersionString(c, v, 32, out vl);
+                    fixed (char* c = "osb.kernel") GetVersionString(c, v, 32, out vl, verStorage, verCount, verAvailable);
                     Syscall.PrintString("Kernel: ");
                     for (int k = 0; k < vl; k++) Syscall.PutChar(v[k]);
                     Syscall.PrintString("\r\n");
@@ -138,7 +147,7 @@ namespace Osb.Shell.Userspace
                 if (showShell)
                 {
                     char* v = stackalloc char[32]; int vl;
-                    fixed (char* c = "osb.shell") GetVersionString(c, v, 32, out vl);
+                    fixed (char* c = "osb.shell") GetVersionString(c, v, 32, out vl, verStorage, verCount, verAvailable);
                     Syscall.PrintString("Shell: ");
                     for (int k = 0; k < vl; k++) Syscall.PutChar(v[k]);
                     Syscall.PrintString("\r\n");
@@ -146,7 +155,7 @@ namespace Osb.Shell.Userspace
                 if (showCore)
                 {
                     char* v = stackalloc char[32]; int vl;
-                    fixed (char* c = "osb.core") GetVersionString(c, v, 32, out vl);
+                    fixed (char* c = "osb.core") GetVersionString(c, v, 32, out vl, verStorage, verCount, verAvailable);
                     Syscall.PrintString("Core: ");
                     for (int k = 0; k < vl; k++) Syscall.PutChar(v[k]);
                     Syscall.PrintString("\r\n");
@@ -154,7 +163,7 @@ namespace Osb.Shell.Userspace
                 if (showToolkit)
                 {
                     char* v = stackalloc char[32]; int vl;
-                    fixed (char* c = "osbkt") GetVersionString(c, v, 32, out vl);
+                    fixed (char* c = "osbkt") GetVersionString(c, v, 32, out vl, verStorage, verCount, verAvailable);
                     Syscall.PrintString("osbkt: ");
                     for (int k = 0; k < vl; k++) Syscall.PutChar(v[k]);
                     Syscall.PrintString("\r\n");
@@ -162,7 +171,7 @@ namespace Osb.Shell.Userspace
                 if (showOslang)
                 {
                     char* v = stackalloc char[32]; int vl;
-                    fixed (char* c = "osb.oslang") GetVersionString(c, v, 32, out vl);
+                    fixed (char* c = "osb.oslang") GetVersionString(c, v, 32, out vl, verStorage, verCount, verAvailable);
                     Syscall.PrintString("OSLANG: ");
                     for (int k = 0; k < vl; k++) Syscall.PutChar(v[k]);
                     Syscall.PrintString("\r\n");
@@ -170,7 +179,7 @@ namespace Osb.Shell.Userspace
                 if (showAbout)
                 {
                     char* c = stackalloc char[32]; int cl;
-                    GetCodename(c, 32, out cl);
+                    GetCodename(c, 32, out cl, verStorage, verCount, verAvailable);
                     Syscall.PrintString("OSB: Operating System Basic, 2000-2026 - ");
                     for (int k = 0; k < cl; k++) Syscall.PutChar(c[k]);
                     Syscall.PrintString("\r\n");

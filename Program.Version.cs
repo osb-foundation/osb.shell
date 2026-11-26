@@ -20,38 +20,37 @@ namespace Osb.Shell.Userspace
             public bool valid;
         }
 
-        private static int _versionCount;
-        private static bool _versionsLoaded;
-        private static bool _versionsAvailable;
-
-        // Fixed-size backing storage for version entries (max 5 components).
-        // This avoids stackalloc lifetime issues and heap allocation.
-        // In NativeAOT, static arrays are in the data section and don't move.
-        private static byte[] _versionStorage = new byte[5 * sizeof(VersionEntry)];
+        // Max components tracked (one entry per component).
+        private const int MaxVersionEntries = 5;
 
         // Size of VersionEntry struct (use sizeof for correctness).
         private static readonly int VersionEntrySize = sizeof(VersionEntry);
 
-        // Load version metadata from /OSB/CONF/VERSION.dat
-        private static void LoadVersions()
+        // Load version metadata from /OSB/CONF/VERSION.dat into the caller's
+        // backing storage. Returns the entry count and whether metadata is
+        // available. No heap allocation: the caller owns the buffer and its
+        // lifetime must cover the entire operation.
+        private static void LoadVersions(byte* storage, out int versionCount, out bool versionsAvailable)
         {
-            if (_versionsLoaded) return;
-            _versionsLoaded = true;
+            versionCount = 0;
+            versionsAvailable = false;
 
-            // Build path manually to avoid foreach on string
+            // Build path manually to avoid foreach on string. Copy the full
+            // literal length, computed from the source text (not a guessed
+            // fixed constant), so the complete path reaches the open API.
             var pathBuf = stackalloc byte[256];
             int plen = 0;
             fixed (char* p = "A:\\OSB\\CONF\\VERSION.dat")
             {
-                for (int k = 0; k < 22; k++) pathBuf[plen++] = (byte)p[k];
+                int pathLen = 0;
+                while (p[pathLen] != '\0') pathLen++;
+                for (int k = 0; k < pathLen; k++) pathBuf[plen++] = (byte)p[k];
             }
 
             int h = Syscall.Open(pathBuf, plen);
             if (h < 0)
             {
                 // Metadata not available
-                _versionsAvailable = false;
-                _versionCount = 0;
                 return;
             }
 
@@ -67,47 +66,33 @@ namespace Osb.Shell.Userspace
             }
             Syscall.Close(h);
 
-            if (total == 0)
+            if (total == 0) return;
+
+            VersionEntry* versions = (VersionEntry*)storage;
+            versionCount = 0;
+
+            // Parse lines: component:version:generation:codename
+            int lineStart = 0;
+            for (int i = 0; i <= total; i++)
             {
-                _versionsAvailable = false;
-                _versionCount = 0;
-                return;
-            }
-
-            // Count lines
-            int lines = 0;
-            for (int i = 0; i < total; i++)
-                if (fileBuf[i] == (byte)'\n') lines++;
-
-            // Use fixed backing storage (max 5 entries, one per component)
-            fixed (byte* storagePtr = _versionStorage)
-            {
-                VersionEntry* versions = (VersionEntry*)storagePtr;
-                _versionCount = 0;
-
-                // Parse lines: component:version:generation:codename
-                int lineStart = 0;
-                for (int i = 0; i <= total; i++)
+                if (i == total || fileBuf[i] == (byte)'\n')
                 {
-                    if (i == total || fileBuf[i] == (byte)'\n')
+                    int lineLen = i - lineStart;
+                    if (lineLen > 0 && versionCount < MaxVersionEntries)
                     {
-                        int lineLen = i - lineStart;
-                        if (lineLen > 0 && _versionCount < 5)
+                        VersionEntry entry;
+                        ParseVersionLine(fileBuf, lineStart, lineLen, out entry);
+                        if (entry.valid)
                         {
-                            VersionEntry entry;
-                            ParseVersionLine(fileBuf, lineStart, lineLen, out entry);
-                            if (entry.valid)
-                            {
-                                versions[_versionCount] = entry;
-                                _versionCount++;
-                            }
+                            versions[versionCount] = entry;
+                            versionCount++;
                         }
-                        lineStart = i + 1;
                     }
+                    lineStart = i + 1;
                 }
             }
 
-            _versionsAvailable = true;
+            versionsAvailable = true;
         }
 
         private static void ParseVersionLine(byte* buf, int start, int len, out VersionEntry entry)
@@ -156,50 +141,40 @@ namespace Osb.Shell.Userspace
             entry.valid = true;
         }
 
-        // Get version string for a component (component name as fixed char*)
-        private static void GetVersionString(char* component, char* outBuf, int cap, out int outLen)
+        // Get version string for a component (component name as fixed char*).
+        // storage/versionCount/versionsAvailable describe the metadata already
+        // loaded into the caller's stack buffer (see DoVer).
+        private static void GetVersionString(char* component, char* outBuf, int cap, out int outLen,
+                                             byte* storage, int versionCount, bool versionsAvailable)
         {
             outLen = 0;
-            LoadVersions();
-
-            if (!_versionsAvailable || _versionCount == 0)
+            if (!versionsAvailable || versionCount == 0)
             {
                 // Metadata unavailable - report explicitly instead of hardcoded fallback
-                fixed (char* msg = "metadata unavailable")
-                {
-                    for (int k = 0; k < 18 && k < cap - 1; k++) outBuf[k] = msg[k];
-                    outLen = 18;
-                }
+                WriteMessage(outBuf, cap, out outLen);
                 return;
             }
 
-            fixed (byte* storagePtr = _versionStorage)
+            VersionEntry* versions = (VersionEntry*)storage;
+            for (int i = 0; i < versionCount; i++)
             {
-                VersionEntry* versions = (VersionEntry*)storagePtr;
-                for (int i = 0; i < _versionCount; i++)
+                var e = versions[i];
+                if (ComponentMatchesPtr(e, component))
                 {
-                    var e = versions[i];
-                    if (ComponentMatchesPtr(e, component))
+                    // Found matching component, copy version
+                    int k = 0;
+                    while (k < 32 && e.version[k] != '\0' && k < cap - 1)
                     {
-                        // Found matching component, copy version
-                        int k = 0;
-                        while (k < 32 && e.version[k] != '\0' && k < cap - 1)
-                        {
-                            outBuf[k] = e.version[k];
-                            k++;
-                        }
-                        outLen = k;
-                        return;
+                        outBuf[k] = e.version[k];
+                        k++;
                     }
+                    outLen = k;
+                    return;
                 }
             }
 
             // Not found, report metadata unavailable
-            fixed (char* msg = "metadata unavailable")
-            {
-                for (int k = 0; k < 18 && k < cap - 1; k++) outBuf[k] = msg[k];
-                outLen = 18;
-            }
+            WriteMessage(outBuf, cap, out outLen);
         }
 
         private static bool ComponentMatchesPtr(VersionEntry e, char* component)
@@ -226,48 +201,57 @@ namespace Osb.Shell.Userspace
             return true;
         }
 
-        // Get codename for generation 0
-        private static void GetCodename(char* outBuf, int cap, out int outLen)
+        // Get codename for generation 0. storage/versionCount/versionsAvailable
+        // describe the metadata already loaded into the caller's stack buffer.
+        private static void GetCodename(char* outBuf, int cap, out int outLen,
+                                        byte* storage, int versionCount, bool versionsAvailable)
         {
             outLen = 0;
-            LoadVersions();
-
-            if (!_versionsAvailable || _versionCount == 0)
+            if (!versionsAvailable || versionCount == 0)
             {
                 // Metadata unavailable - report explicitly instead of hardcoded fallback
-                fixed (char* msg = "metadata unavailable")
-                {
-                    for (int k = 0; k < 18 && k < cap - 1; k++) outBuf[k] = msg[k];
-                    outLen = 18;
-                }
+                WriteMessage(outBuf, cap, out outLen);
                 return;
             }
 
-            fixed (byte* storagePtr = _versionStorage)
+            VersionEntry* versions = (VersionEntry*)storage;
+            for (int i = 0; i < versionCount; i++)
             {
-                VersionEntry* versions = (VersionEntry*)storagePtr;
-                for (int i = 0; i < _versionCount; i++)
+                var e = versions[i];
+                if (e.generation == 0 && e.codename[0] != '\0')
                 {
-                    var e = versions[i];
-                    if (e.generation == 0 && e.codename[0] != '\0')
+                    int k = 0;
+                    while (k < 32 && e.codename[k] != '\0' && k < cap - 1)
                     {
-                        int k = 0;
-                        while (k < 32 && e.codename[k] != '\0' && k < cap - 1)
-                        {
-                            outBuf[k] = e.codename[k];
-                            k++;
-                        }
-                        outLen = k;
-                        return;
+                        outBuf[k] = e.codename[k];
+                        k++;
                     }
+                    outLen = k;
+                    return;
                 }
             }
 
             // Not found, report metadata unavailable
+            WriteMessage(outBuf, cap, out outLen);
+        }
+
+        // Copy the "metadata unavailable" fallback message using its actual
+        // source length (no hardcoded/truncated copy length) so the complete
+        // message is delivered to the caller.
+        private static void WriteMessage(char* outBuf, int cap, out int outLen)
+        {
+            outLen = 0;
             fixed (char* msg = "metadata unavailable")
             {
-                for (int k = 0; k < 18 && k < cap - 1; k++) outBuf[k] = msg[k];
-                outLen = 18;
+                int mlen = 0;
+                while (msg[mlen] != '\0') mlen++;
+                int k = 0;
+                while (k < mlen && k < cap - 1)
+                {
+                    outBuf[k] = msg[k];
+                    k++;
+                }
+                outLen = k;
             }
         }
     }
