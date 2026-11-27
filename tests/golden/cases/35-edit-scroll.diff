@@ -1,0 +1,8 @@
+--- /dev/fd/63	2026-11-27 01:07:31.885338076 -0300
++++ /dev/fd/62	2026-11-27 01:07:31.885338076 -0300
+@@ -25,4 +25,4 @@
+ root@OSB A:\OSB\ROOT>ECHO wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+ wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+ root@OSB A:\OSB\ROOT>qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+-root@OSB A:\OSB\ROOT>
++root@OSB A:\OSB\ROOT>Boot program exited. Halting.

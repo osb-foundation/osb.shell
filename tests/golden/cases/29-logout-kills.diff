@@ -1,0 +1,6 @@
+--- /dev/fd/63	2026-11-27 01:33:13.651186284 -0300
++++ /dev/fd/62	2026-11-27 01:33:13.651186284 -0300
+@@ -1,2 +1,3 @@
++BOOT: A:\OSB\BIN\TLogout.EXE N Logout.EXE
+ LOGOUT: PASS
+ Boot program exited. Halting.

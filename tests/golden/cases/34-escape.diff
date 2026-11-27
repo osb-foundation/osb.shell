@@ -1,0 +1,10 @@
+--- /dev/fd/63	2026-11-27 01:22:15.044170475 -0300
++++ /dev/fd/62	2026-11-27 01:22:15.044170475 -0300
+@@ -1,5 +1,6 @@
+ login: root
+ 
+ root@OSB A:\OSB\ROOT>x
+-root@OSB A:\OSB\ROOT>AB
++root@OSB A:\OSB\ROOT>Boot program exited. Halting.
++AB
+ root@OSB A:\OSB\ROOT>

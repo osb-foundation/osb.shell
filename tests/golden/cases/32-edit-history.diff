@@ -1,10 +1,8 @@
---- /dev/fd/63	2026-11-18 20:51:32.473499686 -0300
-+++ /dev/fd/62	2026-11-18 20:51:32.473499686 -0300
-@@ -2,5 +2,5 @@
- 
+--- /dev/fd/63	2026-11-27 01:25:11.150135758 -0300
++++ /dev/fd/62	2026-11-27 01:25:11.150135758 -0300
+@@ -3,4 +3,4 @@
  root@OSB A:\OSB\ROOT>cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
  Bad command or file name.
--root@OSB A:\OSB\ROOT>root@OSB A:\OSB\ROOT>ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccroot@OSB A:\OSB\ROOT>                                                                                                    
+ root@OSB A:\OSB\ROOT>root@OSB A:\OSB\ROOT>ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccroot@OSB A:\OSB\ROOT>                                                                                                    
 -root@OSB A:\OSB\ROOT>
-+root@OSB A:\OSB\ROOT>root@OSB A:\OSB\ROOT>ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccroot@OSB A:\OSB\ROOT>                                                                                                    Boo
-+root@OSB A:\OSB\ROOT>t program exited. Halting.
++root@OSB A:\OSB\ROOT>Boot program exited. Halting.

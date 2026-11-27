@@ -1,0 +1,7 @@
+--- /dev/fd/63	2026-11-27 01:32:42.087776703 -0300
++++ /dev/fd/62	2026-11-27 01:32:42.093776396 -0300
+@@ -1,3 +1,4 @@
++BOOT: A:\OSB\BIN\TWait.EXE N \TWait.EXE
+ TEXIT: exiting with code 7
+ TWAIT: child exit=7 PASS
+ Boot program exited. Halting.

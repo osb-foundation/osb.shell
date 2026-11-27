@@ -1,0 +1,19 @@
+--- /mnt/Data/Nextcloud/Projects/osb/osb.shell/tests/golden/cases/34-escape.vga	2026-11-21 01:43:45.547744969 -0300
++++ /tmp/osb-golden-xIDjHU/run-36-rErPn5/vga	2026-11-27 01:22:14.998349961 -0300
+@@ -15,7 +15,8 @@
+ login: root
+ 
+ root@OSB A:\OSB\ROOT>x
+-root@OSB A:\OSB\ROOT>AB
++root@OSB A:\OSB\ROOT>Boot program exited. Halting.
++AB
+ 
+ 
+ 
+@@ -23,5 +24,4 @@
+ 
+ 
+ 
+-
+-=== CRTC row=16 col=21 ===
++=== CRTC row=17 col=0 ===

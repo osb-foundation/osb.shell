@@ -1,0 +1,7 @@
+--- /dev/fd/63	2026-11-27 01:32:38.021985765 -0300
++++ /dev/fd/62	2026-11-27 01:32:38.022985714 -0300
+@@ -1,3 +1,4 @@
++BOOT: A:\OSB\BIN\TSpawn.EXE N TSpawn.EXE
+ HELLO from ring 3;
+ memory is private (OK)
+ TSPAWN: child exit=0 PASS

@@ -1,0 +1,7 @@
+--- /dev/fd/63	2026-11-27 01:32:46.712540085 -0300
++++ /dev/fd/62	2026-11-27 01:32:46.712540085 -0300
+@@ -1,2 +1,4 @@
++BOOT: A:\OSB\BIN\TArgs.EXE N \TArgs.EXE
++GA 1:00
+ args=[]
+ Boot program exited. Halting.

@@ -1,0 +1,9 @@
+--- /dev/fd/63	2026-11-27 01:33:17.937974612 -0300
++++ /dev/fd/62	2026-11-27 01:33:17.944974267 -0300
+@@ -1,2 +1,6 @@
++BOOT: A:\OSB\BIN\TSudo.EXE N \TSudo.EXE
++GA 1:00
++[2]:05CHILD
++GA 2:05
+ TSUDO: PASS
+ Boot program exited. Halting.

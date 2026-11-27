@@ -161,6 +161,15 @@ namespace Osb.Shell.Userspace
             ushort mode, uid;
             ulong size;
             if (!Syscall.ResolvePath(path, plen, out ino, out mode, out uid, out size)) return -4;
+
+            // Ambiguity detection: if multiple directory entries match the
+            // final component case-insensitively, refuse to guess and report.
+            if (IsAmbiguous(path, plen))
+            {
+                ReportAmbiguity(path, plen);
+                return -4;
+            }
+
             var req = new Syscall.SpawnReq
             {
                 PathPtr = (ulong)path,
@@ -231,6 +240,115 @@ namespace Osb.Shell.Userspace
             pname[8] = (byte)'X'; pname[9] = (byte)'E';
             var full = stackalloc byte[PathCap];
             return SearchPath(pname, 10, abuf, n, full);
+        }
+
+        // Case-insensitive ASCII compare of two byte spans.
+        private static bool NameEqualsIgnoreCase(byte* a, int aLen, byte* b, int bLen)
+        {
+            if (aLen != bLen) return false;
+            for (int k = 0; k < aLen; k++)
+            {
+                byte ca = a[k], cb = b[k];
+                if (ca >= 0x41 && ca <= 0x5A) ca += 0x20;
+                if (cb >= 0x41 && cb <= 0x5A) cb += 0x20;
+                if (ca != cb) return false;
+            }
+            return true;
+        }
+
+        // Returns true when more than one directory entry matches the final
+        // path component case-insensitively.
+        private static bool IsAmbiguous(byte* path, int plen)
+        {
+            // Locate the last path separator to split dir + filename.
+            int sep = -1;
+            for (int i = plen - 1; i >= 0; i--)
+                if (path[i] == (byte)'\\' || path[i] == (byte)':') { sep = i; break; }
+
+            uint dirIno;
+            ushort dm, du;
+            ulong ds;
+            byte* fileName;
+            int fileNameLen;
+
+            if (sep >= 0)
+            {
+                if (!Syscall.ResolvePath(path, sep, out dirIno, out dm, out du, out ds)) return false;
+                fileName = path + sep + 1;
+                fileNameLen = plen - sep - 1;
+            }
+            else
+            {
+                var cwd = stackalloc byte[256];
+                int cl = Syscall.GetCwd(cwd, 256);
+                if (cl < 0) return false;
+                if (!Syscall.ResolvePath(cwd, cl, out dirIno, out dm, out du, out ds)) return false;
+                fileName = path;
+                fileNameLen = plen;
+            }
+
+            int matches = 0;
+            for (int idx = 0; ; idx++)
+            {
+                var entry = stackalloc byte[240];
+                if (!Syscall.DirNext(dirIno, idx, entry, 240)) break;
+                uint entryIno = *(uint*)entry;
+                if (entryIno == 0) continue;
+                byte entryNameLen = entry[5];
+                if (!NameEqualsIgnoreCase(entry + 6, entryNameLen, fileName, fileNameLen)) continue;
+                matches++;
+                if (matches > 1) return true;
+            }
+            return false;
+        }
+
+        private static void ReportAmbiguity(byte* path, int plen)
+        {
+            Syscall.PrintString("Ambiguous path: ");
+            for (int i = 0; i < plen; i++) Syscall.PutChar((char)path[i]);
+            Syscall.PrintString("\r\nDid you mean:\r\n");
+
+            int sep = -1;
+            for (int i = plen - 1; i >= 0; i--)
+                if (path[i] == (byte)'\\' || path[i] == (byte)':') { sep = i; break; }
+
+            uint dirIno;
+            ushort dm, du;
+            ulong ds;
+            byte* fileName;
+            int fileNameLen;
+
+            if (sep >= 0)
+            {
+                Syscall.ResolvePath(path, sep, out dirIno, out dm, out du, out ds);
+                fileName = path + sep + 1;
+                fileNameLen = plen - sep - 1;
+            }
+            else
+            {
+                var cwd = stackalloc byte[256];
+                int cl = Syscall.GetCwd(cwd, 256);
+                if (cl < 0) return;
+                Syscall.ResolvePath(cwd, cl, out dirIno, out dm, out du, out ds);
+                fileName = path;
+                fileNameLen = plen;
+            }
+
+            int shown = 0;
+            for (int idx = 0; ; idx++)
+            {
+                var entry = stackalloc byte[240];
+                if (!Syscall.DirNext(dirIno, idx, entry, 240)) break;
+                uint entryIno = *(uint*)entry;
+                if (entryIno == 0) continue;
+                byte entryNameLen = entry[5];
+                if (!NameEqualsIgnoreCase(entry + 6, entryNameLen, fileName, fileNameLen)) continue;
+                if (shown > 0) Syscall.PrintString(", ");
+                for (int k = 0; k < entryNameLen; k++) Syscall.PutChar((char)entry[6 + k]);
+                shown++;
+                if (shown >= 8) break;
+            }
+            Syscall.PrintString("\r\n");
         }
 
         // Try <cwd>\<name>.OSL; if present, launch it via OSLANG.EXE. The

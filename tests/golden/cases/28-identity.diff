@@ -1,0 +1,9 @@
+--- /dev/fd/63	2026-11-27 01:33:09.288402748 -0300
++++ /dev/fd/62	2026-11-27 01:33:09.288402748 -0300
+@@ -1,2 +1,6 @@
++BOOT: A:\OSB\BIN\TId.EXE N IN\TId.EXE
++GA 1:00
++[2]:05CHILD
++GA 2:05
+ TID: PASS n=10
+ Boot program exited. Halting.
