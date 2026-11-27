@@ -90,6 +90,10 @@ namespace Osb.Shell.Userspace
         // Search PATH (GETENV) for name/name.EXE. Returns the pid, -4 when no
         // entry resolves, or another negative spawn error from the first entry
         // that did resolve.
+        //
+        // Package discovery (Card 2): for extensionless names, each PATH entry
+        // is also checked as <entry>\<name>\main.osl. Exactly one match runs
+        // the package; multiple matches report ambiguity.
         private static int SearchPath(byte* name, int nameLen, byte* args, int argLen, byte* full)
         {
             var pbuf = stackalloc byte[256];
@@ -100,6 +104,58 @@ namespace Osb.Shell.Userspace
 
             int i = 0;
             bool hasExt = HasExt(name, nameLen);
+
+            // ---- Pass 1: package discovery (<entry>\<name>\main.osl) ----
+            if (!hasExt)
+            {
+                int pkgMatchEntry = -1;
+                int pkgMatchLen = 0;
+                int pkgCount = 0;
+                int j = 0;
+                while (j < pl)
+                {
+                    int es = j;
+                    while (j < pl && pbuf[j] != (byte)';') j++;
+                    int el = j - es;
+                    j++;                       // skip ';'
+                    if (el <= 0) continue;
+                    bool abs = (el >= 2 && pbuf[es + 1] == (byte)':') || pbuf[es] == (byte)'\\';
+                    if (!abs) continue;
+                    int n = BuildPath(full, pbuf + es, el, name, nameLen, false);
+                    if (n < 250 && n + 10 < 260)
+                    {
+                        full[n++] = (byte)'\\';
+                        full[n++] = (byte)'m'; full[n++] = (byte)'a'; full[n++] = (byte)'i';
+                        full[n++] = (byte)'n'; full[n++] = (byte)'.'; full[n++] = (byte)'o';
+                        full[n++] = (byte)'s'; full[n++] = (byte)'l';
+                        uint ino; ushort mode, uid; ulong size;
+                        if (Syscall.ResolvePath(full, n, out ino, out mode, out uid, out size))
+                        {
+                            pkgCount++;
+                            if (pkgCount == 1) { pkgMatchEntry = es; pkgMatchLen = el; }
+                        }
+                    }
+                }
+                if (pkgCount == 1)
+                {
+                    int nn = BuildPath(full, pbuf + pkgMatchEntry, pkgMatchLen, name, nameLen, false);
+                    full[nn++] = (byte)'\\';
+                    full[nn++] = (byte)'m'; full[nn++] = (byte)'a'; full[nn++] = (byte)'i';
+                    full[nn++] = (byte)'n'; full[nn++] = (byte)'.'; full[nn++] = (byte)'o';
+                    full[nn++] = (byte)'s'; full[nn++] = (byte)'l';
+                    int r = SpawnResolved(full, nn, args, argLen);
+                    if (r >= 0) { Syscall.Wait(r); return r; }
+                    return r;
+                }
+                if (pkgCount > 1)
+                {
+                    ReportPackageAmbiguity(name, nameLen);
+                    return -4;
+                }
+            }
+
+            // ---- Pass 2: existing resolution (.OSL, bare, .EXE) ----
+            i = 0;
             while (i < pl)
             {
                 int es = i;
@@ -349,6 +405,14 @@ namespace Osb.Shell.Userspace
                 if (shown >= 8) break;
             }
             Syscall.PrintString("\r\n");
+        }
+
+        // Report ambiguity for a package name found in multiple PATH locations.
+        private static void ReportPackageAmbiguity(byte* name, int nameLen)
+        {
+            Syscall.PrintString("Ambiguous command: ");
+            for (int i = 0; i < nameLen; i++) Syscall.PutChar((char)name[i]);
+            Syscall.PrintString("\r\nPackage found in multiple PATH locations.\r\n");
         }
 
         // Try <cwd>\<name>.OSL; if present, launch it via OSLANG.EXE. The
