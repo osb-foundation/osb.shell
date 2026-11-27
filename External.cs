@@ -143,7 +143,7 @@ namespace Osb.Shell.Userspace
                     full[nn++] = (byte)'m'; full[nn++] = (byte)'a'; full[nn++] = (byte)'i';
                     full[nn++] = (byte)'n'; full[nn++] = (byte)'.'; full[nn++] = (byte)'o';
                     full[nn++] = (byte)'s'; full[nn++] = (byte)'l';
-                    int r = SpawnResolved(full, nn, args, argLen);
+                    int r = SpawnOslang(full, nn, args, argLen);
                     if (r >= 0) { Syscall.Wait(r); return r; }
                     return r;
                 }
