@@ -45,5 +45,6 @@
 33-complete-wrap  2          spec
 34-escape         2          spec
 35-edit-scroll    2          spec
+35-oslang-error    1a.1       spec
 37-envapi        3          spec
 99-stress        4          spec

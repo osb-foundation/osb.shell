@@ -1,0 +1,8 @@
+BOOT: A:\OSB\BIN\TOSLANGError.EXE N GError.EXE
+[2]:22A:\OSB\BIN\DIVZE
+GA 2:22
+RD 16:052
+RD 16:000
+Runtime error: Division by zero.
+TOSLANGERROR: child exit=1 PASS (non-zero)
+Boot program exited. Halting.
