@@ -55,7 +55,7 @@ namespace Osb.Tests
         // Parent: spawn a second task, interleave, verify its own TLS survives.
         private static void Parent()
         {
-            uint pid = Syscall.GetPid();
+            ulong pid = Syscall.GetPid();
 
             int cpid = Syscall.SpawnPath("A:\\OSB\\BIN\\TTlsProof.EXE", "child");
             if (cpid < 0)
@@ -80,7 +80,7 @@ namespace Osb.Tests
             Print("TTLS: ");
             Print(ok ? "PASS" : "FAIL");
             Print(" parent_pid=");
-            PrintNum(pid);
+            PrintNum((uint)pid);
             Print(" child_pid=");
             PrintNum((uint)cpid);
             Print(" child_code=");
@@ -94,13 +94,13 @@ namespace Osb.Tests
         // Child: write its own values, yield, read back.
         private static void Child()
         {
-            uint pid = Syscall.GetPid();
+            ulong pid = Syscall.GetPid();
             bool ok = CheckTls(pid);
 
             Print("TTLS child: ");
             Print(ok ? "PASS" : "FAIL");
             Print(" pid=");
-            PrintNum(pid);
+            PrintNum((uint)pid);
             Print(" tp=");
             PrintHex(osb_tls_tp());
             Print(" alloc=");
@@ -113,7 +113,7 @@ namespace Osb.Tests
 
         // The full TLS check: address validity, the linker-relaxed offset,
         // write/read of both fields, and survival across a context switch.
-        private static bool CheckTls(uint pid)
+        private static bool CheckTls(ulong pid)
         {
             bool ok = true;
             ulong tp = osb_tls_tp();

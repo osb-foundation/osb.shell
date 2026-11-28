@@ -62,7 +62,7 @@ namespace Osb.Tests
 
         private static void Parent()
         {
-            uint pid = Syscall.GetPid();
+            ulong pid = Syscall.GetPid();
             _heapBase = 0x2108000;   // heap A: above every TLS slot
             _heapLimit = 0x2180000;
             osb_tls_set_alloc(_heapBase);
@@ -109,7 +109,7 @@ namespace Osb.Tests
             bool ok = _fails == 0 && childCode == 0;
             Print("TALLOC: ");
             Print(ok ? "PASS" : "FAIL");
-            Print(" pid="); PrintNum(pid);
+            Print(" pid="); PrintNum((uint)pid);
             Print(" child="); PrintNum((uint)cpid);
             Print(" child_code="); PrintNum((uint)(childCode & 0xFF));
             Print(" checks="); PrintNum((uint)_checks);
@@ -122,7 +122,7 @@ namespace Osb.Tests
 
         private static void Child()
         {
-            uint pid = Syscall.GetPid();
+            ulong pid = Syscall.GetPid();
             _heapBase = 0x2180000;   // heap B: distinct from the parent's
             _heapLimit = 0x21FFFF0;
             osb_tls_set_alloc(_heapBase);
@@ -156,7 +156,7 @@ namespace Osb.Tests
 
             Print("TALLOC child: ");
             Print(_fails == 0 ? "PASS" : "FAIL");
-            Print(" pid="); PrintNum(pid);
+            Print(" pid="); PrintNum((uint)pid);
             Print(" checks="); PrintNum((uint)_checks);
             Print(" fails="); PrintNum((uint)_fails);
             Print(" tp="); PrintHex(osb_tls_tp());

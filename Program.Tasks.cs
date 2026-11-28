@@ -4,7 +4,13 @@ namespace Osb.Shell.Userspace
 {
     internal static unsafe partial class Program
     {
-        // ---- slice 6: jobs / processes ----
+        // ---- slice 6: jobs / processes (Card 8: PS / KILL) ----
+        //
+        // Process identity is the Kernel-owned 64-bit PID (Card 3). These
+        // commands never touch Kernel data structures directly: PS reads a
+        // snapshot through the TASKLIST syscall and KILL requests termination
+        // through the KILL syscall. The Kernel enforces authorization and
+        // lifecycle; the shell only parses, formats, and explains the result.
 
         private static void DoTask(char* line, int len)
         {
@@ -20,13 +26,6 @@ namespace Osb.Shell.Userspace
                     Syscall.PrintString("/? [show this help]\r\n");
                     return;
                 }
-            }
-            bool background = false;
-            if (background)
-            {
-                // background listing: show tasks then return
-                ListTasks();
-                return;
             }
             ListTasks();
         }
@@ -45,14 +44,31 @@ namespace Osb.Shell.Userspace
                     return;
                 }
             }
-            if (i >= len) { Syscall.PrintString("Usage: WAIT <pid>\r\n"); return; }
-            int pid = 0; bool any = false;
-            while (i < len && line[i] >= '0' && line[i] <= '9') { pid = pid * 10 + (line[i] - '0'); i++; any = true; }
-            if (!any) { Syscall.PrintString("Usage: KILL <pid>\r\n"); return; }
-            if (Syscall.Kill(pid)) Syscall.PrintString("Killed pid ");
-            else { Syscall.PrintString("No such process.\r\n"); return; }
-            PrintULong((ulong)pid);
-            Syscall.PutChar('.'); Syscall.PutChar('\r'); Syscall.PutChar('\n');
+            if (i >= len) { Syscall.PrintString("Usage: KILL <pid>\r\n"); return; }
+            if (!ParsePid(line, len, i, out ulong pid))
+            {
+                Syscall.PrintString("Invalid PID.\r\n");
+                return;
+            }
+            // Request termination through the authorized Kernel interface. The
+            // Kernel decides whether the caller may kill the target and whether
+            // it exists; we only report the outcome (never claim success early).
+            int r = Syscall.KillStatus(pid);
+            if (r == 0)
+            {
+                Syscall.PrintString("Killed pid ");
+                PrintULong(pid);
+                Syscall.PutChar('.'); Syscall.PutChar('\r'); Syscall.PutChar('\n');
+                return;
+            }
+            if (r == -3)
+            {
+                // EACCES: console (pid 1) or a process the caller may not signal.
+                Syscall.PrintString("Operation not permitted.\r\n");
+                return;
+            }
+            // -4 (or anything else): unknown or already-terminated target.
+            Syscall.PrintString("No such process.\r\n");
         }
 
         private static void DoWait(char* line, int len)
@@ -70,11 +86,13 @@ namespace Osb.Shell.Userspace
                 }
             }
             if (i >= len) { Syscall.PrintString("Usage: WAIT <pid>\r\n"); return; }
-            int pid = 0; bool any = false;
-            while (i < len && line[i] >= '0' && line[i] <= '9') { pid = pid * 10 + (line[i] - '0'); i++; any = true; }
-            if (!any) { Syscall.PrintString("Usage: WAIT <pid>\r\n"); return; }
+            if (!ParsePid(line, len, i, out ulong pid))
+            {
+                Syscall.PrintString("Invalid PID.\r\n");
+                return;
+            }
             Syscall.PrintString("Waiting for pid ");
-            PrintULong((ulong)pid);
+            PrintULong(pid);
             Syscall.PutChar(' ');
             int code = Syscall.Wait(pid);
             if (code == -7)
@@ -84,7 +102,7 @@ namespace Osb.Shell.Userspace
             }
             if (code < 0) { Syscall.PrintString("No such process (or already gone).\r\n"); return; }
             Syscall.PrintString("Process ");
-            PrintULong((ulong)pid);
+            PrintULong(pid);
             Syscall.PrintString(" exited, code ");
             PrintULong((ulong)code);
             Syscall.PutChar('.'); Syscall.PutChar('\r'); Syscall.PutChar('\n');
@@ -105,10 +123,12 @@ namespace Osb.Shell.Userspace
                 }
             }
             if (i >= len) { Syscall.PrintString("Usage: TAB <pid>\r\n"); return; }
-            int pid = 0; bool any = false;
-            while (i < len && line[i] >= '0' && line[i] <= '9') { pid = pid * 10 + (line[i] - '0'); i++; any = true; }
-            if (!any) { Syscall.PrintString("Usage: TAB <pid>\r\n"); return; }
-            if (Syscall.SetForeground(pid)) { Syscall.PrintString("Foreground [pid "); PrintULong((ulong)pid); Syscall.PrintString("]\r\n"); }
+            if (!ParsePid(line, len, i, out ulong pid))
+            {
+                Syscall.PrintString("Invalid PID.\r\n");
+                return;
+            }
+            if (Syscall.SetForeground(pid)) { Syscall.PrintString("Foreground [pid "); PrintULong(pid); Syscall.PrintString("]\r\n"); }
             else Syscall.PrintString("No such process.\r\n");
         }
 
@@ -155,6 +175,27 @@ namespace Osb.Shell.Userspace
 
         // ---- helpers ----
 
+        // Parse a base-10 unsigned 64-bit PID starting at `start`. Rejects an
+        // empty field, any non-digit trailing character, and values that
+        // overflow ulong (out-of-range). The whole remainder must be the number.
+        private static bool ParsePid(char* line, int len, int start, out ulong pid)
+        {
+            pid = 0;
+            int i = start;
+            if (i >= len) return false;
+            bool any = false;
+            for (; i < len; i++)
+            {
+                char c = line[i];
+                if (c < '0' || c > '9') return false;      // malformed (trailing junk / sign)
+                int d = c - '0';
+                if (pid > (ulong.MaxValue - (ulong)d) / 10UL) return false; // overflow
+                pid = pid * 10UL + (ulong)d;
+                any = true;
+            }
+            return any;
+        }
+
         private static void PrintULong(ulong v)
         {
             var buf = stackalloc char[24];
@@ -176,31 +217,45 @@ namespace Osb.Shell.Userspace
             Syscall.Print(b, 1);
         }
 
+        // PS: list the processes the Kernel reports via TASKLIST. Each record
+        // is 20 bytes: pid u64, state u32, name[8]. The list is Kernel-owned —
+        // this is a snapshot, not a scan of any local structure.
         private static void ListTasks()
         {
             var buf = stackalloc byte[512];
-            int n = Syscall.TaskList(buf, 512);
+            // TASKLIST returns the number of records written (not a byte count).
+            int count = Syscall.TaskList(buf, 512);
             int i = 0;
-            bool any = false;
-            while (i + 16 <= n)
+            for (int rec = 0; rec < count && i + 20 <= 512; rec++)
             {
-                int pid = buf[i] | (buf[i + 1] << 8) | (buf[i + 2] << 16) | (buf[i + 3] << 24);
-                int state = buf[i + 4] | (buf[i + 5] << 8) | (buf[i + 6] << 16) | (buf[i + 7] << 24);
-                any = true;
-                PrintULong((ulong)pid);
+                ulong pid = 0;
+                for (int b = 0; b < 8; b++) pid |= ((ulong)buf[i + b]) << (b * 8);
+                int state = buf[i + 8] | (buf[i + 9] << 8) | (buf[i + 10] << 16) | (buf[i + 11] << 24);
+                PrintULong(pid);
                 Syscall.PutChar(' ');
                 for (int k = 0; k < 8; k++)
                 {
-                    byte ch = buf[i + 8 + k];
+                    byte ch = buf[i + 12 + k];
                     if (ch == 0) break;
                     Syscall.PutChar((char)ch);
                 }
                 Syscall.PutChar(' ');
-                Syscall.PrintString(state == 1 ? "ready" : state == 2 ? "zombie" : "?");
+                Syscall.PrintString(StateName(state));
                 Syscall.PutChar('\r'); Syscall.PutChar('\n');
-                i += 16;
+                i += 20;
             }
-            if (!any) Syscall.PrintString("No tasks.\r\n");
+            if (count <= 0) Syscall.PrintString("No tasks.\r\n");
+        }
+
+        // The Kernel process-state model (Memory/Layout.cs): 0 Free (empty slot,
+        // never listed), 1 Ready (runnable or running), 2 Zombie (exited, not yet
+        // reaped). There are no distinct Stopped/Halted/Blocked states, so none
+        // are invented here.
+        private static string StateName(int state)
+        {
+            if (state == 1) return "ready";
+            if (state == 2) return "zombie";
+            return "?";
         }
     }
 }
