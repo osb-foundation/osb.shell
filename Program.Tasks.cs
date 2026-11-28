@@ -130,7 +130,10 @@ namespace Osb.Shell.Userspace
             if (i < len && line[i] == '&') { background = true; i++; }
             while (i < len && line[i] == ' ') i++;
             if (i >= len) { Syscall.PrintString("Usage: SPAWN <program> [&]\r\n"); return; }
-            int pid = SpawnCmd(line + i, len - i);
+            int end = len;
+            while (end > i && (line[end-1] == ' ' || line[end-1] == '\r' || line[end-1] == '\n' || line[end-1] == '\t')) end--;
+            if (end <= i) { Syscall.PrintString("Usage: SPAWN <program> [&]\r\n"); return; }
+            int pid = SpawnCmd(line + i, end - i);
             if (pid < 0)
             {
                 Syscall.PrintString("Bad command or file name.\r\n");
